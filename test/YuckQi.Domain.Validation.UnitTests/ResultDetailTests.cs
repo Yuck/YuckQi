@@ -1,13 +1,10 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 
 namespace YuckQi.Domain.Validation.UnitTests;
 
 public class ResultDetailTests
 {
-    [SetUp]
-    public void Setup() { }
-
     [Test]
     public void ResultDetail_NotFound_HasNotFoundResultCode()
     {

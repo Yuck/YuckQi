@@ -16,12 +16,12 @@ public static class DocumentModelExtensions
 
     public static String? GetCollectionName(this Type? type)
     {
-        return type != null ? CollectionNameByType.GetOrAdd(type, identifier => GetCollectionAttribute(identifier)?.Name ?? identifier.Name) : null;
+        return type != null ? CollectionNameByType.GetOrAdd(type, t => GetCollectionAttribute(t)?.Name ?? t.Name) : null;
     }
 
     public static String? GetDatabaseName(this Type? type)
     {
-        return type != null ? DatabaseNameByType.GetOrAdd(type, identifier => GetDatabaseAttribute(identifier).Name) : null;
+        return type != null ? DatabaseNameByType.GetOrAdd(type, t => GetDatabaseAttribute(t).Name) : null;
     }
 
     public static TIdentifier? GetIdentifier<TDocument, TIdentifier>(this TDocument document)

@@ -8,9 +8,6 @@ public class TypeEntityBaseTests
 {
     private record TypeEntity : TypeEntityBase<Int32>;
 
-    [SetUp]
-    public void Setup() { }
-
     [Test]
     public void TypeEntityBase_Name_HasExpectedValue()
     {

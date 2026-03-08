@@ -6,8 +6,17 @@ namespace YuckQi.Data.Handlers.Write;
 
 public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope>(IRevisionHandler<TDomainEntity, TIdentifier, TScope> reviser) : LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDomainEntity>(reviser) where TDomainEntity : IDomainEntity<TIdentifier>, IDeletionMoment, IRevisionMoment where TIdentifier : IEquatable<TIdentifier>;
 
-public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData>(IRevisionHandler<TDomainEntity, TIdentifier, TScope> reviser) : ILogicalDeletionHandler<TDomainEntity, TIdentifier, TScope?> where TDomainEntity : IDomainEntity<TIdentifier>, IDeletionMoment, IRevisionMoment where TIdentifier : IEquatable<TIdentifier>
+public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> : ILogicalDeletionHandler<TDomainEntity, TIdentifier, TScope?> where TDomainEntity : IDomainEntity<TIdentifier>, IDeletionMoment, IRevisionMoment where TIdentifier : IEquatable<TIdentifier>
 {
+    private readonly IRevisionHandler<TDomainEntity, TIdentifier, TScope> _reviser;
+
+    public LogicalDeletionHandler(IRevisionHandler<TDomainEntity, TIdentifier, TScope> reviser)
+    {
+        ArgumentNullException.ThrowIfNull(reviser);
+
+        _reviser = reviser;
+    }
+
     public TDomainEntity Delete(TDomainEntity entity, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
@@ -17,7 +26,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData>(I
 
         entity.DeletionMoment = DateTime.UtcNow;
 
-        return reviser.Revise(entity, scope);
+        return _reviser.Revise(entity, scope);
     }
 
     public Task<TDomainEntity> Delete(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -29,7 +38,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData>(I
 
         entity.DeletionMoment = DateTime.UtcNow;
 
-        return reviser.Revise(entity, scope, cancellationToken);
+        return _reviser.Revise(entity, scope, cancellationToken);
     }
 
     public TDomainEntity Restore(TDomainEntity entity, TScope? scope)
@@ -41,7 +50,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData>(I
 
         entity.DeletionMoment = null;
 
-        return reviser.Revise(entity, scope);
+        return _reviser.Revise(entity, scope);
     }
 
     public Task<TDomainEntity> Restore(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -53,6 +62,6 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData>(I
 
         entity.DeletionMoment = null;
 
-        return reviser.Revise(entity, scope, cancellationToken);
+        return _reviser.Revise(entity, scope, cancellationToken);
     }
 }

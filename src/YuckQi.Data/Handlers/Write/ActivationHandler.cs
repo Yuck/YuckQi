@@ -6,8 +6,17 @@ namespace YuckQi.Data.Handlers.Write;
 
 public class ActivationHandler<TDomainEntity, TIdentifier, TScope>(IRevisionHandler<TDomainEntity, TIdentifier, TScope?> reviser) : ActivationHandler<TDomainEntity, TIdentifier, TScope, TDomainEntity>(reviser) where TDomainEntity : IDomainEntity<TIdentifier>, IActivationMoment, IRevisionMoment where TIdentifier : IEquatable<TIdentifier>;
 
-public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData>(IRevisionHandler<TDomainEntity, TIdentifier, TScope?> reviser) : IActivationHandler<TDomainEntity, TIdentifier, TScope?> where TDomainEntity : IDomainEntity<TIdentifier>, IActivationMoment, IRevisionMoment where TIdentifier : IEquatable<TIdentifier>
+public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IActivationHandler<TDomainEntity, TIdentifier, TScope?> where TDomainEntity : IDomainEntity<TIdentifier>, IActivationMoment, IRevisionMoment where TIdentifier : IEquatable<TIdentifier>
 {
+    private readonly IRevisionHandler<TDomainEntity, TIdentifier, TScope?> _reviser;
+
+    public ActivationHandler(IRevisionHandler<TDomainEntity, TIdentifier, TScope?> reviser)
+    {
+        ArgumentNullException.ThrowIfNull(reviser);
+
+        _reviser = reviser;
+    }
+
     public TDomainEntity Activate(TDomainEntity entity, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
@@ -17,7 +26,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData>(IRevis
 
         entity.ActivationMoment = DateTime.UtcNow;
 
-        return reviser.Revise(entity, scope);
+        return _reviser.Revise(entity, scope);
     }
 
     public Task<TDomainEntity> Activate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -29,7 +38,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData>(IRevis
 
         entity.ActivationMoment = DateTime.UtcNow;
 
-        return reviser.Revise(entity, scope, cancellationToken);
+        return _reviser.Revise(entity, scope, cancellationToken);
     }
 
     public TDomainEntity Deactivate(TDomainEntity entity, TScope? scope)
@@ -41,7 +50,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData>(IRevis
 
         entity.ActivationMoment = null;
 
-        return reviser.Revise(entity, scope);
+        return _reviser.Revise(entity, scope);
     }
 
     public Task<TDomainEntity> Deactivate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -53,6 +62,6 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData>(IRevis
 
         entity.ActivationMoment = null;
 
-        return reviser.Revise(entity, scope, cancellationToken);
+        return _reviser.Revise(entity, scope, cancellationToken);
     }
 }

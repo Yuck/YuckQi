@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using YuckQi.Domain.ValueObjects;
@@ -7,9 +7,6 @@ namespace YuckQi.Domain.UnitTests.ValueObjects;
 
 public class PageTests
 {
-    [SetUp]
-    public void Setup() { }
-
     [Test]
     public void Page_Properties_HaveExpectedValues()
     {

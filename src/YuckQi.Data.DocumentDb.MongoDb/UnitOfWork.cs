@@ -10,7 +10,7 @@ public class UnitOfWork : IUnitOfWork<IClientSessionHandle>
     private readonly ClientSessionOptions? _options;
     private Lazy<IClientSessionHandle>? _session;
 
-    public IClientSessionHandle Scope => _session != null ? _session.Value : throw new NullReferenceException();
+    public IClientSessionHandle Scope => _session != null ? _session.Value : throw new InvalidOperationException();
 
     public UnitOfWork(IMongoClient client, ClientSessionOptions? options = null)
     {

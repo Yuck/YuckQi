@@ -140,7 +140,7 @@ public class UnitOfWorkTests
     }
 
     [Test]
-    public void Scope_AfterDispose_ThrowsNullReferenceException()
+    public void Scope_AfterDispose_ThrowsInvalidOperationException()
     {
         var session = new Mock<IClientSessionHandle>();
         var client = new Mock<IMongoClient>();
@@ -153,7 +153,7 @@ public class UnitOfWorkTests
         _ = uow.Scope;
         uow.Dispose();
 
-        Assert.Throws<NullReferenceException>(() => _ = uow.Scope);
+        Assert.Throws<InvalidOperationException>(() => _ = uow.Scope);
     }
 
     [Test]

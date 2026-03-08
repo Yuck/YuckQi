@@ -20,7 +20,10 @@ public static class AbstractValidatorExtensions
         return result;
     }
 
-    public static Result<T> GetResult<T>(this AbstractValidator<T> validator, T item) => GetResult(validator as IValidator<T>, item);
+    public static Result<T> GetResult<T>(this AbstractValidator<T> validator, T item)
+    {
+        return GetResult(validator as IValidator<T>, item);
+    }
 
     public static async Task<Result<T>> GetResult<T>(this IValidator<T> validator, T item, CancellationToken cancellationToken)
     {
@@ -32,7 +35,10 @@ public static class AbstractValidatorExtensions
         return result;
     }
 
-    public static Task<Result<T>> GetResult<T>(this AbstractValidator<T> validator, T item, CancellationToken cancellationToken) => GetResult(validator as IValidator<T>, item, cancellationToken);
+    public static Task<Result<T>> GetResult<T>(this AbstractValidator<T> validator, T item, CancellationToken cancellationToken)
+    {
+        return GetResult(validator as IValidator<T>, item, cancellationToken);
+    }
 
     private static Result<T> BuildResult<T>(ValidationResult validationResult, T item)
     {

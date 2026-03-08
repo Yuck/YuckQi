@@ -1,4 +1,3 @@
-﻿using System;
 using Amazon.DynamoDBv2.DataModel;
 using YuckQi.Data.Abstract.Interfaces;
 
@@ -10,7 +9,9 @@ public class UnitOfWork : IUnitOfWork<IDynamoDBContext>
 
     public UnitOfWork(IDynamoDBContext context)
     {
-        Scope = context ?? throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(context);
+
+        Scope = context;
     }
 
     public void Dispose()
@@ -18,7 +19,7 @@ public class UnitOfWork : IUnitOfWork<IDynamoDBContext>
         if (Scope == null)
             return;
 
-        Scope?.Dispose();
+        Scope.Dispose();
 
         Scope = null;
     }

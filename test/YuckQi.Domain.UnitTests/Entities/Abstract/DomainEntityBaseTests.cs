@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using YuckQi.Domain.Entities.Abstract;
 
@@ -7,9 +7,6 @@ namespace YuckQi.Domain.UnitTests.Entities.Abstract;
 public class DomainEntityBaseTests
 {
     private record Entity : DomainEntityBase<Guid>;
-
-    [SetUp]
-    public void Setup() { }
 
     [Test]
     public void EntityBase_GetIdentifier_HasExpectedValue()

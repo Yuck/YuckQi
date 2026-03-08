@@ -13,12 +13,17 @@ public class UnitOfWork<TScope> : IUnitOfWork<TScope> where TScope : new()
 
     public UnitOfWork(IReadOnlyDictionary<Type, IDictionary> entities, TScope scope)
     {
+        ArgumentNullException.ThrowIfNull(entities);
+        ArgumentNullException.ThrowIfNull(scope);
+
         _entities = entities;
 
         Scope = scope;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 
     public IDictionary<TIdentifier, TDomainEntity> GetEntities<TDomainEntity, TIdentifier>()
     {
@@ -30,7 +35,9 @@ public class UnitOfWork<TScope> : IUnitOfWork<TScope> where TScope : new()
         return entities;
     }
 
-    public void SaveChanges() { }
+    public void SaveChanges()
+    {
+    }
 }
 
 public class UnitOfWork : UnitOfWork<Object>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -16,9 +16,6 @@ public class AbstractValidatorExtensionsTests
             RuleFor(t => t.Length).GreaterThan(1).WithMessage("it is too short");
         }
     }
-
-    [SetUp]
-    public void Setup() { }
 
     [Test]
     public void AbstractValidator_GetResultWithValidItem_IsValid()

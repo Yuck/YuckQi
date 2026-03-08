@@ -1,4 +1,4 @@
-﻿namespace YuckQi.Data.DocumentDb.MongoDb.Attributes;
+namespace YuckQi.Data.DocumentDb.MongoDb.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class CollectionAttribute(String name) : Attribute

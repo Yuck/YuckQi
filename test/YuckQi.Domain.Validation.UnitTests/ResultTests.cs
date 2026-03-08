@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -7,9 +7,6 @@ namespace YuckQi.Domain.Validation.UnitTests;
 
 public class ResultTests
 {
-    [SetUp]
-    public void Setup() { }
-
     [Test]
     public void Result_NotFound_HasNotFoundResultCode()
     {

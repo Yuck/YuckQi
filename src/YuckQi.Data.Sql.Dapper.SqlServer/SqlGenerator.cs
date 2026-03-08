@@ -15,6 +15,7 @@ public class SqlGenerator<TRecord> : ISqlGenerator
     private static readonly TableAttribute? TableAttribute = typeof(TRecord).GetCustomAttribute(typeof(TableAttribute)) as TableAttribute;
 
     private static String SchemaName => TableAttribute?.Schema ?? DefaultSchemaName;
+
     private static String TableName => TableAttribute?.Name ?? DefaultTableName;
 
     public String GenerateCountQuery(IReadOnlyCollection<FilterCriteria> parameters)
@@ -56,10 +57,10 @@ public class SqlGenerator<TRecord> : ISqlGenerator
 
     private static String BuildColumnsSql()
     {
-        var properties = typeof(TRecord).GetProperties().Where(t => t.CustomAttributes.All(attribute => attribute.AttributeType != typeof(IgnoreSelectAttribute)));
+        var properties = typeof(TRecord).GetProperties().Where(t => t.CustomAttributes.All(u => u.AttributeType != typeof(IgnoreSelectAttribute)));
         var columns = String.Join(", ", properties.Select(t =>
         {
-            var attribute = t.CustomAttributes.SingleOrDefault(attribute => attribute.AttributeType == typeof(ColumnAttribute));
+            var attribute = t.CustomAttributes.SingleOrDefault(u => u.AttributeType == typeof(ColumnAttribute));
             var custom = attribute?.ConstructorArguments.FirstOrDefault().Value as String;
             var column = String.IsNullOrWhiteSpace(custom)
                              ? $"[{t.Name}]"
