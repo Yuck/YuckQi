@@ -12,7 +12,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDicti
     protected override Boolean DoRevise(TDomainEntity entity, TScope? scope)
     {
         if (entity.Identifier == null)
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Entity identifier must not be null.");
 
         return entities.TryUpdate(entity.Identifier, entity, entities.TryGetValue(entity.Identifier, out var current) ? current : throw new RevisionException<TDomainEntity, TIdentifier>(entity.Identifier));
     }

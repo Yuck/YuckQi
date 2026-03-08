@@ -22,7 +22,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var documents = MapToDataCollection(list) ?? throw new NullReferenceException();
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
 
         foreach (var document in documents)
         {
@@ -43,7 +43,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var documents = MapToDataCollection(list) ?? throw new NullReferenceException();
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
 
         foreach (var document in documents)
         {
@@ -63,11 +63,9 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var document = MapToData(entity);
-        var identifier = document != null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
+        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var identifier = document.GetIdentifier<TDocument, TIdentifier>();
         var filter = Builders<TDocument>.Filter.Eq(field, identifier);
-        if (document == null)
-            throw new NullReferenceException();
 
         var result = collection.ReplaceOne(scope, filter, document);
 
@@ -81,11 +79,9 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var document = MapToData(entity);
-        var identifier = document != null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
+        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var identifier = document.GetIdentifier<TDocument, TIdentifier>();
         var filter = Builders<TDocument>.Filter.Eq(field, identifier);
-        if (document == null)
-            throw new NullReferenceException();
 
         var result = await collection.ReplaceOneAsync(scope, filter, document, cancellationToken: cancellationToken);
 

@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Kevin J Lambert</Authors>
     <Description>An implementation of YuckQi.Data for SQL databases using Entity Framework.</Description>
@@ -12,7 +11,6 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Yuck/YuckQi.Data</PackageProjectUrl>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

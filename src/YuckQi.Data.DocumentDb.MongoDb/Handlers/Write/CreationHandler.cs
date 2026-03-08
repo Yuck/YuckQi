@@ -21,7 +21,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
         var list = entities.Select(PreProcess).ToList();
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var documents = MapToDataCollection(list) ?? throw new NullReferenceException();
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
 
         collection.InsertMany(scope, documents);
 
@@ -35,7 +35,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
         var list = entities.Select(PreProcess).ToList();
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var documents = MapToDataCollection(list) ?? throw new NullReferenceException();
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
 
         await collection.InsertManyAsync(scope, documents, cancellationToken: cancellationToken);
 
@@ -48,7 +48,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
 
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var document = MapToData(entity) ?? throw new NullReferenceException();
+        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
 
         collection.InsertOne(scope, document);
 
@@ -61,7 +61,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
 
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var document = MapToData(entity) ?? throw new NullReferenceException();
+        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
 
         await collection.InsertOneAsync(scope, document, cancellationToken: cancellationToken);
 

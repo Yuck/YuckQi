@@ -9,7 +9,6 @@
     <Project Path="src/YuckQi.Data.Sql.Dapper/YuckQi.Data.Sql.Dapper.csproj" />
     <Project Path="src/YuckQi.Data.Sql.EntityFramework/YuckQi.Data.Sql.EntityFramework.csproj" />
     <Project Path="src/YuckQi.Data/YuckQi.Data.csproj" />
-    <Project Path="src/YuckQi.Domain.Services/YuckQi.Domain.Services.csproj" />
     <Project Path="src/YuckQi.Domain.Validation/YuckQi.Domain.Validation.csproj" />
     <Project Path="src/YuckQi.Domain/YuckQi.Domain.csproj" />
     <Project Path="src/YuckQi.Extensions.Mapping.Abstractions/YuckQi.Extensions.Mapping.Abstractions.csproj" />

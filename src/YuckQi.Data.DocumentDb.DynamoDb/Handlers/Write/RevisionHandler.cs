@@ -23,7 +23,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         foreach (var document in documents)
             batch.AddDocumentToPut(scope.ToDocument(document));
 
-        Task.Run(async () => await batch.ExecuteAsync());
+        Task.Run(async () => await batch.ExecuteAsync()).GetAwaiter().GetResult();
 
         return list;
     }
@@ -50,7 +50,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoRevise(entity, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }
@@ -59,7 +59,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        var document = MapToData(entity) ?? throw new NullReferenceException();
+        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
         var table = scope.GetTargetTable<TDocument>();
 
         await table.PutItemAsync(scope.ToDocument(document), cancellationToken);

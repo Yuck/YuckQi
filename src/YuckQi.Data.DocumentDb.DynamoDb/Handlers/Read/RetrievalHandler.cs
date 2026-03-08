@@ -17,7 +17,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Fun
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoGet(identifier, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }
@@ -43,7 +43,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Fun
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoGet(parameters, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }
@@ -67,7 +67,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Fun
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoGetList(parameters, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }

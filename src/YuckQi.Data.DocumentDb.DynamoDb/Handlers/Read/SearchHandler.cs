@@ -18,7 +18,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoCount(parameters, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }
@@ -40,7 +40,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoSearch(parameters, page, sort, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }

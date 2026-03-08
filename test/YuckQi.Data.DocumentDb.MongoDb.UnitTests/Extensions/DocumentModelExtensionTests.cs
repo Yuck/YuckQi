@@ -79,9 +79,9 @@ public class DocumentModelExtensionTests
     }
 
     [Test]
-    public void GetDatabaseName_WithoutDatabaseAttribute_ThrowsNullReferenceException()
+    public void GetDatabaseName_WithoutDatabaseAttribute_ThrowsInvalidOperationException()
     {
-        Assert.Throws<NullReferenceException>(() => typeof(UndecoratedDocument).GetDatabaseName());
+        Assert.Throws<InvalidOperationException>(() => typeof(UndecoratedDocument).GetDatabaseName());
     }
 
     [Test]
@@ -157,11 +157,11 @@ public class DocumentModelExtensionTests
     }
 
     [Test]
-    public void GetIdentifier_WithNoIdentifierProperty_ThrowsNullReferenceException()
+    public void GetIdentifier_WithNoIdentifierProperty_ThrowsInvalidOperationException()
     {
         var document = new UndecoratedDocument { Name = "test" };
 
-        Assert.Throws<NullReferenceException>(() => document.GetIdentifier<UndecoratedDocument, Int32>());
+        Assert.Throws<InvalidOperationException>(() => document.GetIdentifier<UndecoratedDocument, Int32>());
     }
 
     [Database("Tableau")]

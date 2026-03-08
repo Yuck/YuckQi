@@ -62,7 +62,7 @@ public static class DocumentModelExtensions
         if (type.GetCustomAttribute(typeof(DatabaseAttribute)) is DatabaseAttribute attribute)
             return attribute;
 
-        throw new NullReferenceException();
+        throw new InvalidOperationException($"Type '{type.Name}' is missing the required [{nameof(DatabaseAttribute)}].");
     }
 
     private static PropertyInfo? GetIdentifierPropertyInfo(Type? type)
@@ -78,6 +78,6 @@ public static class DocumentModelExtensions
         if (property != null)
             return property;
 
-        throw new NullReferenceException();
+        throw new InvalidOperationException($"Type '{type.Name}' does not have an identifier property. Apply [{nameof(BsonIdAttribute)}] or define a property named '{DefaultObjectIdPropertyName}'.");
     }
 }

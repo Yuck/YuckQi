@@ -14,7 +14,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDocume
         ArgumentNullException.ThrowIfNull(scope);
 
         var task = Task.Run(async () => await DoDelete(entity, scope, CancellationToken.None));
-        var result = task.Result;
+        var result = task.GetAwaiter().GetResult();
 
         return result;
     }
@@ -23,7 +23,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDocume
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        var document = MapToData(entity) ?? throw new NullReferenceException();
+        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
         var table = scope.GetTargetTable<TDocument>();
 
         await table.DeleteItemAsync(scope.ToDocument(document), cancellationToken);
