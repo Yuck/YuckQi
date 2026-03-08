@@ -26,5 +26,7 @@
     <Project Path="test/YuckQi.Data.UnitTests/YuckQi.Data.UnitTests.csproj" />
     <Project Path="test/YuckQi.Domain.UnitTests/YuckQi.Domain.UnitTests.csproj" />
     <Project Path="test/YuckQi.Domain.Validation.UnitTests/YuckQi.Domain.Validation.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Extensions.Mapping.AutoMapper.UnitTests/YuckQi.Extensions.Mapping.AutoMapper.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Extensions.Mapping.Mapster.UnitTests/YuckQi.Extensions.Mapping.Mapster.UnitTests.csproj" />
   </Folder>
 </Solution>
