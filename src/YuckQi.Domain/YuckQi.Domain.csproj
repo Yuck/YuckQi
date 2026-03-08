@@ -1,16 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Kevin J Lambert</Authors>
-    <Version>8.0.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>A .NET library for bootstrapping a domain model project.</Description>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

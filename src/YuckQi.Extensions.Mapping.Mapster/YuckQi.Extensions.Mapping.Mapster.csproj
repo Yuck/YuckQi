@@ -4,7 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Kevin J Lambert</Authors>
-    <Version>8.0.0</Version>
     <Description>A basic mapper implementation using the Mapster framework.</Description>
     <RepositoryUrl>https://github.com/Yuck/YuckQi.Extensions.Mapping.Abstractions.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
