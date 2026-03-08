@@ -1,6 +1,16 @@
 # YuckQi.Data.Sql.EntityFramework
 
-An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) for SQL databases using Entity Framework Core. This package is currently a work in progress.
+An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) for SQL databases using Entity Framework Core. Handlers operate over a `DbContext` scope.
+
+## Key Types
+
+- **`UnitOfWork<TContext>`** &ndash; implements `IUnitOfWork<TContext>` for a `DbContext`; `SaveChanges()` persists tracked changes
+- **`CreationHandler`** &ndash; inserts entities via `DbSet.Add`; like Dapper, does not call `SaveChanges` (caller commits via `UnitOfWork.SaveChanges()`). For database-generated keys (e.g. identity), use `CreationOptions.IdentifierFactory` so an identifier is returned; otherwise the key is only set after `SaveChanges`.
+- **`RevisionHandler`** &ndash; updates entities via `DbSet.Update`
+- **`PhysicalDeletionHandler`** &ndash; deletes entities via `DbSet.Remove`
+- **`RetrievalHandler`** &ndash; retrieval by identifier or filter criteria using `DbSet.Find` and LINQ
+- **`SearchHandler`** &ndash; paginated search with filtering and sorting via LINQ
+- **`FilterCriteriaExtensions`** &ndash; builds `Expression<Func<T, Boolean>>` predicates from `FilterCriteria` for use with `IQueryable`
 
 ## Dependencies
 
