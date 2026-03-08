@@ -1,7 +1,7 @@
 ---
 description: Keep NuGet package readme.md files in sync with implementation changes
 globs: src/**/*.cs, src/**/*.csproj
-alwaysApply: false
+alwaysApply: true
 ---
 
 # NuGet Package Readme Convention
