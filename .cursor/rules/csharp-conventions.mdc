@@ -1,6 +1,6 @@
 ---
-description: C# code style, naming conventions, and project structure for YuckQi.Data
-globs: **/*.cs
+description: C# code style, naming conventions, and project structure for YuckQi
+globs: **/*.cs,**/Directory.Packages.props
 alwaysApply: true
 ---
 
@@ -62,3 +62,7 @@ When creating or editing `.cs` files, apply every section below. Do not rely on 
 - Organize by concern: `Handlers/Read/`, `Handlers/Write/`, `Exceptions/`, `Filtering/`, `Sorting/`
 - Place base classes in an `Abstract/` subfolder; interfaces in `Abstract/Interfaces/`
 - Test projects mirror source names with a `.UnitTests` suffix; use NUnit
+
+# NuGet / Dependencies
+
+- **MediatR**: Use only a 12.x version (e.g. `12.5.0`). Do **not** upgrade to MediatR 13.x or 14.x; those lines require a paid license. Pin the version in `Directory.Packages.props` and keep it within the 12.x range when updating.

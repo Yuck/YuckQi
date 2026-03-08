@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/YuckQi.Application.Core/YuckQi.Application.Core.csproj" />
     <Project Path="src/YuckQi.Data.DocumentDb.DynamoDb/YuckQi.Data.DocumentDb.DynamoDb.csproj" />
     <Project Path="src/YuckQi.Data.DocumentDb.MongoDb/YuckQi.Data.DocumentDb.MongoDb.csproj" />
     <Project Path="src/YuckQi.Data.DocumentDb.RavenDb/YuckQi.Data.DocumentDb.RavenDb.csproj" />
