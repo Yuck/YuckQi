@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/YuckQi.Data.DocumentDb.DynamoDb/YuckQi.Data.DocumentDb.DynamoDb.csproj" />
+    <Project Path="src/YuckQi.Data.DocumentDb.MongoDb/YuckQi.Data.DocumentDb.MongoDb.csproj" />
+    <Project Path="src/YuckQi.Data.MemDb/YuckQi.Data.MemDb.csproj" />
+    <Project Path="src/YuckQi.Data.Sql.Dapper.MySql/YuckQi.Data.Sql.Dapper.MySql.csproj" />
+    <Project Path="src/YuckQi.Data.Sql.Dapper.Oracle/YuckQi.Data.Sql.Dapper.Oracle.csproj" />
+    <Project Path="src/YuckQi.Data.Sql.Dapper.SqlServer/YuckQi.Data.Sql.Dapper.SqlServer.csproj" />
+    <Project Path="src/YuckQi.Data.Sql.Dapper/YuckQi.Data.Sql.Dapper.csproj" />
+    <Project Path="src/YuckQi.Data.Sql.EntityFramework/YuckQi.Data.Sql.EntityFramework.csproj" />
+    <Project Path="src/YuckQi.Data/YuckQi.Data.csproj" />
+    <Project Path="src/YuckQi.Domain.Services/YuckQi.Domain.Services.csproj" />
+    <Project Path="src/YuckQi.Domain.Validation/YuckQi.Domain.Validation.csproj" />
+    <Project Path="src/YuckQi.Domain/YuckQi.Domain.csproj" />
+    <Project Path="src/YuckQi.Extensions.Mapping.Abstractions/YuckQi.Extensions.Mapping.Abstractions.csproj" />
+    <Project Path="src/YuckQi.Extensions.Mapping.AutoMapper/YuckQi.Extensions.Mapping.AutoMapper.csproj" />
+    <Project Path="src/YuckQi.Extensions.Mapping.Mapster/YuckQi.Extensions.Mapping.Mapster.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/YuckQi.Data.DocumentDb.DynamoDb.UnitTests/YuckQi.Data.DocumentDb.DynamoDb.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.DocumentDb.MongoDb.UnitTests/YuckQi.Data.DocumentDb.MongoDb.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.MemDb.UnitTests/YuckQi.Data.MemDb.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.Sql.Dapper.MySql.UnitTests/YuckQi.Data.Sql.Dapper.MySql.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.Sql.Dapper.Oracle.UnitTests/YuckQi.Data.Sql.Dapper.Oracle.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.Sql.Dapper.SqlServer.UnitTests/YuckQi.Data.Sql.Dapper.SqlServer.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.Sql.Dapper.UnitTests/YuckQi.Data.Sql.Dapper.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.UnitTests/YuckQi.Data.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Domain.UnitTests/YuckQi.Domain.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Domain.Validation.UnitTests/YuckQi.Domain.Validation.UnitTests.csproj" />
+  </Folder>
+</Solution>

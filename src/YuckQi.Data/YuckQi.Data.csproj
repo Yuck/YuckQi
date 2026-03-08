@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Kevin J Lambert</Authors>
+    <Version>8.3.0</Version>
+    <Description>A .NET library of lightweight data access handlers which can be used to compose repositories and domain services.</Description>
+    <RepositoryUrl>https://github.com/Yuck/YuckQi.Data.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Yuck/YuckQi.Data</PackageProjectUrl>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YuckQi.Domain\YuckQi.Domain.csproj" />
+    <ProjectReference Include="..\YuckQi.Extensions.Mapping.Abstractions\YuckQi.Extensions.Mapping.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
