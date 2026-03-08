@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/YuckQi.Data.DocumentDb.DynamoDb/YuckQi.Data.DocumentDb.DynamoDb.csproj" />
     <Project Path="src/YuckQi.Data.DocumentDb.MongoDb/YuckQi.Data.DocumentDb.MongoDb.csproj" />
+    <Project Path="src/YuckQi.Data.DocumentDb.RavenDb/YuckQi.Data.DocumentDb.RavenDb.csproj" />
     <Project Path="src/YuckQi.Data.MemDb/YuckQi.Data.MemDb.csproj" />
     <Project Path="src/YuckQi.Data.Sql.Dapper.MySql/YuckQi.Data.Sql.Dapper.MySql.csproj" />
     <Project Path="src/YuckQi.Data.Sql.Dapper.Oracle/YuckQi.Data.Sql.Dapper.Oracle.csproj" />
@@ -18,6 +19,7 @@
   <Folder Name="/test/">
     <Project Path="test/YuckQi.Data.DocumentDb.DynamoDb.UnitTests/YuckQi.Data.DocumentDb.DynamoDb.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.DocumentDb.MongoDb.UnitTests/YuckQi.Data.DocumentDb.MongoDb.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.DocumentDb.RavenDb.UnitTests/YuckQi.Data.DocumentDb.RavenDb.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.MemDb.UnitTests/YuckQi.Data.MemDb.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.Sql.Dapper.MySql.UnitTests/YuckQi.Data.Sql.Dapper.MySql.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.Sql.Dapper.Oracle.UnitTests/YuckQi.Data.Sql.Dapper.Oracle.UnitTests.csproj" />
