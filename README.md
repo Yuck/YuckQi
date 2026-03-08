@@ -27,22 +27,22 @@ Handlers follow a template-method pattern: you implement provider-specific logic
 
 | Package | NuGet | Description |
 |---------|-------|-------------|
+| **YuckQi.Application.Core** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Application.Core.svg)](https://www.nuget.org/packages/YuckQi.Application.Core) | Application bootstrapping: MediatR behaviors (logging, validation). |
+| **YuckQi.Data** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.svg)](https://www.nuget.org/packages/YuckQi.Data) | Data handlers for repository implementations. |
+| **YuckQi.Data.DocumentDb.DynamoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.DynamoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.DynamoDb) | Amazon DynamoDB. |
+| **YuckQi.Data.DocumentDb.MongoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.MongoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.MongoDb) | MongoDB. |
+| **YuckQi.Data.DocumentDb.RavenDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.RavenDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.RavenDb) | RavenDB. |
+| **YuckQi.Data.MemDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.MemDb.svg)](https://www.nuget.org/packages/YuckQi.Data.MemDb) | In-memory implementation (ConcurrentDictionary). |
+| **YuckQi.Data.Sql.Dapper** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper) | SQL via Dapper + SimpleCRUD (base). |
+| **YuckQi.Data.Sql.Dapper.MySql** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.MySql.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.MySql) | MySQL (Dapper). |
+| **YuckQi.Data.Sql.Dapper.Oracle** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.Oracle.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.Oracle) | Oracle (Dapper). |
+| **YuckQi.Data.Sql.Dapper.SqlServer** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.SqlServer.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.SqlServer) | SQL Server (Dapper). |
+| **YuckQi.Data.Sql.EntityFramework** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.EntityFramework.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.EntityFramework) | SQL via Entity Framework Core. |
 | **YuckQi.Domain** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Domain.svg)](https://www.nuget.org/packages/YuckQi.Domain) | Domain model bootstrapping. |
 | **YuckQi.Domain.Validation** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Domain.Validation.svg)](https://www.nuget.org/packages/YuckQi.Domain.Validation) | Domain validation (FluentValidation). |
-| **YuckQi.Application.Core** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Application.Core.svg)](https://www.nuget.org/packages/YuckQi.Application.Core) | Application bootstrapping: MediatR behaviors (logging, validation). |
 | **YuckQi.Extensions.Mapping.Abstractions** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Extensions.Mapping.Abstractions.svg)](https://www.nuget.org/packages/YuckQi.Extensions.Mapping.Abstractions) | Mapping abstractions (`IMapper`). |
 | **YuckQi.Extensions.Mapping.AutoMapper** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Extensions.Mapping.AutoMapper.svg)](https://www.nuget.org/packages/YuckQi.Extensions.Mapping.AutoMapper) | AutoMapper implementation. |
 | **YuckQi.Extensions.Mapping.Mapster** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Extensions.Mapping.Mapster.svg)](https://www.nuget.org/packages/YuckQi.Extensions.Mapping.Mapster) | Mapster implementation. |
-| **YuckQi.Data** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.svg)](https://www.nuget.org/packages/YuckQi.Data) | Core data handlers, `IUnitOfWork`, filtering/sorting, exceptions. |
-| **YuckQi.Data.MemDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.MemDb.svg)](https://www.nuget.org/packages/YuckQi.Data.MemDb) | In-memory implementation (ConcurrentDictionary). |
-| **YuckQi.Data.Sql.Dapper** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper) | SQL via Dapper + SimpleCRUD (base). |
-| **YuckQi.Data.Sql.Dapper.SqlServer** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.SqlServer.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.SqlServer) | SQL Server (Dapper). |
-| **YuckQi.Data.Sql.Dapper.MySql** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.MySql.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.MySql) | MySQL (Dapper). |
-| **YuckQi.Data.Sql.Dapper.Oracle** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.Oracle.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.Oracle) | Oracle (Dapper). |
-| **YuckQi.Data.Sql.EntityFramework** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.EntityFramework.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.EntityFramework) | SQL via Entity Framework Core. |
-| **YuckQi.Data.DocumentDb.MongoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.MongoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.MongoDb) | MongoDB. |
-| **YuckQi.Data.DocumentDb.RavenDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.RavenDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.RavenDb) | RavenDB. |
-| **YuckQi.Data.DocumentDb.DynamoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.DynamoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.DynamoDb) | Amazon DynamoDB. |
 
 ## Getting Started
 
