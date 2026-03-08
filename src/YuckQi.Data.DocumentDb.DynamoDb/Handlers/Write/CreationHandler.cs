@@ -59,7 +59,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
         var table = scope.GetTargetTable<TDocument>();
 
         await table.PutItemAsync(scope.ToDocument(document), cancellationToken);

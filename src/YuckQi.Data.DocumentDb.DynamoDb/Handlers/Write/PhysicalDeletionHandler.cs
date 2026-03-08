@@ -23,7 +23,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDocume
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
         var table = scope.GetTargetTable<TDocument>();
 
         await table.DeleteItemAsync(scope.ToDocument(document), cancellationToken);

@@ -22,7 +22,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entities to {typeof(TDocument).Name} documents.");
 
         foreach (var document in documents)
         {
@@ -43,7 +43,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entities to {typeof(TDocument).Name} documents.");
 
         foreach (var document in documents)
         {
@@ -63,7 +63,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
         var identifier = document.GetIdentifier<TDocument, TIdentifier>();
         var filter = Builders<TDocument>.Filter.Eq(field, identifier);
 
@@ -79,7 +79,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
         var identifier = document.GetIdentifier<TDocument, TIdentifier>();
         var filter = Builders<TDocument>.Filter.Eq(field, identifier);
 

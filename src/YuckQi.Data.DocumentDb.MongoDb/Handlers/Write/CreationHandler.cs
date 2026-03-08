@@ -21,7 +21,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
         var list = entities.Select(PreProcess).ToList();
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entities to {typeof(TDocument).Name} documents.");
 
         collection.InsertMany(scope, documents);
 
@@ -35,7 +35,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
         var list = entities.Select(PreProcess).ToList();
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException("Failed to map entities to documents.");
+        var documents = MapToDataCollection(list) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entities to {typeof(TDocument).Name} documents.");
 
         await collection.InsertManyAsync(scope, documents, cancellationToken: cancellationToken);
 
@@ -48,7 +48,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
 
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
 
         collection.InsertOne(scope, document);
 
@@ -61,7 +61,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
 
         var database = scope.Client.GetDatabase(DocumentType.GetDatabaseName());
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
-        var document = MapToData(entity) ?? throw new InvalidOperationException("Failed to map entity to document.");
+        var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
 
         await collection.InsertOneAsync(scope, document, cancellationToken: cancellationToken);
 
