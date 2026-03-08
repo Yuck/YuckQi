@@ -1,0 +1,62 @@
+---
+description: C# code style, naming conventions, and project structure for YuckQi.Data
+globs: **/*.cs
+alwaysApply: false
+---
+
+# Code Style
+
+- Use file-scoped namespaces (`namespace X;`)
+- Use primary constructors for dependency injection and parameter forwarding
+- Use full CLR type names: `String`, `Boolean`, `Int32`, `Object` (not `string`, `bool`, `int`, `object`)
+- Use `var` for local variables
+- Use `ArgumentNullException.ThrowIfNull()` for null guards
+- Use block bodies for methods even when single-expression; expression-bodied properties are acceptable
+- Place a space before the `!` negation operator (e.g., `! String.IsNullOrWhiteSpace(value)`)
+- Omit braces for single-statement `if` blocks
+- Mark concrete exception classes as `sealed`
+- Use `CancellationToken.None` instead of `default` when a `CancellationToken` value is needed; the explicit form communicates intent more clearly
+- Do not add code comments unless they explain non-obvious intent
+- Do not wrap long lines
+- In chained method calls, align continuation `.` with the `.` on the first line (e.g., indent so all `.` share the same column)
+- Files should be named to match the class they contain
+- Alphabetize `using` statements with all `System` namespaces listed first
+- Never use fully-qualified attribute names; import the namespace with a `using` statement and use the short form (e.g., `[Key]` not `[System.ComponentModel.DataAnnotations.Key]`)
+- Place a blank line after a set of variable declarations before other statements
+- Place a blank line before `return` statements (when preceded by other statements)
+- Place a space after the closing parenthesis of a type cast (e.g., `(Int16) 7` not `(Int16)7`)
+- Use local functions instead of lambda expressions when possible
+- Local functions should appear after a `return;` statement at the end of the method body
+- Properties should be separated by a single blank line
+- Properties should be listed in alphabetical order in the class which defines them
+
+# Naming Conventions
+
+- Private fields: `_camelCase` (underscore prefix)
+- Public members, properties, methods: `PascalCase`
+- Descriptive generic type parameters: `TDomainEntity`, `TIdentifier`, `TScope`, `TRecord`, `TData`
+- Interfaces: `I` prefix (e.g. `ICreationHandler`)
+- Abstract base classes: `Base` suffix (e.g. `CreationHandlerBase`)
+- Protected abstract methods: `Do` prefix (e.g. `DoCreate`, `DoGet`, `DoRevise`)
+- Extension method classes: `*Extensions` suffix (e.g. `FilterCriteriaExtensions`, `DynamicParameterExtensions`)
+- Avoid using abbreviations when naming variables (e.g., prefer `connection` instead of `conn`, `dictionary` instead of `dict`); exception: `unitOfWork` should be abbreviated to `uow`
+- Lambda expression parameters: use `t` as the default temporary variable name regardless of the underlying type; when there are conflicts (e.g. nested lambdas), use `u`, `v`, etc. in sequence (e.g., `t => parameters.Any(u => u.Name == t)`)
+- Unit test method names use `MethodName_Condition_ExpectedResult` format (e.g. `Delete_WhenNotDeleted_SetsDeletionMoment`)
+- Mock variables: do not prefix with `mock`; name them after what they represent (e.g., `scope` not `mockScope`, `cursor` not `mockCursor`)
+
+# Design Patterns
+
+- **Template Method**: Base classes define public workflow; subclasses override `DoXxx` abstract methods
+- **Convenience overloads**: Provide a simpler generic signature (fewer type params) that defaults `TData` to `TDomainEntity` via primary constructor forwarding
+- **Sync + Async parity**: Every operation has both synchronous and `Task`-returning async overloads (async overloads accept `CancellationToken`)
+- **Scope pattern**: Operations accept a `TScope?` parameter representing the data store context (e.g. `IDbTransaction`)
+- **Composition**: Handlers that delegate to other handlers (e.g. `ActivationHandler`, `LogicalDeletionHandler`) implement their interface directly without a base class
+- **Optional mapper**: `IMapper?` enables mapping between domain entities and data records; when null, identity mapping is assumed
+
+# Project Structure
+
+- `src/` for source projects, `test/` for test projects
+- Core abstractions live in `YuckQi.Data`; provider implementations in provider-specific projects (e.g. `YuckQi.Data.Sql.Dapper`, `YuckQi.Data.DocumentDb.MongoDb`)
+- Organize by concern: `Handlers/Read/`, `Handlers/Write/`, `Exceptions/`, `Filtering/`, `Sorting/`
+- Place base classes in an `Abstract/` subfolder; interfaces in `Abstract/Interfaces/`
+- Test projects mirror source names with a `.UnitTests` suffix; use NUnit
