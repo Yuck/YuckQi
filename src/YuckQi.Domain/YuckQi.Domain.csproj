@@ -1,16 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Kevin J Lambert</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>A .NET library for bootstrapping a domain model project.</Description>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Product>YuckQi.Domain</Product>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="readme.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
 
 </Project>
