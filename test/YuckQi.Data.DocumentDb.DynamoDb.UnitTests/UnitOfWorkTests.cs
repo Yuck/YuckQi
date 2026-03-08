@@ -69,6 +69,17 @@ public class UnitOfWorkTests
     }
 
     [Test]
+    public void Dispose_WhenScopeIsNull_DoesNotThrow()
+    {
+        var context = new Mock<IDynamoDBContext>();
+        var uow = new UnitOfWork(context.Object);
+
+        uow.Dispose();
+
+        Assert.DoesNotThrow(uow.Dispose);
+    }
+
+    [Test]
     public void SaveChanges_ThrowsNotImplementedException()
     {
         var context = new Mock<IDynamoDBContext>();
