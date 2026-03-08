@@ -1,8 +1,10 @@
 ---
 description: C# code style, naming conventions, and project structure for YuckQi.Data
 globs: **/*.cs
-alwaysApply: false
+alwaysApply: true
 ---
+
+When creating or editing `.cs` files, apply every section below. Do not rely on memory—treat this file as the source of truth.
 
 # Code Style
 
