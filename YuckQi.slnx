@@ -23,6 +23,7 @@
     <Project Path="test/YuckQi.Data.Sql.Dapper.Oracle.UnitTests/YuckQi.Data.Sql.Dapper.Oracle.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.Sql.Dapper.SqlServer.UnitTests/YuckQi.Data.Sql.Dapper.SqlServer.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.Sql.Dapper.UnitTests/YuckQi.Data.Sql.Dapper.UnitTests.csproj" />
+    <Project Path="test/YuckQi.Data.Sql.EntityFramework.UnitTests/YuckQi.Data.Sql.EntityFramework.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.UnitTests/YuckQi.Data.UnitTests.csproj" />
     <Project Path="test/YuckQi.Domain.UnitTests/YuckQi.Domain.UnitTests.csproj" />
     <Project Path="test/YuckQi.Domain.Validation.UnitTests/YuckQi.Domain.Validation.UnitTests.csproj" />
