@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+env:
+  DOTNET_VERSION: "8.0.x"
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore YuckQi.slnx
+
+      - name: Build
+        run: dotnet build YuckQi.slnx --no-restore -c Release
+
+      - name: Test
+        run: dotnet test YuckQi.slnx --no-build -c Release --verbosity normal
