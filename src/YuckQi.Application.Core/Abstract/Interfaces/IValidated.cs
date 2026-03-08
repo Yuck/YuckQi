@@ -5,5 +5,5 @@ namespace YuckQi.Application.Core.Abstract.Interfaces;
 
 public interface IValidated
 {
-    IReadOnlyCollection<Result> ValidationResults { get; internal set; }
+    IReadOnlyCollection<Result> ValidationResults { get; set; }
 }

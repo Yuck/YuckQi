@@ -18,6 +18,7 @@
     <Project Path="src/YuckQi.Extensions.Mapping.Mapster/YuckQi.Extensions.Mapping.Mapster.csproj" />
   </Folder>
   <Folder Name="/test/">
+    <Project Path="test/YuckQi.Application.Core.UnitTests/YuckQi.Application.Core.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.DocumentDb.DynamoDb.UnitTests/YuckQi.Data.DocumentDb.DynamoDb.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.DocumentDb.MongoDb.UnitTests/YuckQi.Data.DocumentDb.MongoDb.UnitTests.csproj" />
     <Project Path="test/YuckQi.Data.DocumentDb.RavenDb.UnitTests/YuckQi.Data.DocumentDb.RavenDb.UnitTests.csproj" />
