@@ -67,6 +67,10 @@ dotnet build
 dotnet test
 ```
 
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs `dotnet build` and `dotnet test` on pull requests and pushes to `main`/`master`.
+
 Requires [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
 
 ## Author
