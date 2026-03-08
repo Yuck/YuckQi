@@ -13,7 +13,8 @@ Provides concrete handler implementations that operate over an `IAsyncDocumentSe
 - **`SearchHandler`** &ndash; paginated document search
 - **`UnitOfWork`** &ndash; unit of work backed by `IAsyncDocumentSession`
 - **`DatabaseAttribute`** / **`CollectionAttribute`** &ndash; attributes for specifying database and collection names on document types (optional; RavenDB infers collection from type by default)
-- **`DocumentModelExtensions`** / **`DocumentQueryExtensions`** &ndash; helpers for identifier handling and filter translation to RavenDB document queries
+- **`DocumentModelExtensions`** &ndash; collection and database name resolution, identifier handling, and document ID conversion
+- **`DocumentQueryExtensions`** &ndash; applies `FilterCriteria` to RavenDB document queries (`IDocumentQuery` / `IAsyncDocumentQuery`)
 
 All handlers provide overloads with an explicit `TDocument` type parameter for domain-to-document mapping.
 

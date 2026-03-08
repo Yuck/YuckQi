@@ -39,6 +39,7 @@ Handlers follow a template-method pattern: you implement provider-specific logic
 | **YuckQi.Data.Sql.Dapper.Oracle** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.Dapper.Oracle.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.Dapper.Oracle) | Oracle (Dapper). |
 | **YuckQi.Data.Sql.EntityFramework** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.Sql.EntityFramework.svg)](https://www.nuget.org/packages/YuckQi.Data.Sql.EntityFramework) | SQL via Entity Framework Core. |
 | **YuckQi.Data.DocumentDb.MongoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.MongoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.MongoDb) | MongoDB. |
+| **YuckQi.Data.DocumentDb.RavenDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.RavenDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.RavenDb) | RavenDB. |
 | **YuckQi.Data.DocumentDb.DynamoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.DynamoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.DynamoDb) | Amazon DynamoDB. |
 
 ## Getting Started
