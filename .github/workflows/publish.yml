@@ -33,7 +33,7 @@ jobs:
         run: dotnet test YuckQi.slnx --no-build -c Release --verbosity normal
 
       - name: Pack
-        run: dotnet pack YuckQi.slnx --no-build -c Release -c Release -o ./artifacts
+        run: dotnet pack YuckQi.slnx --no-build -c Release -o ./artifacts
 
       - name: Publish to NuGet
         run: dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
