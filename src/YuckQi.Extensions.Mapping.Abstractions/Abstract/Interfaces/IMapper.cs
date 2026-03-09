@@ -1,4 +1,4 @@
-namespace YuckQi.Extensions.Mapping.Abstractions;
+namespace YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 public interface IMapper
 {

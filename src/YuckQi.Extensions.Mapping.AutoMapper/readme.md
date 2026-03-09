@@ -4,7 +4,7 @@ An `IMapper` implementation backed by the [AutoMapper](https://www.nuget.org/pac
 
 ## Key Types
 
-- **`DefaultMapper`** &ndash; implements `YuckQi.Extensions.Mapping.Abstractions.IMapper` by delegating to an AutoMapper `IMapper` instance created from a provided `IConfigurationProvider`
+- **`DefaultMapper`** &ndash; implements `YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces.IMapper` by delegating to an AutoMapper `IMapper` instance created from a provided `IConfigurationProvider`
 
 ## Dependencies
 
