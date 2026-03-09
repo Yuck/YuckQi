@@ -11,7 +11,7 @@ Provides concrete handler implementations that operate over an `IClientSessionHa
 - **`PhysicalDeletionHandler`** &ndash; deletes documents
 - **`RetrievalHandler`** &ndash; retrieves documents by identifier or filter criteria
 - **`SearchHandler`** &ndash; paginated document search
-- **`UnitOfWork`** &ndash; unit of work backed by `IClientSessionHandle` with transaction support
+- **`UnitOfWork`** &ndash; unit of work backed by `IClientSessionHandle`; when a MongoDB transaction is active, `SaveChanges()` / `SaveChanges(CancellationToken)` commit the transaction and rotate the session; operations performed outside an explicit transaction are persisted immediately by MongoDB and `SaveChanges` simply rotates the session
 - **`DatabaseAttribute`** / **`CollectionAttribute`** &ndash; attributes for specifying database and collection names on document types
 - **`DocumentModelExtensions`** / **`FilterDefinitionExtensions`** &ndash; helpers for collection resolution and filter translation
 

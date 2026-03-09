@@ -107,4 +107,22 @@ public class UnitOfWorkTests
 
         Assert.Throws<InvalidOperationException>(() => uow.SaveChanges());
     }
+
+    [Test]
+    public async Task SaveChanges_WithCancellationToken_CallsSaveChangesAsync()
+    {
+        var session = new Mock<IAsyncDocumentSession>();
+        var store = new Mock<IDocumentStore>();
+
+        session.Setup(t => t.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        store.Setup(t => t.OpenAsyncSession()).Returns(session.Object);
+
+        var uow = new UnitOfWork(store.Object);
+
+        _ = uow.Scope;
+
+        await uow.SaveChanges(CancellationToken.None);
+
+        session.Verify(t => t.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

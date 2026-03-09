@@ -11,7 +11,7 @@ Provides concrete handler implementations that operate over an `IAsyncDocumentSe
 - **`PhysicalDeletionHandler`** &ndash; deletes documents
 - **`RetrievalHandler`** &ndash; retrieves documents by identifier or filter criteria
 - **`SearchHandler`** &ndash; paginated document search
-- **`UnitOfWork`** &ndash; unit of work backed by `IAsyncDocumentSession`
+- **`UnitOfWork`** &ndash; unit of work backed by `IAsyncDocumentSession`; `SaveChanges()` / `SaveChanges(CancellationToken)` flush all pending session changes to the server using RavenDB's session-level unit of work (not a database transaction in the relational sense)
 - **`DatabaseAttribute`** / **`CollectionAttribute`** &ndash; attributes for specifying database and collection names on document types (optional; RavenDB infers collection from type by default)
 - **`DocumentModelExtensions`** &ndash; collection and database name resolution, identifier handling, and document ID conversion
 - **`DocumentQueryExtensions`** &ndash; applies `FilterCriteria` to RavenDB document queries (`IDocumentQuery` / `IAsyncDocumentQuery`)

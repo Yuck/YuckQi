@@ -22,10 +22,15 @@ public class UnitOfWork(IDocumentStore store, String? database = null) : IUnitOf
 
     public void SaveChanges()
     {
+        SaveChanges(CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    public Task SaveChanges(CancellationToken cancellationToken)
+    {
         if (_session == null)
             throw new InvalidOperationException();
 
-        _session.SaveChangesAsync(CancellationToken.None).GetAwaiter().GetResult();
+        return _session.SaveChangesAsync(cancellationToken);
     }
 
     private static IAsyncDocumentSession OpenSession(IDocumentStore store, String? database)

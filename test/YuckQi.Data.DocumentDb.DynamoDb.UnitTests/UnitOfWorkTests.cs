@@ -85,6 +85,15 @@ public class UnitOfWorkTests
         var context = new Mock<IDynamoDBContext>();
         var uow = new UnitOfWork(context.Object);
 
-        Assert.Throws<NotImplementedException>(uow.SaveChanges);
+        Assert.DoesNotThrow(uow.SaveChanges);
+    }
+
+    [Test]
+    public void SaveChanges_WithCancellationToken_DoesNotThrow()
+    {
+        var context = new Mock<IDynamoDBContext>();
+        var uow = new UnitOfWork(context.Object);
+
+        Assert.DoesNotThrowAsync(() => uow.SaveChanges(CancellationToken.None));
     }
 }

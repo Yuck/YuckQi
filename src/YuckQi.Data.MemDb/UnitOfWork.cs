@@ -38,6 +38,15 @@ public class UnitOfWork<TScope> : IUnitOfWork<TScope> where TScope : new()
     public void SaveChanges()
     {
     }
+
+    public Task SaveChanges(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        SaveChanges();
+
+        return Task.CompletedTask;
+    }
 }
 
 public class UnitOfWork : UnitOfWork<Object>
