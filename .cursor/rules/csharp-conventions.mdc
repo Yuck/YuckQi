@@ -9,10 +9,12 @@ When creating or editing `.cs` files, apply every section below. Do not rely on 
 # Code Style
 
 - Use file-scoped namespaces (`namespace X;`)
+- Type definitions (class, struct, interface, record) that have no body should be terminated with a semicolon (e.g., `class Foo;` not `class Foo { }`)
 - Use primary constructors for dependency injection and parameter forwarding
 - Use full CLR type names: `String`, `Boolean`, `Int32`, `Object` (not `string`, `bool`, `int`, `object`)
 - Use `var` for local variables
 - Use `ArgumentNullException.ThrowIfNull()` for null guards
+- Use `is null` for null checks and `is not null` for non-null checks (not `== null` or `!= null`)
 - Use block bodies for methods even when single-expression; expression-bodied properties are acceptable
 - Place a space before the `!` negation operator (e.g., `! String.IsNullOrWhiteSpace(value)`)
 - Omit braces for single-statement `if` blocks

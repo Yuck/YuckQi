@@ -8,7 +8,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope>(Concurr
 {
     protected override Boolean DoDelete(TDomainEntity entity, TScope? scope)
     {
-        if (entity.Identifier == null)
+        if (entity.Identifier is null)
             throw new InvalidOperationException("Entity identifier must not be null.");
 
         return entities.TryRemove(entity.Identifier, out _);

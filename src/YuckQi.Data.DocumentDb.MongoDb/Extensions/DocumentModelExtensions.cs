@@ -16,17 +16,17 @@ public static class DocumentModelExtensions
 
     public static String? GetCollectionName(this Type? type)
     {
-        return type != null ? CollectionNameByType.GetOrAdd(type, t => GetCollectionAttribute(t)?.Name ?? t.Name) : null;
+        return type is not null ? CollectionNameByType.GetOrAdd(type, t => GetCollectionAttribute(t)?.Name ?? t.Name) : null;
     }
 
     public static String? GetDatabaseName(this Type? type)
     {
-        return type != null ? DatabaseNameByType.GetOrAdd(type, t => GetDatabaseAttribute(t).Name) : null;
+        return type is not null ? DatabaseNameByType.GetOrAdd(type, t => GetDatabaseAttribute(t).Name) : null;
     }
 
     public static TIdentifier? GetIdentifier<TDocument, TIdentifier>(this TDocument document)
     {
-        if (document == null)
+        if (document is null)
             return default;
 
         var property = GetIdentifierPropertyInfo(typeof(TDocument)) ?? throw new InvalidOperationException($"{typeof(TDocument).Name} identifier property could not be determined.");
@@ -39,7 +39,7 @@ public static class DocumentModelExtensions
 
     public static StringFieldDefinition<TDocument, TIdentifier?>? GetIdentifierFieldDefinition<TDocument, TIdentifier>(this Type? type)
     {
-        if (type == null)
+        if (type is null)
             return null;
 
         // This isn't great since it should be enforced at compile time
@@ -67,15 +67,15 @@ public static class DocumentModelExtensions
 
     private static PropertyInfo? GetIdentifierPropertyInfo(Type? type)
     {
-        return type != null ? IdentifierByType.GetOrAdd(type, IdentifierPropertyInfoValueFactory) : null;
+        return type is not null ? IdentifierByType.GetOrAdd(type, IdentifierPropertyInfoValueFactory) : null;
     }
 
     private static PropertyInfo IdentifierPropertyInfoValueFactory(Type type)
     {
         var property = type.GetProperties()
-                           .Select(t => t.GetCustomAttribute<BsonIdAttribute>() != null ? t : null)
-                           .SingleOrDefault(t => t != null) ?? type.GetProperty(DefaultObjectIdPropertyName);
-        if (property != null)
+                           .Select(t => t.GetCustomAttribute<BsonIdAttribute>() is not null ? t : null)
+                           .SingleOrDefault(t => t is not null) ?? type.GetProperty(DefaultObjectIdPropertyName);
+        if (property is not null)
             return property;
 
         throw new InvalidOperationException($"Type '{type.Name}' does not have an identifier property. Apply [{nameof(BsonIdAttribute)}] or define a property named '{DefaultObjectIdPropertyName}'.");

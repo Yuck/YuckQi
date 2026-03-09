@@ -17,7 +17,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Revisi
 
         var record = MapToData(entity);
 
-        if (record == null)
+        if (record is null)
             return false;
 
         scope.Set<TRecord>().Update(record);
@@ -31,7 +31,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Revisi
 
         var record = MapToData(entity);
 
-        if (record == null)
+        if (record is null)
             return false;
 
         scope.Set<TRecord>().Update(record);

@@ -16,7 +16,7 @@ public class UnitOfWork : IUnitOfWork<IDynamoDBContext>
 
     public void Dispose()
     {
-        if (Scope == null)
+        if (Scope is null)
             return;
 
         Scope.Dispose();

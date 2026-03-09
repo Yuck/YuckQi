@@ -29,7 +29,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Fun
         var table = scope.GetTargetTable<TDocument>();
         var hashKey = hashKeyValueFactory(identifier);
         var rangeKey = rangeKeyValueFactory?.Invoke(identifier);
-        var result = rangeKey != null
+        var result = rangeKey is not null
                          ? await table.GetItemAsync(hashKey, rangeKey, cancellationToken)
                          : await table.GetItemAsync(hashKey, cancellationToken);
         var document = scope.FromDocument<TDocument>(result);

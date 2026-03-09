@@ -12,7 +12,7 @@ public class UnitOfWork(IDocumentStore store, String? database = null) : IUnitOf
 
     public void Dispose()
     {
-        if (_session == null)
+        if (_session is null)
             return;
 
         _session.Dispose();
@@ -27,7 +27,7 @@ public class UnitOfWork(IDocumentStore store, String? database = null) : IUnitOf
 
     public Task SaveChanges(CancellationToken cancellationToken)
     {
-        if (_session == null)
+        if (_session is null)
             throw new InvalidOperationException();
 
         return _session.SaveChangesAsync(cancellationToken);
@@ -35,6 +35,6 @@ public class UnitOfWork(IDocumentStore store, String? database = null) : IUnitOf
 
     private static IAsyncDocumentSession OpenSession(IDocumentStore store, String? database)
     {
-        return database != null ? store.OpenAsyncSession(database) : store.OpenAsyncSession();
+        return database is not null ? store.OpenAsyncSession(database) : store.OpenAsyncSession();
     }
 }

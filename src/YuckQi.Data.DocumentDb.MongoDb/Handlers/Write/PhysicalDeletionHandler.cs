@@ -20,7 +20,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDocume
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var document = GetDocument(entity);
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var identifier = document != null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
+        var identifier = document is not null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
         var filter = Builders<TDocument>.Filter.Eq(field, identifier);
         var result = collection.DeleteOne(scope, filter);
 
@@ -35,7 +35,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDocume
         var collection = database.GetCollection<TDocument>(DocumentType.GetCollectionName());
         var document = GetDocument(entity);
         var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
-        var identifier = document != null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
+        var identifier = document is not null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
         var filter = Builders<TDocument>.Filter.Eq(field, identifier);
         var result = await collection.DeleteOneAsync(scope, filter, cancellationToken: cancellationToken);
 
@@ -47,6 +47,6 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TDocume
         if (entity is TDocument document)
             return document;
 
-        return Mapper != null ? Mapper.Map<TDocument>(entity) : default;
+        return Mapper is not null ? Mapper.Map<TDocument>(entity) : default;
     }
 }

@@ -21,7 +21,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.DeletionMoment != null)
+        if (entity.DeletionMoment is not null)
             return entity;
 
         entity.DeletionMoment = DateTime.UtcNow;
@@ -33,7 +33,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.DeletionMoment != null)
+        if (entity.DeletionMoment is not null)
             return Task.FromResult(entity);
 
         entity.DeletionMoment = DateTime.UtcNow;
@@ -45,7 +45,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.DeletionMoment == null)
+        if (entity.DeletionMoment is null)
             return entity;
 
         entity.DeletionMoment = null;
@@ -57,7 +57,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.DeletionMoment == null)
+        if (entity.DeletionMoment is null)
             return Task.FromResult(entity);
 
         entity.DeletionMoment = null;

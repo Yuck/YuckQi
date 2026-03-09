@@ -54,7 +54,7 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
 
     protected TDomainEntity PreProcess(TDomainEntity entity)
     {
-        if (_options.IdentifierFactory != null)
+        if (_options.IdentifierFactory is not null)
             entity.Identifier = _options.IdentifierFactory();
         if (_options.CreationMomentAssignment == PropertyHandling.Auto)
             entity.CreationMoment = DateTime.UtcNow;

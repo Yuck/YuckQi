@@ -11,7 +11,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDicti
 {
     protected override TIdentifier? DoCreate(TDomainEntity entity, TScope? scope)
     {
-        if (entity.Identifier == null)
+        if (entity.Identifier is null)
             throw new InvalidOperationException("Entity identifier must not be null.");
 
         return entities.TryAdd(entity.Identifier, entity) ? entity.Identifier : throw new CreationException<TDomainEntity>();

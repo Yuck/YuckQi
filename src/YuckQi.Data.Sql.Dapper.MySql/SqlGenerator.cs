@@ -75,13 +75,13 @@ public class SqlGenerator<TRecord> : ISqlGenerator
     {
         return operation switch
         {
-            FilterOperation.Equal => value != null ? "=" : "is",
+            FilterOperation.Equal => value is not null ? "=" : "is",
             FilterOperation.GreaterThan => ">",
             FilterOperation.GreaterThanOrEqual => ">=",
             FilterOperation.In => "in",
             FilterOperation.LessThan => "<",
             FilterOperation.LessThanOrEqual => "<=",
-            FilterOperation.NotEqual => value != null ? "!=" : "is not",
+            FilterOperation.NotEqual => value is not null ? "!=" : "is not",
             _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, null)
         };
     }
@@ -105,10 +105,10 @@ public class SqlGenerator<TRecord> : ISqlGenerator
                           ? enumerable.Cast<Object>().ToArray().Select((_, i) => $"@{t.FieldName}{i}").ToList()
                           : null;
             var parameter = t.Operation == FilterOperation.In
-                                ? set != null && set.Count != 0
+                                ? set is not null && set.Count != 0
                                       ? $"({String.Join(",", set)})"
                                       : "(null)"
-                                : value != null
+                                : value is not null
                                     ? $"@{t.FieldName}"
                                     : "null";
 

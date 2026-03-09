@@ -43,6 +43,6 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Creati
 
         var value = entry.Property(keyPropertyName).CurrentValue;
 
-        return value != null ? (TIdentifier) value : default;
+        return value is not null ? (TIdentifier) value : default;
     }
 }
