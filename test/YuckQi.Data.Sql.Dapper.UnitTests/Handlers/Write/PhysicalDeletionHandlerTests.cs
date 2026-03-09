@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using YuckQi.Data.Sql.Dapper.Handlers.Write;
 using YuckQi.Domain.Entities.Abstract;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.UnitTests.Handlers.Write;
 

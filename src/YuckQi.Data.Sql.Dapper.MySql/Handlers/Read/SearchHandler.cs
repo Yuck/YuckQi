@@ -3,7 +3,7 @@ using YuckQi.Data.Sql.Dapper.Abstract.Interfaces;
 using YuckQi.Data.Sql.Dapper.Handlers.Read.Abstract;
 using YuckQi.Data.Sql.Dapper.MySql.Internal;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.MySql.Handlers.Read;
 
