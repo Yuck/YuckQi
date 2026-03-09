@@ -15,7 +15,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TRecord
 
         var record = MapToData(entity);
 
-        if (record == null)
+        if (record is null)
             return false;
 
         scope.Set<TRecord>().Remove(record);
@@ -29,7 +29,7 @@ public class PhysicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TRecord
 
         var record = MapToData(entity);
 
-        if (record == null)
+        if (record is null)
             return false;
 
         scope.Set<TRecord>().Remove(record);

@@ -14,7 +14,7 @@ internal sealed class DataMapper
         {
             null => default,
             TTarget entity => entity,
-            _ => mapper != null
+            _ => mapper is not null
                      ? mapper.Map<TTarget>(source)
                      : throw new InvalidOperationException($"Unable to map '{typeof(TSource).Name}' to {typeof(TTarget).Name}; {nameof(mapper)} instance is null.")
         };
@@ -26,7 +26,7 @@ internal sealed class DataMapper
         {
             null => [],
             IEnumerable<TTarget> entities => [.. entities],
-            _ => mapper != null
+            _ => mapper is not null
                      ? mapper.Map<IReadOnlyCollection<TTarget>>(source)
                      : throw new InvalidOperationException($"Unable to map '{typeof(IEnumerable<TSource>).Name}' to {typeof(IEnumerable<TTarget>).Name}; {nameof(mapper)} instance is null.")
         };

@@ -26,7 +26,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
 
         foreach (var document in documents)
         {
-            var identifier = document != null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
+            var identifier = document is not null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
             var filter = Builders<TDocument>.Filter.Eq(field, identifier);
 
             collection.ReplaceOne(scope, filter, document);
@@ -47,7 +47,7 @@ public class RevisionHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Revi
 
         foreach (var document in documents)
         {
-            var identifier = document != null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
+            var identifier = document is not null ? document.GetIdentifier<TDocument, TIdentifier>() : default;
             var filter = Builders<TDocument>.Filter.Eq(field, identifier);
 
             await collection.ReplaceOneAsync(scope, filter, document, cancellationToken: cancellationToken);

@@ -21,7 +21,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.ActivationMoment != null)
+        if (entity.ActivationMoment is not null)
             return entity;
 
         entity.ActivationMoment = DateTime.UtcNow;
@@ -33,7 +33,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.ActivationMoment != null)
+        if (entity.ActivationMoment is not null)
             return Task.FromResult(entity);
 
         entity.ActivationMoment = DateTime.UtcNow;
@@ -45,7 +45,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.ActivationMoment == null)
+        if (entity.ActivationMoment is null)
             return entity;
 
         entity.ActivationMoment = null;
@@ -57,7 +57,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        if (entity.ActivationMoment == null)
+        if (entity.ActivationMoment is null)
             return Task.FromResult(entity);
 
         entity.ActivationMoment = null;

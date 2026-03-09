@@ -10,7 +10,7 @@ public class UnitOfWork : IUnitOfWork<IClientSessionHandle>
     private readonly ClientSessionOptions? _options;
     private Lazy<IClientSessionHandle>? _session;
 
-    public IClientSessionHandle Scope => _session != null ? _session.Value : throw new InvalidOperationException();
+    public IClientSessionHandle Scope => _session is not null ? _session.Value : throw new InvalidOperationException();
 
     public UnitOfWork(IMongoClient client, ClientSessionOptions? options = null)
     {
@@ -23,7 +23,7 @@ public class UnitOfWork : IUnitOfWork<IClientSessionHandle>
 
     public void Dispose()
     {
-        if (_session == null)
+        if (_session is null)
             return;
 
         if (Scope.IsInTransaction)
@@ -38,7 +38,7 @@ public class UnitOfWork : IUnitOfWork<IClientSessionHandle>
     {
         lock (_lock)
         {
-            if (_session == null)
+            if (_session is null)
                 throw new InvalidOperationException();
 
             if (Scope.IsInTransaction)
@@ -52,7 +52,7 @@ public class UnitOfWork : IUnitOfWork<IClientSessionHandle>
     {
         lock (_lock)
         {
-            if (_session == null)
+            if (_session is null)
                 throw new InvalidOperationException();
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -8,7 +8,7 @@ public static class DocumentQueryExtensions
 {
     public static IDocumentQuery<TDocument> ApplyFilter<TDocument>(this IDocumentQuery<TDocument> query, IEnumerable<FilterCriteria>? parameters)
     {
-        if (parameters == null)
+        if (parameters is null)
             return query;
 
         foreach (var parameter in parameters)
@@ -51,7 +51,7 @@ public static class DocumentQueryExtensions
 
     public static IAsyncDocumentQuery<TDocument> ApplyFilter<TDocument>(this IAsyncDocumentQuery<TDocument> query, IEnumerable<FilterCriteria>? parameters)
     {
-        if (parameters == null)
+        if (parameters is null)
             return query;
 
         foreach (var parameter in parameters)

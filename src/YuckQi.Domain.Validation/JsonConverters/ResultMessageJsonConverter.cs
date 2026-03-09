@@ -9,7 +9,7 @@ public class ResultMessageJsonConverter : JsonConverter<ResultMessage>
     public override ResultMessage? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var value = reader.GetString();
-        var result = value != null ? new ResultMessage(value) : null;
+        var result = value is not null ? new ResultMessage(value) : null;
 
         return result;
     }

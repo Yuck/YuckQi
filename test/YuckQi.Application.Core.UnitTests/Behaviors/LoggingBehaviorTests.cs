@@ -41,5 +41,5 @@ public class LoggingBehaviorTests
         Task<Int32> Next() => Task.FromResult(0);
     }
 
-    public sealed class Ping : IRequest<Int32> { }
+    public sealed class Ping : IRequest<Int32>;
 }

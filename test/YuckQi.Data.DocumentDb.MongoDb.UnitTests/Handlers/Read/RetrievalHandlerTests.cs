@@ -219,10 +219,10 @@ public class RetrievalHandlerTests
     {
         var collection = new Mock<IMongoCollection<SurLaTableDocument>>();
 
-        if (syncCursor != null)
+        if (syncCursor is not null)
             collection.Setup(t => t.FindSync(It.IsAny<FilterDefinition<SurLaTableDocument>>(), It.IsAny<FindOptions<SurLaTableDocument, SurLaTableDocument>>(), It.IsAny<CancellationToken>())).Returns(syncCursor);
 
-        if (asyncCursor != null)
+        if (asyncCursor is not null)
             collection.Setup(t => t.FindAsync(It.IsAny<FilterDefinition<SurLaTableDocument>>(), It.IsAny<FindOptions<SurLaTableDocument, SurLaTableDocument>>(), It.IsAny<CancellationToken>())).ReturnsAsync(asyncCursor);
 
         var database = new Mock<IMongoDatabase>();

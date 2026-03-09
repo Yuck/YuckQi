@@ -1,4 +1,4 @@
-﻿using YuckQi.Data.Filtering;
+using YuckQi.Data.Filtering;
 
 namespace YuckQi.Data.Extensions;
 
@@ -10,7 +10,7 @@ public static class FilterCriteriaExtensions
         {
             FilterCriteria filter => [filter],
             IEnumerable<FilterCriteria> filters => [.. filters],
-            _ => parameters != null ? parameters.GetType().GetProperties().Select(t => new FilterCriteria(t.Name, FilterOperation.Equal, t.GetValue(parameters))).ToList() : []
+            _ => parameters is not null ? parameters.GetType().GetProperties().Select(t => new FilterCriteria(t.Name, FilterOperation.Equal, t.GetValue(parameters))).ToList() : []
         };
     }
 }

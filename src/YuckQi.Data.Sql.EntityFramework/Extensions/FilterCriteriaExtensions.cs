@@ -10,14 +10,14 @@ internal static class FilterCriteriaExtensions
 {
     public static Expression<Func<T, Boolean>> ToPredicate<T>(this IReadOnlyCollection<FilterCriteria>? criteria)
     {
-        if (criteria == null || criteria.Count == 0)
+        if (criteria is null || criteria.Count == 0)
             return _ => true;
 
         var parameter = Expression.Parameter(typeof(T));
         var body = criteria.Select(t => ToExpression(t, parameter))
-                           .Aggregate((Expression?) null, (t, u) => t == null ? u : Expression.AndAlso(t, u));
+                           .Aggregate((Expression?) null, (t, u) => t is null ? u : Expression.AndAlso(t, u));
 
-        return body != null ? Expression.Lambda<Func<T, Boolean>>(body, parameter) : (_ => true);
+        return body is not null ? Expression.Lambda<Func<T, Boolean>>(body, parameter) : (_ => true);
     }
 
     private static Expression ToExpression(FilterCriteria criteria, ParameterExpression parameter)
@@ -26,7 +26,7 @@ internal static class FilterCriteriaExtensions
         var value = criteria.Value;
         var type = property.Type;
 
-        if (value != null && value.GetType() != type)
+        if (value is not null && value.GetType() != type)
         {
             var underlying = Nullable.GetUnderlyingType(type) ?? type;
 
@@ -34,7 +34,7 @@ internal static class FilterCriteriaExtensions
                 value = Convert.ChangeType(value, underlying);
         }
 
-        var constant = value != null ? Expression.Constant(value, type) : Expression.Constant(null, type);
+        var constant = value is not null ? Expression.Constant(value, type) : Expression.Constant(null, type);
 
         return criteria.Operation switch
         {

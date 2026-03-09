@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using MongoDB.Driver;
 using YuckQi.Data.Filtering;
 
@@ -8,7 +8,7 @@ public static class FilterDefinitionExtensions
 {
     public static FilterDefinition<TDocument>? ToFilterDefinition<TDocument>(this IEnumerable<FilterCriteria>? parameters)
     {
-        if (parameters == null)
+        if (parameters is null)
             return Builders<TDocument>.Filter.Empty;
 
         var builder = Builders<TDocument>.Filter;

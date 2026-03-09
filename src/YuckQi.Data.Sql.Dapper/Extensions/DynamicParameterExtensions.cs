@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Data;
 using Dapper;
 using YuckQi.Data.Filtering;
@@ -11,7 +11,7 @@ public static class DynamicParameterExtensions
     {
         var result = new DynamicParameters();
 
-        if (parameters == null)
+        if (parameters is null)
             return result;
 
         foreach (var parameter in parameters)
@@ -26,7 +26,7 @@ public static class DynamicParameterExtensions
                     var name = $"{parameter.FieldName}{i}";
                     var value = set[i];
                     var type = value?.GetType();
-                    var dbType = dbTypeMap != null && type != null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
+                    var dbType = dbTypeMap is not null && type is not null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
 
                     result.Add(name, value, dbType);
                 }
@@ -36,7 +36,7 @@ public static class DynamicParameterExtensions
                 var name = parameter.FieldName;
                 var value = parameter.Value;
                 var type = value?.GetType();
-                var dbType = dbTypeMap != null && type != null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
+                var dbType = dbTypeMap is not null && type is not null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
 
                 result.Add(name, value, dbType);
             }

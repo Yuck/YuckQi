@@ -14,17 +14,17 @@ public static class DocumentModelExtensions
 
     public static String? GetCollectionName(this Type? type)
     {
-        return type != null ? CollectionNameByType.GetOrAdd(type, t => GetCollectionAttribute(t)?.Name ?? t.Name) : null;
+        return type is not null ? CollectionNameByType.GetOrAdd(type, t => GetCollectionAttribute(t)?.Name ?? t.Name) : null;
     }
 
     public static String? GetDatabaseName(this Type? type)
     {
-        return type != null ? DatabaseNameByType.GetOrAdd(type, t => GetDatabaseAttribute(t).Name) : null;
+        return type is not null ? DatabaseNameByType.GetOrAdd(type, t => GetDatabaseAttribute(t).Name) : null;
     }
 
     public static TIdentifier? GetIdentifier<TDocument, TIdentifier>(this TDocument document)
     {
-        if (document == null)
+        if (document is null)
             return default;
 
         var property = GetIdentifierPropertyInfo(typeof(TDocument)) ?? throw new InvalidOperationException($"{typeof(TDocument).Name} identifier property could not be determined.");
@@ -37,7 +37,7 @@ public static class DocumentModelExtensions
 
     public static String ToDocumentId<TIdentifier>(this TIdentifier? identifier) where TIdentifier : IEquatable<TIdentifier>
     {
-        if (identifier == null)
+        if (identifier is null)
             throw new ArgumentNullException(nameof(identifier));
 
         return identifier.ToString() ?? throw new InvalidOperationException("Identifier string representation cannot be null.");
@@ -45,9 +45,9 @@ public static class DocumentModelExtensions
 
     public static void SetDocumentId<TDocument, TIdentifier>(this TDocument document, TIdentifier? identifier) where TIdentifier : IEquatable<TIdentifier>
     {
-        if (document == null)
+        if (document is null)
             throw new ArgumentNullException(nameof(document));
-        if (identifier == null)
+        if (identifier is null)
             throw new ArgumentNullException(nameof(identifier));
 
         var property = GetIdentifierPropertyInfo(typeof(TDocument)) ?? throw new InvalidOperationException($"{typeof(TDocument).Name} identifier property could not be determined.");
@@ -70,13 +70,13 @@ public static class DocumentModelExtensions
 
     private static PropertyInfo? GetIdentifierPropertyInfo(Type? type)
     {
-        return type != null ? IdentifierByType.GetOrAdd(type, IdentifierPropertyInfoValueFactory) : null;
+        return type is not null ? IdentifierByType.GetOrAdd(type, IdentifierPropertyInfoValueFactory) : null;
     }
 
     private static PropertyInfo IdentifierPropertyInfoValueFactory(Type type)
     {
         var property = type.GetProperty(DefaultIdPropertyName, BindingFlags.Public | BindingFlags.Instance);
-        if (property != null)
+        if (property is not null)
             return property;
 
         throw new InvalidOperationException($"Type '{type.Name}' does not have an identifier property. Define a property named '{DefaultIdPropertyName}'.");

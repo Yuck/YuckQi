@@ -21,7 +21,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query, Is.Not.Null);
                 Assert.That(query.ElementCount, Is.EqualTo(1));
@@ -47,7 +47,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query.ElementCount, Is.EqualTo(1));
                 Assert.That(query.Elements.First().Name, Is.EqualTo("_id"));
@@ -72,7 +72,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query.ElementCount, Is.EqualTo(1));
                 Assert.That(query.Elements.First().Name, Is.EqualTo("_id"));
@@ -97,7 +97,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query.ElementCount, Is.EqualTo(1));
                 Assert.That(query.Elements.First().Name, Is.EqualTo("_id"));
@@ -122,7 +122,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query.ElementCount, Is.EqualTo(1));
                 Assert.That(query.Elements.First().Name, Is.EqualTo("_id"));
@@ -147,7 +147,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query.ElementCount, Is.EqualTo(1));
                 Assert.That(query.Elements.First().Name, Is.EqualTo("_id"));
@@ -172,7 +172,7 @@ public class FilterDefinitionExtensionTests
 
         Assert.Multiple(() =>
         {
-            if (query != null)
+            if (query is not null)
             {
                 Assert.That(query.ElementCount, Is.EqualTo(1));
                 Assert.That(query.Elements.First().Name, Is.EqualTo("_id"));

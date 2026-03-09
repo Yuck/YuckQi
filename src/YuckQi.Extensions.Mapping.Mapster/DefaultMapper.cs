@@ -12,7 +12,7 @@ public class DefaultMapper : IMapper
 
     public DefaultMapper(TypeAdapterConfig? configuration = null)
     {
-        _mapper = configuration != null ? new Mapper(configuration) : new Mapper();
+        _mapper = configuration is not null ? new Mapper(configuration) : new Mapper();
     }
 
     public Object Map(Object source, Object destination, Type sourceType, Type destinationType)
