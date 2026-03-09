@@ -7,7 +7,7 @@ using YuckQi.Data.Sorting;
 using YuckQi.Data.Sql.Dapper.Oracle.Handlers.Read;
 using YuckQi.Domain.Entities.Abstract;
 using YuckQi.Domain.ValueObjects;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.Oracle.UnitTests.Handlers.Read;
 

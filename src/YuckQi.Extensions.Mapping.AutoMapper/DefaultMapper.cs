@@ -1,7 +1,7 @@
 using System;
 using AutoMapper;
 using AutoMapperIMapper = AutoMapper.IMapper;
-using IMapper = YuckQi.Extensions.Mapping.Abstractions.IMapper;
+using IMapper = YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces.IMapper;
 
 namespace YuckQi.Extensions.Mapping.AutoMapper;
 

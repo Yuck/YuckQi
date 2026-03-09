@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using YuckQi.Data.Sql.EntityFramework.Handlers.Write;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.EntityFramework.UnitTests.Handlers.Write;
 

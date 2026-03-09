@@ -3,7 +3,7 @@ using YuckQi.Data.Handlers.Write.Abstract;
 using YuckQi.Data.Handlers.Write.Options;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.DynamoDb.Handlers.Write;
 

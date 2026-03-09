@@ -5,7 +5,7 @@ using YuckQi.Data.Handlers.Read.Abstract;
 using YuckQi.Data.Sorting;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.DynamoDb.Handlers.Read;
 

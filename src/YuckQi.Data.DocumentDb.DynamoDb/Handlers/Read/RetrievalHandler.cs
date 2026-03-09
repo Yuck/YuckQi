@@ -4,7 +4,7 @@ using YuckQi.Data.DocumentDb.DynamoDb.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Handlers.Read.Abstract;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.DynamoDb.Handlers.Read;
 

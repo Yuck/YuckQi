@@ -6,7 +6,7 @@ using YuckQi.Data.DocumentDb.MongoDb.Attributes;
 using YuckQi.Data.DocumentDb.MongoDb.Handlers.Write;
 using YuckQi.Data.Exceptions;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.MongoDb.UnitTests.Handlers.Write;
 

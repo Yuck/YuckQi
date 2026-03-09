@@ -9,7 +9,7 @@ using YuckQi.Data.Sql.Dapper.Handlers.Read.Abstract;
 using YuckQi.Domain.Entities.Abstract;
 using YuckQi.Domain.ValueObjects;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.UnitTests.Handlers.Read;
 

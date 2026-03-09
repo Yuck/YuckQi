@@ -7,7 +7,7 @@ using YuckQi.Data.DocumentDb.MongoDb.Handlers.Read;
 using YuckQi.Data.Filtering;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.MongoDb.UnitTests.Handlers.Read;
 

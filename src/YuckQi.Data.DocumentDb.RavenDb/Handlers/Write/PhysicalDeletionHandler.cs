@@ -2,7 +2,7 @@ using Raven.Client.Documents.Session;
 using YuckQi.Data.DocumentDb.RavenDb.Extensions;
 using YuckQi.Data.Handlers.Write.Abstract;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.RavenDb.Handlers.Write;
 

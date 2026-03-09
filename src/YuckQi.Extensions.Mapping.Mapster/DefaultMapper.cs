@@ -1,7 +1,7 @@
 using System;
 using Mapster;
 using MapsterMapper;
-using IMapper = YuckQi.Extensions.Mapping.Abstractions.IMapper;
+using IMapper = YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces.IMapper;
 using MapsterIMapper = MapsterMapper.IMapper;
 
 namespace YuckQi.Extensions.Mapping.Mapster;

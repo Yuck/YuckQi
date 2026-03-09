@@ -1,5 +1,5 @@
 using YuckQi.Data.Handlers.Internal;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Handlers.Write.Abstract;
 

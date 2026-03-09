@@ -6,7 +6,7 @@ using YuckQi.Data.Handlers.Write.Options;
 using YuckQi.Data.Sql.Dapper.Handlers.Write;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.UnitTests.Handlers.Write;
 

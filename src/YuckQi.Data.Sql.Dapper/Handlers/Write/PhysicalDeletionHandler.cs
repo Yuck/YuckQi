@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using YuckQi.Data.Handlers.Write.Abstract;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.Handlers.Write;
 

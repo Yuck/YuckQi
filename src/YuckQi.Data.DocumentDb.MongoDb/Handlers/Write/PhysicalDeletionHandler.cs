@@ -2,7 +2,7 @@ using MongoDB.Driver;
 using YuckQi.Data.DocumentDb.MongoDb.Extensions;
 using YuckQi.Data.Handlers.Write.Abstract;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.MongoDb.Handlers.Write;
 

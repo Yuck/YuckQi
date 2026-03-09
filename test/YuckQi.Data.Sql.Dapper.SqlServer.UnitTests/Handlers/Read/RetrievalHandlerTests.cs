@@ -5,7 +5,7 @@ using NUnit.Framework;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Sql.Dapper.SqlServer.Handlers.Read;
 using YuckQi.Domain.Entities.Abstract;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.SqlServer.UnitTests.Handlers.Read;
 

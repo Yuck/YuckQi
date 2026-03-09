@@ -4,7 +4,7 @@ An `IMapper` implementation backed by the [Mapster](https://www.nuget.org/packag
 
 ## Key Types
 
-- **`DefaultMapper`** &ndash; implements `YuckQi.Extensions.Mapping.Abstractions.IMapper` by delegating to a Mapster `IMapper` instance; accepts an optional `TypeAdapterConfig` (defaults to the global configuration when null)
+- **`DefaultMapper`** &ndash; implements `YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces.IMapper` by delegating to a Mapster `IMapper` instance; accepts an optional `TypeAdapterConfig` (defaults to the global configuration when null)
 
 ## Dependencies
 

@@ -4,7 +4,7 @@ using YuckQi.Data.Filtering;
 using YuckQi.Data.Sql.Dapper.Abstract.Interfaces;
 using YuckQi.Data.Sql.Dapper.Extensions;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
-using YuckQi.Extensions.Mapping.Abstractions;
+using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.Handlers.Read.Abstract;
 
