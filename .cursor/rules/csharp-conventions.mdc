@@ -65,6 +65,16 @@ When creating or editing `.cs` files, apply every section below. Do not rely on 
 - Place base classes in an `Abstract/` subfolder; interfaces in `Abstract/Interfaces/`
 - Test projects mirror source names with a `.UnitTests` suffix; use NUnit
 
+# Versioning
+
+NuGet package version is defined in `src/Directory.Build.props` as `<Version>`. When updating the version:
+
+- **Major**: Matches the .NET SDK version targeted (e.g. `8` for `net8.0`). Change when upgrading the target framework.
+- **Minor**: Increment only when there are **breaking changes** (removed or changed public API, changed behavior that breaks existing callers).
+- **Revision** (third segment): Increment for all other releases—new features, bug fixes, refactors, and any non-breaking changes.
+
+Example: after adding new caching behaviors with no breaking changes, bump the revision (e.g. `8.3.1` → `8.3.2`).
+
 # NuGet / Dependencies
 
 - **MediatR**: Use only a 12.x version (e.g. `12.5.0`). Do **not** upgrade to MediatR 13.x or 14.x; those lines require a paid license. Pin the version in `Directory.Packages.props` and keep it within the 12.x range when updating.
