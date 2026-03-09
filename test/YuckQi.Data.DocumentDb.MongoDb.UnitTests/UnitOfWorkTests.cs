@@ -178,6 +178,53 @@ public class UnitOfWorkTests
     }
 
     [Test]
+    public async Task SaveChanges_WithCancellationToken_WhenInTransaction_CommitsTransactionAndCreatesNewSession()
+    {
+        var session1 = new Mock<IClientSessionHandle>();
+        var session2 = new Mock<IClientSessionHandle>();
+        var client = new Mock<IMongoClient>();
+
+        session1.Setup(t => t.IsInTransaction).Returns(true);
+        client.SetupSequence(t => t.StartSession(It.IsAny<ClientSessionOptions>(), CancellationToken.None))
+              .Returns(session1.Object)
+              .Returns(session2.Object);
+        session1.Setup(t => t.CommitTransactionAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        var uow = new UnitOfWork(client.Object);
+
+        var first = uow.Scope;
+
+        await uow.SaveChanges(CancellationToken.None);
+        var second = uow.Scope;
+
+        session1.Verify(t => t.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
+        Assert.That(second, Is.SameAs(session2.Object));
+    }
+
+    [Test]
+    public async Task SaveChanges_WithCancellationToken_WhenNotInTransaction_DoesNotCommitButCreatesNewSession()
+    {
+        var session1 = new Mock<IClientSessionHandle>();
+        var session2 = new Mock<IClientSessionHandle>();
+        var client = new Mock<IMongoClient>();
+
+        session1.Setup(t => t.IsInTransaction).Returns(false);
+        client.SetupSequence(t => t.StartSession(It.IsAny<ClientSessionOptions>(), CancellationToken.None))
+              .Returns(session1.Object)
+              .Returns(session2.Object);
+
+        var uow = new UnitOfWork(client.Object);
+
+        var first = uow.Scope;
+
+        await uow.SaveChanges(CancellationToken.None);
+        var second = uow.Scope;
+
+        session1.Verify(t => t.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
+        Assert.That(second, Is.SameAs(session2.Object));
+    }
+
+    [Test]
     public void Constructor_WithOptions_PassesOptionsToStartSession()
     {
         var options = new ClientSessionOptions();

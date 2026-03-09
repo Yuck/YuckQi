@@ -11,7 +11,7 @@ Provides concrete handler implementations that operate over an `IDynamoDBContext
 - **`PhysicalDeletionHandler`** &ndash; deletes documents
 - **`RetrievalHandler`** &ndash; retrieves documents by identifier or filter criteria
 - **`SearchHandler`** &ndash; paginated document search
-- **`UnitOfWork`** &ndash; unit of work backed by `IDynamoDBContext`
+- **`UnitOfWork`** &ndash; unit of work backed by `IDynamoDBContext`; DynamoDB operations are persisted immediately by `IDynamoDBContext`, and `SaveChanges()` / `SaveChanges(CancellationToken)` are no-ops (no transaction aggregation)
 - **`FilterCriteriaExtensions`** / **`FilterOperationExtensions`** &ndash; translate `FilterCriteria` into DynamoDB scan conditions
 
 All handlers provide overloads with an explicit `TDocument` type parameter for domain-to-document mapping.

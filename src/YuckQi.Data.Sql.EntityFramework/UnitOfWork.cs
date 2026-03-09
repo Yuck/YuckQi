@@ -25,4 +25,9 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
     {
         _context.SaveChanges();
     }
+
+    public Task SaveChanges(CancellationToken cancellationToken)
+    {
+        return _context.SaveChangesAsync(cancellationToken);
+    }
 }

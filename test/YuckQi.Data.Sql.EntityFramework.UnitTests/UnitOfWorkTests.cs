@@ -38,6 +38,18 @@ public class UnitOfWorkTests
     }
 
     [Test]
+    public async Task SaveChanges_WithCancellationToken_CallsContextSaveChangesAsync()
+    {
+        var options = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase("UnitOfWork_SaveChanges_Async").Options;
+        await using var context = new TestDbContext(options);
+        var uow = new UnitOfWork<TestDbContext>(context);
+
+        await uow.SaveChanges(CancellationToken.None);
+
+        Assert.Pass();
+    }
+
+    [Test]
     public void Dispose_DisposesContext()
     {
         var options = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase("UnitOfWork_Dispose").Options;

@@ -54,6 +54,15 @@ public class UnitOfWork<TScope, TDbConnection> : IUnitOfWork<TScope> where TScop
         }
     }
 
+    public Task SaveChanges(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        SaveChanges();
+
+        return Task.CompletedTask;
+    }
+
     private TScope StartTransaction()
     {
         lock (_lock)

@@ -47,4 +47,28 @@ public class UnitOfWork : IUnitOfWork<IClientSessionHandle>
             _session = new Lazy<IClientSessionHandle>(() => _client.StartSession(_options));
         }
     }
+
+    public Task SaveChanges(CancellationToken cancellationToken)
+    {
+        lock (_lock)
+        {
+            if (_session == null)
+                throw new InvalidOperationException();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (Scope.IsInTransaction)
+            {
+                var task = Scope.CommitTransactionAsync(cancellationToken);
+
+                _session = new Lazy<IClientSessionHandle>(() => _client.StartSession(_options));
+
+                return task;
+            }
+
+            _session = new Lazy<IClientSessionHandle>(() => _client.StartSession(_options));
+
+            return Task.CompletedTask;
+        }
+    }
 }

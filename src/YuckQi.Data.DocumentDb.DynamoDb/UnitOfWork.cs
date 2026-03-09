@@ -26,6 +26,12 @@ public class UnitOfWork : IUnitOfWork<IDynamoDBContext>
 
     public void SaveChanges()
     {
-        throw new NotImplementedException();
+    }
+
+    public Task SaveChanges(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return Task.CompletedTask;
     }
 }

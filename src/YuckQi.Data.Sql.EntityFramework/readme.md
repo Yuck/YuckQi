@@ -4,7 +4,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 
 ## Key Types
 
-- **`UnitOfWork<TContext>`** &ndash; implements `IUnitOfWork<TContext>` for a `DbContext`; `SaveChanges()` persists tracked changes
+- **`UnitOfWork<TContext>`** &ndash; implements `IUnitOfWork<TContext>` for a `DbContext`; `SaveChanges()` / `SaveChanges(CancellationToken)` persist all tracked changes in the underlying `DbContext` (transaction semantics are those of the configured EF Core provider)
 - **`CreationHandler`** &ndash; inserts entities via `DbSet.Add`; like Dapper, does not call `SaveChanges` (caller commits via `UnitOfWork.SaveChanges()`). For database-generated keys (e.g. identity), use `CreationOptions.IdentifierFactory` so an identifier is returned; otherwise the key is only set after `SaveChanges`.
 - **`RevisionHandler`** &ndash; updates entities via `DbSet.Update`
 - **`PhysicalDeletionHandler`** &ndash; deletes entities via `DbSet.Remove`
