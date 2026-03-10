@@ -1,4 +1,3 @@
-﻿using System;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 
 namespace YuckQi.Domain.Entities.Abstract;
