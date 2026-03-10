@@ -91,6 +91,40 @@ public class FilterExpressionCriteriaTests
         });
     }
 
+    [Test]
+    public void SortExpressions_ToSortCriteria_Multiple_IsValid()
+    {
+        var sorts = new[]
+        {
+            new SortExpression<TestDomainEntity>(t => t.Name, SortOrder.Descending),
+            new SortExpression<TestDomainEntity>(t => t.Identifier, SortOrder.Ascending)
+        };
+
+        var criteria = sorts.ToSortCriteria<TestDomainEntity, TestRecord>(null).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(criteria.Count, Is.EqualTo(2));
+
+            var byExpression = criteria.OrderBy(t => t.Expression).ToList();
+
+            Assert.That(byExpression[0].Expression, Is.EqualTo("Identifier"));
+            Assert.That(byExpression[0].Order, Is.EqualTo(SortOrder.Ascending));
+            Assert.That(byExpression[1].Expression, Is.EqualTo("Name"));
+            Assert.That(byExpression[1].Order, Is.EqualTo(SortOrder.Descending));
+        });
+    }
+
+    [Test]
+    public void FilterExpressions_ToFilterCriteria_WithNullResolver_UsesDefaultPropertyNames()
+    {
+        var filters = new[] { new FilterExpression<TestDomainEntity>(t => t.Name, "X") };
+
+        var criteria = filters.ToFilterCriteria<TestDomainEntity, TestRecord>(null);
+
+        Assert.That(criteria.First().FieldName, Is.EqualTo("Name"));
+    }
+
     private sealed class TestDomainEntity
     {
         public Int32 Identifier { get; set; }
