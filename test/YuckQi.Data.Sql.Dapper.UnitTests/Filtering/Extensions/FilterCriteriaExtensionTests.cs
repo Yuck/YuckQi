@@ -1,11 +1,11 @@
 using System.Data;
 using NUnit.Framework;
 using YuckQi.Data.Filtering;
-using YuckQi.Data.Sql.Dapper.Extensions;
+using YuckQi.Data.Sql.Dapper.Filtering.Extensions;
 
-namespace YuckQi.Data.Sql.Dapper.UnitTests.Extensions;
+namespace YuckQi.Data.Sql.Dapper.UnitTests.Filtering.Extensions;
 
-public class DynamicParameterExtensionTests
+public class FilterCriteriaExtensionTests
 {
     [Test]
     public void FilterCriteria_SingleValue_IsValid()

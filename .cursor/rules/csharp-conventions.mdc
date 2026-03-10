@@ -43,7 +43,7 @@ When creating or editing `.cs` files, apply every section below. Do not rely on 
 - Interfaces: `I` prefix (e.g. `ICreationHandler`)
 - Abstract base classes: `Base` suffix (e.g. `CreationHandlerBase`)
 - Protected abstract methods: `Do` prefix (e.g. `DoCreate`, `DoGet`, `DoRevise`)
-- Extension method classes: `*Extensions` suffix (e.g. `FilterCriteriaExtensions`, `DynamicParameterExtensions`)
+- Extension method classes: `*Extensions` suffix (e.g. `FilterCriteriaExtensions`, `SortCriteriaExtensions`)
 - Avoid using abbreviations when naming variables (e.g., prefer `connection` instead of `conn`, `dictionary` instead of `dict`); exception: `unitOfWork` should be abbreviated to `uow`
 - Lambda expression parameters: use `t` as the default temporary variable name regardless of the underlying type; when there are conflicts (e.g. nested lambdas), use `u`, `v`, etc. in sequence (e.g., `t => parameters.Any(u => u.Name == t)`)
 - Unit test method names use `MethodName_Condition_ExpectedResult` format (e.g. `Delete_WhenNotDeleted_SetsDeletionMoment`)

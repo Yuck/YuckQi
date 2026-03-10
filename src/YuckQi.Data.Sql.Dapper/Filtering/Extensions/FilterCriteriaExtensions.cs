@@ -3,9 +3,9 @@ using System.Data;
 using Dapper;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.Sql.Dapper.Extensions;
+namespace YuckQi.Data.Sql.Dapper.Filtering.Extensions;
 
-public static class DynamicParameterExtensions
+public static class FilterCriteriaExtensions
 {
     public static DynamicParameters ToDynamicParameters(this IEnumerable<FilterCriteria>? parameters, IReadOnlyDictionary<Type, DbType>? dbTypeMap = null)
     {

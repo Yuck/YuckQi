@@ -12,7 +12,7 @@ Provides handler implementations that operate over an `IDbTransaction` scope:
 - **`RetrievalHandlerBase`** &ndash; abstract base for retrieval with `ISqlGenerator`-driven queries
 - **`SearchHandlerBase`** &ndash; abstract base for paginated search with `ISqlGenerator`-driven queries
 - **`ISqlGenerator`** &ndash; interface for generating provider-specific SQL (implemented by database-specific packages)
-- **`DynamicParameterExtensions`** &ndash; builds Dapper `DynamicParameters` from `FilterCriteria`
+- **`FilterCriteriaExtensions`** &ndash; builds Dapper `DynamicParameters` from `FilterCriteria`
 
 Database-specific packages (MySql, Oracle, SqlServer) provide concrete `ISqlGenerator` implementations and ready-to-use retrieval/search handlers.
 
