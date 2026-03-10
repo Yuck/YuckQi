@@ -1,5 +1,6 @@
 using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
+using YuckQi.Data.Filtering.Extensions;
 using YuckQi.Data.Handlers.Read.Abstract.Interfaces;
 using YuckQi.Data.Sorting;
 using YuckQi.Domain.Entities.Abstract.Interfaces;

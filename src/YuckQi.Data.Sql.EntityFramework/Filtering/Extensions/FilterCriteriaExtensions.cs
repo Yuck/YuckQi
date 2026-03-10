@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.Sql.EntityFramework.Extensions;
+namespace YuckQi.Data.Sql.EntityFramework.Filtering.Extensions;
 
 internal static class FilterCriteriaExtensions
 {
@@ -74,10 +74,10 @@ internal static class FilterCriteriaExtensions
                              .Select(t => Convert.ChangeType(t, type))
                              .Aggregate((IList) (Activator.CreateInstance(listType) ?? throw new InvalidOperationException()), (t, u) =>
                              {
-                                t.Add(u);
+                                 t.Add(u);
 
-                                return t;
-                            });
+                                 return t;
+                             });
 
         var contains = typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public)
                                          .Single(t => t.Name == "Contains" && t.GetParameters().Length == 2);

@@ -1,8 +1,8 @@
 using NUnit.Framework;
-using YuckQi.Data.DocumentDb.DynamoDb.Extensions;
+using YuckQi.Data.DocumentDb.DynamoDb.Filtering.Extensions;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.DocumentDb.DynamoDb.UnitTests.Extensions;
+namespace YuckQi.Data.DocumentDb.DynamoDb.UnitTests.Filtering.Extensions;
 
 public class FilterCriteriaExtensionTests
 {

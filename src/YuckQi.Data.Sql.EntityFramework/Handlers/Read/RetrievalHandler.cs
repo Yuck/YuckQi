@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Handlers.Read.Abstract;
-using YuckQi.Data.Sql.EntityFramework.Extensions;
+using YuckQi.Data.Sql.EntityFramework.Filtering.Extensions;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 

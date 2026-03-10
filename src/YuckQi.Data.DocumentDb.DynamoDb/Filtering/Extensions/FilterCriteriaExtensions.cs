@@ -1,8 +1,9 @@
-﻿using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
+using YuckQi.Data.DocumentDb.DynamoDb.Extensions;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.DocumentDb.DynamoDb.Extensions;
+namespace YuckQi.Data.DocumentDb.DynamoDb.Filtering.Extensions;
 
 public static class FilterCriteriaExtensions
 {

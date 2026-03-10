@@ -2,12 +2,12 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using NUnit.Framework;
-using YuckQi.Data.DocumentDb.MongoDb.Extensions;
+using YuckQi.Data.DocumentDb.MongoDb.Filtering.Extensions;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.DocumentDb.MongoDb.UnitTests.Extensions;
+namespace YuckQi.Data.DocumentDb.MongoDb.UnitTests.Filtering.Extensions;
 
-public class FilterDefinitionExtensionTests
+public class FilterCriteriaExtensionTests
 {
     [Test]
     public void FilterCriteria_Equal_IsValid()

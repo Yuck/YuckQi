@@ -33,12 +33,13 @@ When creating or editing `.cs` files, apply every section below. Do not rely on 
 - Local functions should appear after a `return;` statement at the end of the method body
 - Properties should be separated by a single blank line
 - Properties should be listed in alphabetical order in the class which defines them
+- Constructors (including primary constructors) should appear before properties and other members in the type body
 
 # Naming Conventions
 
 - Private fields: `_camelCase` (underscore prefix)
 - Public members, properties, methods: `PascalCase`
-- Descriptive generic type parameters: `TDomainEntity`, `TIdentifier`, `TScope`, `TRecord`, `TData`
+- Descriptive generic type parameters: `TDomainEntity`, `TIdentifier`, `TScope`, `TPersistenceModel`, `TData`
 - Interfaces: `I` prefix (e.g. `ICreationHandler`)
 - Abstract base classes: `Base` suffix (e.g. `CreationHandlerBase`)
 - Protected abstract methods: `Do` prefix (e.g. `DoCreate`, `DoGet`, `DoRevise`)

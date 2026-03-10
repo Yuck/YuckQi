@@ -1,5 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
-using YuckQi.Data.DocumentDb.DynamoDb.Extensions;
+using YuckQi.Data.DocumentDb.DynamoDb.Filtering.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Handlers.Read.Abstract;
 using YuckQi.Data.Sorting;

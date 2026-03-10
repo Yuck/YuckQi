@@ -1,8 +1,9 @@
 using System.Collections.Concurrent;
 using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
+using YuckQi.Data.Filtering.Extensions;
 using YuckQi.Data.Handlers.Read.Abstract.Interfaces;
-using YuckQi.Data.MemDb.Filtering;
+using YuckQi.Data.MemDb.Filtering.Extensions;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 
 namespace YuckQi.Data.MemDb.Handlers.Read;

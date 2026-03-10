@@ -1,8 +1,8 @@
 using NUnit.Framework;
-using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
+using YuckQi.Data.Filtering.Extensions;
 
-namespace YuckQi.Data.UnitTests.Extensions;
+namespace YuckQi.Data.UnitTests.Filtering.Extensions;
 
 public class FilterCriteriaExtensionTests
 {

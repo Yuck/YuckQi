@@ -1,9 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.MemDb.Filtering;
+namespace YuckQi.Data.MemDb.Filtering.Extensions;
 
 internal static class FilterCriteriaExtensions
 {

@@ -10,8 +10,6 @@ public class UnitOfWork<TScope, TDbConnection> : IUnitOfWork<TScope> where TScop
     private readonly Object _lock = new();
     private Lazy<TScope>? _transaction;
 
-    public TScope Scope => _transaction is not null ? _transaction.Value : throw new InvalidOperationException();
-
     public UnitOfWork(TDbConnection connection, IsolationLevel isolation = IsolationLevel.ReadCommitted)
     {
         ArgumentNullException.ThrowIfNull(connection);
@@ -20,6 +18,8 @@ public class UnitOfWork<TScope, TDbConnection> : IUnitOfWork<TScope> where TScop
         _isolation = isolation;
         _transaction = new Lazy<TScope>(StartTransaction);
     }
+
+    public TScope Scope => _transaction is not null ? _transaction.Value : throw new InvalidOperationException();
 
     public void Dispose()
     {
