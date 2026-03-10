@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;

@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace YuckQi.Domain.Validation;
 
 public record ResultDetail

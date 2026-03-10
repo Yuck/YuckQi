@@ -1,7 +1,4 @@
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;

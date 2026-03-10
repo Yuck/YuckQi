@@ -1,4 +1,3 @@
-using System;
 using MediatR;
 
 namespace YuckQi.Application.Core.Abstract.Aspects.Interfaces;

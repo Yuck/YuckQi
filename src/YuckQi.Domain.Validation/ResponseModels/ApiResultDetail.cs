@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace YuckQi.Domain.Validation.ResponseModels;
 
 public record ApiResultDetail

@@ -1,4 +1,3 @@
-using System;
 using Mapster;
 using NUnit.Framework;
 using YuckQi.Extensions.Mapping.Mapster;

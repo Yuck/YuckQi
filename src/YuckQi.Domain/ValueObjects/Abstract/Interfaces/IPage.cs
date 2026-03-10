@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-
 namespace YuckQi.Domain.ValueObjects.Abstract.Interfaces;
 
 public interface IPage

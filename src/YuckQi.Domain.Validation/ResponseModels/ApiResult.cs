@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-
 namespace YuckQi.Domain.Validation.ResponseModels;
 
 public record ApiResult

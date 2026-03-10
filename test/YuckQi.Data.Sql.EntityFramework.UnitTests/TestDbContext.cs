@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
