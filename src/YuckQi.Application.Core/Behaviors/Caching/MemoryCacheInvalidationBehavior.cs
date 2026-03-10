@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
 
-namespace YuckQi.Application.Core.Behaviors;
+namespace YuckQi.Application.Core.Behaviors.Caching;
 
 public class MemoryCacheInvalidationBehavior<TRequest, TResponse>(IMemoryCache cache, ILogger<MemoryCacheInvalidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : IHasCacheInvalidationKeys
 {

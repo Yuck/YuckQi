@@ -12,12 +12,22 @@ A .NET library for bootstrapping a domain application project. Provides MediatR 
 
 ### Behaviors
 
-- **`DistributedCacheInvalidationBehavior<TRequest, TResponse>`** &ndash; MediatR pipeline behavior that removes keys from `IDistributedCache` after the handler runs when `TResponse` implements `IHasCacheInvalidationKeys`
-- **`DistributedCachingBehavior<TRequest, TResponse>`** &ndash; MediatR pipeline behavior that uses `IDistributedCache` to cache responses for cacheable requests
-- **`LoggingBehavior<TRequest, TResponse>`** &ndash; MediatR pipeline behavior that logs request handling start and completion
-- **`MemoryCacheInvalidationBehavior<TRequest, TResponse>`** &ndash; MediatR pipeline behavior that removes keys from `IMemoryCache` after the handler runs when `TResponse` implements `IHasCacheInvalidationKeys`
-- **`MemoryCachingBehavior<TRequest, TResponse>`** &ndash; MediatR pipeline behavior that uses `IMemoryCache` to cache responses for cacheable requests
-- **`ValidationBehavior<TRequest, TResponse>`** &ndash; MediatR pipeline behavior that runs FluentValidation validators and short-circuits on error
+Pipeline behaviors are organized by purpose in subfolders and namespaces:
+
+**Caching** (`YuckQi.Application.Core.Behaviors.Caching`)
+
+- **`DistributedCacheInvalidationBehavior<TRequest, TResponse>`** &ndash; Removes keys from `IDistributedCache` after the handler runs when `TResponse` implements `IHasCacheInvalidationKeys`
+- **`DistributedCachingBehavior<TRequest, TResponse>`** &ndash; Uses `IDistributedCache` to cache responses for cacheable requests; configuration via `DistributedCachingBehaviorOptions` record (same file)
+- **`MemoryCacheInvalidationBehavior<TRequest, TResponse>`** &ndash; Removes keys from `IMemoryCache` after the handler runs when `TResponse` implements `IHasCacheInvalidationKeys`
+- **`MemoryCachingBehavior<TRequest, TResponse>`** &ndash; Uses `IMemoryCache` to cache responses for cacheable requests; configuration via `MemoryCachingBehaviorOptions` record (same file)
+
+**Logging** (`YuckQi.Application.Core.Behaviors.Logging`)
+
+- **`LoggingBehavior<TRequest, TResponse>`** &ndash; Logs request handling start and completion
+
+**Validation** (`YuckQi.Application.Core.Behaviors.Validation`)
+
+- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error
 
 ## Dependencies
 

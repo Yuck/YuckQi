@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
 
-namespace YuckQi.Application.Core.Behaviors;
+namespace YuckQi.Application.Core.Behaviors.Caching;
+
+public record DistributedCachingBehaviorOptions(TimeSpan? CacheDuration);
 
 public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache cache, IOptions<DistributedCachingBehaviorOptions> configuration, ILogger<DistributedCachingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IHasCacheKey
 {
@@ -37,7 +39,7 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
         }
 
         logger.LogInformation("Distributed cache miss for '{type}' with key '{key}'.", type, key);
-        
+
         var response = await next();
 
         var options = new DistributedCacheEntryOptions();

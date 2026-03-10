@@ -11,7 +11,7 @@ using YuckQi.Application.Core.Abstract.Interfaces;
 using YuckQi.Domain.Validation;
 using YuckQi.Domain.Validation.Extensions;
 
-namespace YuckQi.Application.Core.Behaviors;
+namespace YuckQi.Application.Core.Behaviors.Validation;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<AbstractValidator<TRequest>> validators, ILogger<ValidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : IValidated, new()
 {

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
-using YuckQi.Application.Core.Behaviors;
+using YuckQi.Application.Core.Behaviors.Caching;
 
 namespace YuckQi.Application.Core.UnitTests.Behaviors;
 
@@ -18,7 +18,7 @@ public class MemoryCachingBehaviorTests
     public async Task Handle_WhenCacheHit_ReturnsCachedResponseAndDoesNotCallNext()
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
-        var options = Options.Create(new MemoryCachingBehaviorOptions { CacheDuration = null });
+        var options = Options.Create(new MemoryCachingBehaviorOptions(null));
         var logger = new Mock<ILogger<MemoryCachingBehavior<CacheablePingRequest, Int32>>>();
         var behavior = new MemoryCachingBehavior<CacheablePingRequest, Int32>(memoryCache, options, logger.Object);
         var request = new CacheablePingRequest();
@@ -44,7 +44,7 @@ public class MemoryCachingBehaviorTests
     public async Task Handle_WhenCacheMiss_CallsNextAndCachesResponse()
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
-        var options = Options.Create(new MemoryCachingBehaviorOptions { CacheDuration = TimeSpan.FromMinutes(5) });
+        var options = Options.Create(new MemoryCachingBehaviorOptions(TimeSpan.FromMinutes(5)));
         var logger = new Mock<ILogger<MemoryCachingBehavior<CacheablePingRequest, Int32>>>();
         var behavior = new MemoryCachingBehavior<CacheablePingRequest, Int32>(memoryCache, options, logger.Object);
         var request = new CacheablePingRequest();

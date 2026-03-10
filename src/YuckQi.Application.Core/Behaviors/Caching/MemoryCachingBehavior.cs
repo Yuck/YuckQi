@@ -7,7 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
 
-namespace YuckQi.Application.Core.Behaviors;
+namespace YuckQi.Application.Core.Behaviors.Caching;
+
+public record MemoryCachingBehaviorOptions(TimeSpan? CacheDuration);
 
 public class MemoryCachingBehavior<TRequest, TResponse>(IMemoryCache cache, IOptions<MemoryCachingBehaviorOptions> configuration, ILogger<MemoryCachingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IHasCacheKey
 {

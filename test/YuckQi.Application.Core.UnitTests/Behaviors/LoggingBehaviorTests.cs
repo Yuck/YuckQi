@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using YuckQi.Application.Core.Behaviors;
+using YuckQi.Application.Core.Behaviors.Logging;
 
 namespace YuckQi.Application.Core.UnitTests.Behaviors;
 
