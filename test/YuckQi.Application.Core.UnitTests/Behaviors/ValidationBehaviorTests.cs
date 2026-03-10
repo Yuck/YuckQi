@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using YuckQi.Application.Core.Abstract.Interfaces;
+using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
 using YuckQi.Application.Core.Behaviors.Validation;
 using YuckQi.Domain.Validation;
 
@@ -74,7 +74,7 @@ public class ValidationBehaviorTests
         public String Value { get; set; } = String.Empty;
     }
 
-    public sealed class ValidatedStub : IValidated
+    public sealed class ValidatedStub : IHasValidationResults
     {
         public IReadOnlyCollection<Result> ValidationResults { get; set; } = Array.Empty<Result>();
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
+        var stopwatch = Stopwatch.StartNew();
         var type = typeof(TRequest).Name;
         var key = request.CacheKey;
 
@@ -27,7 +29,7 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
                 var result = JsonSerializer.Deserialize<TResponse>(cached);
                 if (result is not null)
                 {
-                    logger.LogInformation("Distributed cache hit for '{type}' with key '{key}'.", type, key);
+                    logger.LogInformation("Distributed cache hit for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
 
                     return result;
                 }
@@ -35,12 +37,12 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception, "Distributed cache get or deserialization failed for '{type}' with key '{key}'. Treating as cache miss.", type, key);
+            logger.LogWarning(exception, "Distributed cache get failed for '{type}' with key '{key}'.", type, key);
         }
 
         logger.LogInformation("Distributed cache miss for '{type}' with key '{key}'.", type, key);
 
-        var response = await next();
+        var response = await next(cancellationToken);
 
         var options = new DistributedCacheEntryOptions();
         var cacheDuration = configuration.Value.CacheDuration;
@@ -51,11 +53,11 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
         {
             await cache.SetAsync(key, JsonSerializer.SerializeToUtf8Bytes(response), options, cancellationToken);
 
-            logger.LogInformation("Distributed cache set for '{type}' with key '{key}'.", type, key);
+            logger.LogInformation("Distributed cache set for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
         }
         catch (Exception exception)
         {
-            logger.LogWarning(exception, "Distributed cache set failed for '{type}' with key '{key}'.", type, key);
+            logger.LogWarning(exception, "Distributed cache set failed for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
         }
 
         return response;

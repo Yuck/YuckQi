@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -12,7 +13,8 @@ public class MemoryCacheInvalidationBehavior<TRequest, TResponse>(IMemoryCache c
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var response = await next();
+        var stopwatch = Stopwatch.StartNew();
+        var response = await next(cancellationToken);
 
         var keys = response.CacheKeys;
         if (keys is null)
@@ -28,11 +30,11 @@ public class MemoryCacheInvalidationBehavior<TRequest, TResponse>(IMemoryCache c
             {
                 cache.Remove(key);
 
-                logger.LogInformation("Memory cache invalidated for '{type}' with key '{key}'.", type, key);
+                logger.LogInformation("Memory cache invalidated for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
             }
             catch (Exception exception)
             {
-                logger.LogWarning(exception, "Memory cache invalidation failed for '{type}' with key '{key}'.", type, key);
+                logger.LogWarning(exception, "Memory cache invalidation failed for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
             }
         }
 

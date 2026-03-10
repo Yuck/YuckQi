@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -12,7 +13,8 @@ public class DistributedCacheInvalidationBehavior<TRequest, TResponse>(IDistribu
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var response = await next();
+        var stopwatch = Stopwatch.StartNew();
+        var response = await next(cancellationToken);
 
         var keys = response.CacheKeys;
         if (keys is null)
@@ -28,11 +30,11 @@ public class DistributedCacheInvalidationBehavior<TRequest, TResponse>(IDistribu
             {
                 await cache.RemoveAsync(key, cancellationToken);
 
-                logger.LogInformation("Distributed cache invalidated for '{type}' with key '{key}'.", type, key);
+                logger.LogInformation("Distributed cache invalidated for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
             }
             catch (Exception exception)
             {
-                logger.LogWarning(exception, "Distributed cache invalidation failed for '{type}' with key '{key}'.", type, key);
+                logger.LogWarning(exception, "Distributed cache invalidation failed for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
             }
         }
 

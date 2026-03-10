@@ -8,7 +8,7 @@ A .NET library for bootstrapping a domain application project. Provides MediatR 
 
 - **`IHasCacheInvalidationKeys`** &ndash; aspect marker for MediatR *response* types that trigger cache invalidation; exposes `CacheKeys` (`IReadOnlySet<String>`) to remove after the handler runs
 - **`IHasCacheKey`** &ndash; aspect marker for cacheable MediatR requests with cache key and expiration
-- **`IValidated`** &ndash; response marker with `ValidationResults` for validation behavior
+- **`IHasValidationResults`** &ndash; aspect marker for MediatR *response* types that carry validation results; exposes `ValidationResults` (`IReadOnlyCollection<Result>`) for validation behavior
 
 ### Behaviors
 
@@ -27,7 +27,7 @@ Pipeline behaviors are organized by purpose in subfolders and namespaces:
 
 **Validation** (`YuckQi.Application.Core.Behaviors.Validation`)
 
-- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error
+- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error when `TResponse` implements `IHasValidationResults`
 
 ## Dependencies
 
