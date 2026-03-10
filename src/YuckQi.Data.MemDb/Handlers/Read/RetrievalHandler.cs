@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Linq.Expressions;
 using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Filtering.Extensions;
@@ -18,6 +19,18 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
     public Task<TDomainEntity?> Get(TIdentifier identifier, TScope? scope, CancellationToken cancellationToken)
     {
         return Task.FromResult(Get(identifier, scope));
+    }
+
+    public TDomainEntity? Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope)
+    {
+        var predicate = expression.Compile();
+
+        return entities.Values.Where(t => predicate(t)).SingleOrDefault();
+    }
+
+    public Task<TDomainEntity?> Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(Get(expression, scope));
     }
 
     public TDomainEntity? Get(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)
@@ -51,6 +64,18 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
     public Task<IReadOnlyCollection<TDomainEntity>> GetList(TScope? scope, CancellationToken cancellationToken)
     {
         return Task.FromResult(GetList(scope));
+    }
+
+    public IReadOnlyCollection<TDomainEntity> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope)
+    {
+        var predicate = expression.Compile();
+
+        return [.. entities.Values.Where(t => predicate(t))];
+    }
+
+    public Task<IReadOnlyCollection<TDomainEntity>> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(GetList(expression, scope));
     }
 
     public IReadOnlyCollection<TDomainEntity> GetList(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)

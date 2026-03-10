@@ -10,7 +10,7 @@ All data operations follow a **Template Method** pattern where public methods ca
 
 **Read Handlers**
 
-- **`IRetrievalHandler<TDomainEntity, TIdentifier, TScope>`** &ndash; single-item and list retrieval by identifier or filter criteria
+- **`IRetrievalHandler<TDomainEntity, TIdentifier, TScope>`** &ndash; single-item and list retrieval by identifier, expression predicate, filter criteria, or anonymous object
 - **`ISearchHandler<TDomainEntity, TIdentifier, TScope>`** &ndash; paginated search with filter and sort criteria
 
 **Write Handlers**
