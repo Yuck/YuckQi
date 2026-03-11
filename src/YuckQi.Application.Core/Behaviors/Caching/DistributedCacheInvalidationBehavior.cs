@@ -2,7 +2,7 @@ using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
-using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
+using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 
 namespace YuckQi.Application.Core.Behaviors.Caching;
 

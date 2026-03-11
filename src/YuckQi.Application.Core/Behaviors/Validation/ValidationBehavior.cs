@@ -2,7 +2,7 @@ using System.Diagnostics;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
+using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Validation;
 using YuckQi.Domain.Validation.Extensions;
 

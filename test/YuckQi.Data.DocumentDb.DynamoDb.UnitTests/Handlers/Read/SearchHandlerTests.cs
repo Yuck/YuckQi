@@ -141,12 +141,12 @@ public class SearchHandlerTests
     {
         protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
         {
-            return Array.Empty<TDomainEntity>();
+            return [];
         }
 
         protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IReadOnlyCollection<TDomainEntity>>(Array.Empty<TDomainEntity>());
+            return Task.FromResult<IReadOnlyCollection<TDomainEntity>>([]);
         }
     }
 

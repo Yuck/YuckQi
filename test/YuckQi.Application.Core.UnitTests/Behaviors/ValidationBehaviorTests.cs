@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
+using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Validation;
 using YuckQi.Domain.Validation;
 
@@ -72,7 +72,7 @@ public class ValidationBehaviorTests
 
     public sealed class ValidatedStub : IHasValidationResults
     {
-        public IReadOnlyCollection<Result> ValidationResults { get; set; } = Array.Empty<Result>();
+        public IReadOnlyCollection<Result> ValidationResults { get; set; } = [];
     }
 
     public sealed class PassingValidator : AbstractValidator<PingRequest>

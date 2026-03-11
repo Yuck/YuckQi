@@ -4,16 +4,9 @@ using IMapper = YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces.IMapp
 
 namespace YuckQi.Extensions.Mapping.AutoMapper;
 
-public class DefaultMapper : IMapper
+public class DefaultMapper(IConfigurationProvider configuration) : IMapper
 {
-    private readonly AutoMapperIMapper _mapper;
-
-    public DefaultMapper(IConfigurationProvider configuration)
-    {
-        ArgumentNullException.ThrowIfNull(configuration);
-
-        _mapper = configuration.CreateMapper();
-    }
+    private readonly AutoMapperIMapper _mapper = configuration.CreateMapper();
 
     public Object Map(Object source, Object destination, Type sourceType, Type destinationType)
     {

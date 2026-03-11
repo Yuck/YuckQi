@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using YuckQi.Data.Filtering;
-using YuckQi.Data.Sql.EntityFramework.Handlers.Read;
 using YuckQi.Data.Sorting;
+using YuckQi.Data.Sql.EntityFramework.Handlers.Read;
 using YuckQi.Domain.ValueObjects;
-using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.EntityFramework.UnitTests.Handlers.Read;
 

@@ -1,8 +1,8 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using YuckQi.Data.Filtering;
 
-namespace YuckQi.Data.DocumentDb.DynamoDb.Extensions;
+namespace YuckQi.Data.DocumentDb.DynamoDb.Filtering.Extensions;
 
 public static class FilterOperationExtensions
 {
@@ -34,3 +34,4 @@ public static class FilterOperationExtensions
         };
     }
 }
+

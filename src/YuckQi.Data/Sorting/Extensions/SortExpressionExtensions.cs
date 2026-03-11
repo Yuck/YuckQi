@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using YuckQi.Data.Resolvers;
 using YuckQi.Data.Resolvers.Abstract.Interfaces;
 using YuckQi.Data.Sorting;

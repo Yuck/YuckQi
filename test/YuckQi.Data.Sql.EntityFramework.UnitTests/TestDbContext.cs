@@ -4,12 +4,8 @@ using YuckQi.Domain.Entities.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.EntityFramework.UnitTests;
 
-internal class TestDbContext : DbContext
+internal class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
 {
-    public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<SurLaTableRecord> SurLaTable => Set<SurLaTableRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

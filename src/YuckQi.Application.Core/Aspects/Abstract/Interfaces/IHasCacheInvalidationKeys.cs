@@ -1,4 +1,4 @@
-namespace YuckQi.Application.Core.Abstract.Aspects.Interfaces;
+namespace YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 
 public interface IHasCacheInvalidationKeys
 {

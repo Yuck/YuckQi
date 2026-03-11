@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using YuckQi.Data.Resolvers.Abstract;
 using YuckQi.Data.Resolvers.Abstract.Interfaces;
 

@@ -7,7 +7,7 @@ public static class PredicateFilterExtensions
 {
     public static IReadOnlyCollection<FilterExpression<TDomainEntity>> ToFilterExpressions<TDomainEntity>(this Expression<Func<TDomainEntity, Boolean>> predicate)
     {
-        return Collect(predicate.Body, predicate.Parameters.First()).ToList();
+        return [.. Collect(predicate.Body, predicate.Parameters.First())];
 
         static IEnumerable<FilterExpression<TDomainEntity>> Collect(Expression expression, ParameterExpression parameter)
         {

@@ -189,7 +189,7 @@ public class RetrievalHandlerTests
 
         cursor.SetupSequence(t => t.MoveNext(It.IsAny<CancellationToken>())).Returns(true).Returns(false);
         cursor.SetupSequence(t => t.MoveNextAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true).ReturnsAsync(false);
-        cursor.Setup(t => t.Current).Returns(new[] { document });
+        cursor.Setup(t => t.Current).Returns([document]);
 
         return cursor;
     }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using YuckQi.Data.Resolvers.Abstract.Interfaces;
 
 namespace YuckQi.Data.Resolvers.Extensions;

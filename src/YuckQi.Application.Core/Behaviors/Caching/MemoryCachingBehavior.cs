@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
+using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 
 namespace YuckQi.Application.Core.Behaviors.Caching;
 
