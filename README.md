@@ -8,9 +8,9 @@ A .NET solution of lightweight, composable libraries for domain modeling, data a
 
 YuckQi provides:
 
-- **Domain** — Bootstrapping and validation for a domain model (YuckQi.Domain, YuckQi.Domain.Validation).
-- **Application** — MediatR pipeline behaviors for logging and validation with FluentValidation (YuckQi.Application.Core).
-- **Data** — Handler-based data access (create, read, update, delete, search) with a scope/unit-of-work pattern and sync/async parity (YuckQi.Data).
+- **Domain** — Bootstrapping and validation for a domain model (`YuckQi.Domain`, `YuckQi.Domain.Validation`).
+- **Application** — MediatR pipeline behaviors for logging and validation with FluentValidation (`YuckQi.Application.Core`).
+- **Data** — Handler-based data access (create, read, update, delete, search) with a scope/unit-of-work pattern and sync/async parity (`YuckQi.Data`).
 - **Data implementations** — Concrete handlers for multiple backends so you can compose repositories without tying code to a single store.
 - **Mapping** — Abstractions and adapters for object-to-object mapping (AutoMapper, Mapster).
 
@@ -20,14 +20,14 @@ Handlers follow a template-method pattern: you implement provider-specific logic
 
 | Folder | Contents |
 |--------|----------|
-| **src/** | NuGet packages (net8.0). Each package may be published independently. |
-| **test/** | Unit test projects aligned to each source project. |
+| **src** | NuGet packages (net8.0). Each package may be published independently. |
+| **test** | Unit test projects aligned to each source project. |
 
 ### Source Packages
 
 | Package | NuGet | Description |
 |---------|-------|-------------|
-| **YuckQi.Application.Core** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Application.Core.svg)](https://www.nuget.org/packages/YuckQi.Application.Core) | Application bootstrapping: MediatR behaviors (logging, validation). |
+| **YuckQi.Application.Core** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Application.Core.svg)](https://www.nuget.org/packages/YuckQi.Application.Core) | MediatR-based application bootstrapping. |
 | **YuckQi.Data** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.svg)](https://www.nuget.org/packages/YuckQi.Data) | Data handlers for repository implementations. |
 | **YuckQi.Data.DocumentDb.DynamoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.DynamoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.DynamoDb) | Amazon DynamoDB. |
 | **YuckQi.Data.DocumentDb.MongoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.MongoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.MongoDb) | MongoDB. |
@@ -74,13 +74,3 @@ Each package has its own readme (in the project folder and on NuGet) with types 
 dotnet build
 dotnet test
 ```
-
-## CI
-
-GitHub Actions (`.github/workflows/ci.yml`) runs `dotnet build` and `dotnet test` on pull requests and pushes to `main`/`master`.
-
-Requires [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
-
-## Author
-
-Kevin J Lambert
