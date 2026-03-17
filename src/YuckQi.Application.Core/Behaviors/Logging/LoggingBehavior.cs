@@ -13,7 +13,7 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
 
         logger.LogInformation("Handling '{type}' started.", type);
 
-        var response = await next();
+        var response = await next(cancellationToken);
 
         logger.LogInformation("Handling '{type}' completed ({elapsed:g} elapsed).", type, stopwatch.Elapsed);
 

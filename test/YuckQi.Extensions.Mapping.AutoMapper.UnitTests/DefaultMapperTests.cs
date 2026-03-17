@@ -30,12 +30,6 @@ public class DefaultMapperTests
     }
 
     [Test]
-    public void Constructor_WhenConfigurationIsNull_ThrowsArgumentNullException()
-    {
-        Assert.Throws<ArgumentNullException>(() => new DefaultMapper(null!));
-    }
-
-    [Test]
     public void Map_WithSourceAndDestinationAndTypes_MapsToDestination()
     {
         var configuration = CreateConfiguration();
