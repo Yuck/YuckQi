@@ -5,14 +5,9 @@ using MapsterIMapper = MapsterMapper.IMapper;
 
 namespace YuckQi.Extensions.Mapping.Mapster;
 
-public class DefaultMapper : IMapper
+public class DefaultMapper(TypeAdapterConfig? configuration = null) : IMapper
 {
-    private readonly MapsterIMapper _mapper;
-
-    public DefaultMapper(TypeAdapterConfig? configuration = null)
-    {
-        _mapper = configuration is not null ? new Mapper(configuration) : new Mapper();
-    }
+    private readonly MapsterIMapper _mapper = configuration is not null ? new Mapper(configuration) : new Mapper();
 
     public Object Map(Object source, Object destination, Type sourceType, Type destinationType)
     {

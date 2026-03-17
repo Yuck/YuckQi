@@ -7,7 +7,7 @@ internal sealed class DataMapper
     private static readonly Lazy<DataMapper> DefaultInstance = new(() => new DataMapper());
 
     public static DataMapper Default => DefaultInstance.Value;
-    
+
     public TTarget? MapToTarget<TSource, TTarget>(TSource? source, IMapper? mapper)
     {
         return source switch

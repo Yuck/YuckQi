@@ -1,5 +1,6 @@
 using MongoDB.Driver;
 using YuckQi.Data.DocumentDb.MongoDb.Extensions;
+using YuckQi.Data.DocumentDb.MongoDb.Filtering.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Handlers.Read.Abstract;
 using YuckQi.Data.Sorting;

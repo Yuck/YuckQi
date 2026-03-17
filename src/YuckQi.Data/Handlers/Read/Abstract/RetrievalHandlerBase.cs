@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
+using YuckQi.Data.Filtering.Extensions;
 using YuckQi.Data.Handlers.Read.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
@@ -22,6 +24,20 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
         ArgumentNullException.ThrowIfNull(scope);
 
         return DoGet(identifier, scope, cancellationToken);
+    }
+
+    public TDomainEntity? Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope)
+    {
+        ArgumentNullException.ThrowIfNull(scope);
+
+        return Get(expression.ToFilterExpressions().ToFilterCriteria<TDomainEntity, TDomainEntity>(null), scope);
+    }
+
+    public Task<TDomainEntity?> Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(scope);
+
+        return Get(expression.ToFilterExpressions().ToFilterCriteria<TDomainEntity, TDomainEntity>(null), scope, cancellationToken);
     }
 
     public TDomainEntity? Get(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)
@@ -64,6 +80,20 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
         ArgumentNullException.ThrowIfNull(scope);
 
         return DoGetList(null, scope, cancellationToken);
+    }
+
+    public IReadOnlyCollection<TDomainEntity> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope)
+    {
+        ArgumentNullException.ThrowIfNull(scope);
+
+        return GetList(expression.ToFilterExpressions().ToFilterCriteria<TDomainEntity, TDomainEntity>(null), scope);
+    }
+
+    public Task<IReadOnlyCollection<TDomainEntity>> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(scope);
+
+        return GetList(expression.ToFilterExpressions().ToFilterCriteria<TDomainEntity, TDomainEntity>(null), scope, cancellationToken);
     }
 
     public IReadOnlyCollection<TDomainEntity> GetList(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)

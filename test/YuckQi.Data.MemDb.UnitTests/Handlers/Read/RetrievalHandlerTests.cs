@@ -258,7 +258,7 @@ public class RetrievalHandlerTests
         var scope = new Object();
 
         creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
-        
+
         var retrieved = await retriever.GetList(new { Name = "ABC" }, scope, CancellationToken.None);
 
         Assert.That(retrieved, Has.Count.EqualTo(1));

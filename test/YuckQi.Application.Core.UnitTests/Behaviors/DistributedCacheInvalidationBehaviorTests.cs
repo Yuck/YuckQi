@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using YuckQi.Application.Core.Abstract.Aspects.Interfaces;
+using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Caching;
 
 namespace YuckQi.Application.Core.UnitTests.Behaviors;

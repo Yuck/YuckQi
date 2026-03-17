@@ -1,7 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using NUnit.Framework;
-using YuckQi.Data.DocumentDb.DynamoDb.Extensions;
+using YuckQi.Data.DocumentDb.DynamoDb.Filtering.Extensions;
 using YuckQi.Data.Filtering;
 
 namespace YuckQi.Data.DocumentDb.DynamoDb.UnitTests.Extensions;

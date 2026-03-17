@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using YuckQi.Data.Filtering;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 
@@ -8,6 +9,10 @@ public interface IRetrievalHandler<TDomainEntity, in TIdentifier, in TScope> whe
     TDomainEntity? Get(TIdentifier identifier, TScope? scope);
 
     Task<TDomainEntity?> Get(TIdentifier identifier, TScope? scope, CancellationToken cancellationToken);
+
+    TDomainEntity? Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope);
+
+    Task<TDomainEntity?> Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken);
 
     TDomainEntity? Get(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope);
 
@@ -20,6 +25,10 @@ public interface IRetrievalHandler<TDomainEntity, in TIdentifier, in TScope> whe
     IReadOnlyCollection<TDomainEntity> GetList(TScope? scope);
 
     Task<IReadOnlyCollection<TDomainEntity>> GetList(TScope? scope, CancellationToken cancellationToken);
+
+    IReadOnlyCollection<TDomainEntity> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope);
+
+    Task<IReadOnlyCollection<TDomainEntity>> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken);
 
     IReadOnlyCollection<TDomainEntity> GetList(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope);
 

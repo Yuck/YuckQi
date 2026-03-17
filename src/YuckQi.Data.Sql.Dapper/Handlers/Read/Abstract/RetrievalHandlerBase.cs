@@ -2,7 +2,7 @@ using System.Data;
 using Dapper;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Sql.Dapper.Abstract.Interfaces;
-using YuckQi.Data.Sql.Dapper.Extensions;
+using YuckQi.Data.Sql.Dapper.Filtering.Extensions;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
