@@ -12,7 +12,7 @@ YuckQi provides:
 - **Application** — MediatR pipeline behaviors for logging and validation with FluentValidation (`YuckQi.Application.Core`).
 - **Data** — Handler-based data access (create, read, update, delete, search) with a scope/unit-of-work pattern and sync/async parity (`YuckQi.Data`).
 - **Data implementations** — Concrete handlers for multiple backends so you can compose repositories without tying code to a single store.
-- **Mapping** — Abstractions and adapters for object-to-object mapping (AutoMapper, Mapster).
+- **Mapping** — Abstractions and adapters for object-to-object mapping (Mapster).
 
 Handlers follow a template-method pattern: you implement provider-specific logic (e.g., Dapper, Entity Framework, MongoDB), and the core library handles options, filtering, sorting, and optional mapping.
 
@@ -41,7 +41,6 @@ Handlers follow a template-method pattern: you implement provider-specific logic
 | **YuckQi.Domain** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Domain.svg)](https://www.nuget.org/packages/YuckQi.Domain) | Domain model bootstrapping. |
 | **YuckQi.Domain.Validation** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Domain.Validation.svg)](https://www.nuget.org/packages/YuckQi.Domain.Validation) | Domain validation (FluentValidation). |
 | **YuckQi.Extensions.Mapping.Abstractions** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Extensions.Mapping.Abstractions.svg)](https://www.nuget.org/packages/YuckQi.Extensions.Mapping.Abstractions) | Mapping abstractions (`IMapper`). |
-| **YuckQi.Extensions.Mapping.AutoMapper** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Extensions.Mapping.AutoMapper.svg)](https://www.nuget.org/packages/YuckQi.Extensions.Mapping.AutoMapper) | AutoMapper implementation. |
 | **YuckQi.Extensions.Mapping.Mapster** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Extensions.Mapping.Mapster.svg)](https://www.nuget.org/packages/YuckQi.Extensions.Mapping.Mapster) | Mapster implementation. |
 
 ## Getting Started

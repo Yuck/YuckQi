@@ -3,7 +3,6 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="AutoMapper" Version="16.1.1" />
     <PackageVersion Include="AWSSDK.DynamoDBv2" Version="4.0.15.2" />
     <PackageVersion Include="coverlet.collector" Version="8.0.1" />
     <PackageVersion Include="Dapper.SimpleCRUD" Version="2.3.0" />

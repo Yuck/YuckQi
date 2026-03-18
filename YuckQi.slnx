@@ -14,7 +14,6 @@
     <Project Path="src/YuckQi.Domain.Validation/YuckQi.Domain.Validation.csproj" />
     <Project Path="src/YuckQi.Domain/YuckQi.Domain.csproj" />
     <Project Path="src/YuckQi.Extensions.Mapping.Abstractions/YuckQi.Extensions.Mapping.Abstractions.csproj" />
-    <Project Path="src/YuckQi.Extensions.Mapping.AutoMapper/YuckQi.Extensions.Mapping.AutoMapper.csproj" />
     <Project Path="src/YuckQi.Extensions.Mapping.Mapster/YuckQi.Extensions.Mapping.Mapster.csproj" />
   </Folder>
   <Folder Name="/test/">
@@ -31,7 +30,6 @@
     <Project Path="test/YuckQi.Data.UnitTests/YuckQi.Data.UnitTests.csproj" />
     <Project Path="test/YuckQi.Domain.UnitTests/YuckQi.Domain.UnitTests.csproj" />
     <Project Path="test/YuckQi.Domain.Validation.UnitTests/YuckQi.Domain.Validation.UnitTests.csproj" />
-    <Project Path="test/YuckQi.Extensions.Mapping.AutoMapper.UnitTests/YuckQi.Extensions.Mapping.AutoMapper.UnitTests.csproj" />
     <Project Path="test/YuckQi.Extensions.Mapping.Mapster.UnitTests/YuckQi.Extensions.Mapping.Mapster.UnitTests.csproj" />
   </Folder>
 </Solution>
