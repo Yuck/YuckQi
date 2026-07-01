@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>An implementation of YuckQi.Data for PostgreSQL databases using Dapper and SimpleCRUD.</Description>
+    <Product>YuckQi.Data</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YuckQi.Data.Sql.Dapper\YuckQi.Data.Sql.Dapper.csproj" />
+  </ItemGroup>
+
+</Project>
