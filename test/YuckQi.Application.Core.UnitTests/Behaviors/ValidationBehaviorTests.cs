@@ -1,5 +1,5 @@
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -20,11 +20,11 @@ public class ValidationBehaviorTests
         var request = new PingRequest();
         var expected = new ValidatedStub();
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.SameAs(expected));
 
-        Task<ValidatedStub> Next() => Task.FromResult(expected);
+        ValueTask<ValidatedStub> Next() => new(expected);
     }
 
     [Test]
@@ -36,11 +36,11 @@ public class ValidationBehaviorTests
         var request = new PingRequest { Value = "ok" };
         var expected = new ValidatedStub();
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.SameAs(expected));
 
-        Task<ValidatedStub> Next() => Task.FromResult(expected);
+        ValueTask<ValidatedStub> Next() => new(expected);
     }
 
     [Test]
@@ -52,16 +52,16 @@ public class ValidationBehaviorTests
         var request = new PingRequest { Value = "x" };
         var next = false;
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(next, Is.False);
         Assert.That(result.ValidationResults, Is.Not.Empty);
 
-        Task<ValidatedStub> Next()
+        ValueTask<ValidatedStub> Next()
         {
             next = true;
 
-            return Task.FromResult(new ValidatedStub());
+            return new ValueTask<ValidatedStub>(new ValidatedStub());
         }
     }
 

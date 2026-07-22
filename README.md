@@ -9,7 +9,7 @@ A .NET solution of lightweight, composable libraries for domain modeling, data a
 YuckQi provides:
 
 - **Domain** — Bootstrapping and validation for a domain model (`YuckQi.Domain`, `YuckQi.Domain.Validation`).
-- **Application** — MediatR pipeline behaviors for logging and validation with FluentValidation (`YuckQi.Application.Core`).
+- **Application** — Mediator pipeline behaviors for logging and validation with FluentValidation (`YuckQi.Application.Core`).
 - **Data** — Handler-based data access (create, read, update, delete, search) with a scope/unit-of-work pattern and sync/async parity (`YuckQi.Data`).
 - **Data implementations** — Concrete handlers for multiple backends so you can compose repositories without tying code to a single store.
 - **Mapping** — Abstractions and adapters for object-to-object mapping (Mapster).
@@ -27,7 +27,7 @@ Handlers follow a template-method pattern: you implement provider-specific logic
 
 | Package | NuGet | Description |
 |---------|-------|-------------|
-| **YuckQi.Application.Core** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Application.Core.svg)](https://www.nuget.org/packages/YuckQi.Application.Core) | MediatR-based application bootstrapping. |
+| **YuckQi.Application.Core** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Application.Core.svg)](https://www.nuget.org/packages/YuckQi.Application.Core) | Mediator-based application bootstrapping. |
 | **YuckQi.Data** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.svg)](https://www.nuget.org/packages/YuckQi.Data) | Data handlers for repository implementations. |
 | **YuckQi.Data.DocumentDb.DynamoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.DynamoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.DynamoDb) | Amazon DynamoDB. |
 | **YuckQi.Data.DocumentDb.MongoDb** | [![NuGet](https://img.shields.io/nuget/v/YuckQi.Data.DocumentDb.MongoDb.svg)](https://www.nuget.org/packages/YuckQi.Data.DocumentDb.MongoDb) | MongoDB. |
@@ -59,7 +59,7 @@ dotnet add package YuckQi.Domain
 dotnet add package YuckQi.Domain.Validation
 ```
 
-For application pipeline behaviors (MediatR + FluentValidation):
+For application pipeline behaviors (Mediator + FluentValidation):
 
 ```bash
 dotnet add package YuckQi.Application.Core

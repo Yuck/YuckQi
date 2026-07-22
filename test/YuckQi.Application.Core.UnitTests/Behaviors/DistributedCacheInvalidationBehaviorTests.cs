@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -21,7 +21,7 @@ public class DistributedCacheInvalidationBehaviorTests
         cache.Setup(t => t.RemoveAsync("key1", It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         cache.Setup(t => t.RemoveAsync("key2", It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-        var result = await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(result.Value, Is.EqualTo(99));
 
@@ -37,7 +37,7 @@ public class DistributedCacheInvalidationBehaviorTests
         var behavior = new DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(cache.Object, logger.Object);
         var response = new InvalidationPingResponse(3, null!);
 
-        var result = await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(result.Value, Is.EqualTo(3));
 
@@ -52,7 +52,7 @@ public class DistributedCacheInvalidationBehaviorTests
         var behavior = new DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(cache.Object, logger.Object);
         var response = new InvalidationPingResponse(0, new HashSet<String>());
 
-        var result = await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(result.Value, Is.EqualTo(0));
 
@@ -68,7 +68,7 @@ public class DistributedCacheInvalidationBehaviorTests
         var behavior = new DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(cache.Object, logger.Object);
         var response = new InvalidationPingResponse(0, new HashSet<String> { " ", "valid", "" });
 
-        await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         cache.Verify(t => t.RemoveAsync("valid", It.IsAny<CancellationToken>()), Times.Once);
         cache.Verify(t => t.RemoveAsync(It.IsAny<String>(), It.IsAny<CancellationToken>()), Times.Once);

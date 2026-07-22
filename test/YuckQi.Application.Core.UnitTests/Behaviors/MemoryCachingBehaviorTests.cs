@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,16 +24,16 @@ public class MemoryCachingBehaviorTests
 
         memoryCache.Set(request.CacheKey, expected);
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.EqualTo(expected));
         Assert.That(next, Is.False);
 
-        Task<Int32> Next()
+        ValueTask<Int32> Next()
         {
             next = true;
 
-            return Task.FromResult(0);
+            return new ValueTask<Int32>(0);
         }
     }
 
@@ -47,14 +47,14 @@ public class MemoryCachingBehaviorTests
         var request = new CacheablePingRequest();
         var expected = 7;
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.EqualTo(expected));
 
         Assert.That(memoryCache.TryGetValue(request.CacheKey, out var cached));
         Assert.That(cached, Is.EqualTo(expected));
 
-        Task<Int32> Next() => Task.FromResult(expected);
+        ValueTask<Int32> Next() => new(expected);
     }
 
     public sealed class CacheablePingRequest : IRequest<Int32>, IHasCacheKey

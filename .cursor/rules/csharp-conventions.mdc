@@ -78,4 +78,4 @@ Example: after adding new caching behaviors with no breaking changes, bump the r
 
 # NuGet / Dependencies
 
-- **MediatR**: Use only a 12.x version (e.g. `12.5.0`). Do **not** upgrade to MediatR 13.x or 14.x; those lines require a paid license. Pin the version in `Directory.Packages.props` and keep it within the 12.x range when updating.
+- **Mediator**: Use [Mediator](https://github.com/martinothamar/mediator) (`Mediator.Abstractions` / `Mediator.SourceGenerator`) instead of MediatR. Pin the version in `Directory.Packages.props`. Library projects that define messages, handlers, or pipeline behaviors reference `Mediator.Abstractions`; host/executable projects also reference `Mediator.SourceGenerator`.
