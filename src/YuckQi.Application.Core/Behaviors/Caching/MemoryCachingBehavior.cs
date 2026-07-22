@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,7 +11,7 @@ public record MemoryCachingBehaviorOptions(TimeSpan? CacheDuration);
 
 public class MemoryCachingBehavior<TRequest, TResponse>(IMemoryCache cache, IOptions<MemoryCachingBehaviorOptions> configuration, ILogger<MemoryCachingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IHasCacheKey
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TRequest request, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
         var type = typeof(TRequest).Name;
@@ -33,7 +33,7 @@ public class MemoryCachingBehavior<TRequest, TResponse>(IMemoryCache cache, IOpt
 
         logger.LogInformation("Memory cache miss for '{type}' with key '{key}'.", type, key);
 
-        var response = await next(cancellationToken);
+        var response = await next(request, cancellationToken);
 
         var options = new MemoryCacheEntryOptions();
         var cacheDuration = configuration.Value.CacheDuration;

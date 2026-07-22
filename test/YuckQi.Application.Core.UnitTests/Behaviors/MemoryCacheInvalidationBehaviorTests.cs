@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -21,7 +21,7 @@ public class MemoryCacheInvalidationBehaviorTests
         memoryCache.Set("key1", 1);
         memoryCache.Set("key2", 2);
 
-        var result = await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(result.Value, Is.EqualTo(99));
         Assert.That(memoryCache.TryGetValue("key1", out _), Is.False);
@@ -36,7 +36,7 @@ public class MemoryCacheInvalidationBehaviorTests
         var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, logger.Object);
         var response = new InvalidationPingResponse(3, null!);
 
-        var result = await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(result.Value, Is.EqualTo(3));
     }
@@ -51,7 +51,7 @@ public class MemoryCacheInvalidationBehaviorTests
 
         memoryCache.Set("other", 1);
 
-        var result = await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(result.Value, Is.EqualTo(0));
         Assert.That(memoryCache.TryGetValue("other", out var cached) && cached is Int32 i && i == 1);
@@ -67,7 +67,7 @@ public class MemoryCacheInvalidationBehaviorTests
 
         memoryCache.Set("valid", 1);
 
-        await behavior.Handle(new InvalidationPingRequest(), t => Task.FromResult(response), CancellationToken.None);
+        await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
         Assert.That(memoryCache.TryGetValue("valid", out _), Is.False);
     }

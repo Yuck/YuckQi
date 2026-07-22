@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Validation;
@@ -10,7 +10,7 @@ namespace YuckQi.Application.Core.Behaviors.Validation;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<AbstractValidator<TRequest>> validators, ILogger<ValidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : IHasValidationResults, new()
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TRequest request, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
         var type = typeof(TRequest).Name;
@@ -34,6 +34,6 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<AbstractValidat
 
         logger.LogInformation("Validation of '{type}' completed ({elapsed:g} elapsed).", type, stopwatch.Elapsed);
 
-        return await next(cancellationToken);
+        return await next(request, cancellationToken);
     }
 }

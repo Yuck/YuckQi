@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,16 +27,16 @@ public class DistributedCachingBehaviorTests
 
         cache.Setup(t => t.GetAsync(request.CacheKey, It.IsAny<CancellationToken>())).ReturnsAsync(cachedBytes);
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.EqualTo(expected));
         Assert.That(next, Is.False);
 
-        Task<Int32> Next()
+        ValueTask<Int32> Next()
         {
             next = true;
 
-            return Task.FromResult(0);
+            return new ValueTask<Int32>(0);
         }
     }
 
@@ -52,13 +52,13 @@ public class DistributedCachingBehaviorTests
 
         cache.Setup(t => t.GetAsync(request.CacheKey, It.IsAny<CancellationToken>())).ReturnsAsync((Byte[]?) null);
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.EqualTo(expected));
 
         cache.Verify(t => t.SetAsync(request.CacheKey, It.Is<Byte[]>(u => Encoding.UTF8.GetString(u).Contains(expected.ToString(), StringComparison.Ordinal)), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        Task<Int32> Next() => Task.FromResult(expected);
+        ValueTask<Int32> Next() => new(expected);
     }
 
     public sealed class CacheablePingRequest : IRequest<Int32>, IHasCacheKey

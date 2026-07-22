@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 
 namespace YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 

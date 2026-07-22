@@ -1,14 +1,14 @@
 # YuckQi.Application.Core
 
-A .NET library for bootstrapping a domain application project. Provides MediatR pipeline behaviors for logging and validation with FluentValidation integration.
+A .NET library for bootstrapping a domain application project. Provides Mediator pipeline behaviors for logging and validation with FluentValidation integration.
 
 ## Key Types
 
 ### Abstractions
 
-- **`IHasCacheInvalidationKeys`** &ndash; aspect marker for MediatR *response* types that trigger cache invalidation; exposes `CacheKeys` (`IReadOnlySet<String>`) to remove after the handler runs
-- **`IHasCacheKey`** &ndash; aspect marker for cacheable MediatR requests with cache key and expiration
-- **`IHasValidationResults`** &ndash; aspect marker for MediatR *response* types that carry validation results; exposes `ValidationResults` (`IReadOnlyCollection<Result>`) for validation behavior
+- **`IHasCacheInvalidationKeys`** &ndash; aspect marker for Mediator *response* types that trigger cache invalidation; exposes `CacheKeys` (`IReadOnlySet<String>`) to remove after the handler runs
+- **`IHasCacheKey`** &ndash; aspect marker for cacheable Mediator requests with cache key and expiration
+- **`IHasValidationResults`** &ndash; aspect marker for Mediator *response* types that carry validation results; exposes `ValidationResults` (`IReadOnlyCollection<Result>`) for validation behavior
 
 ### Behaviors
 
@@ -32,7 +32,7 @@ Pipeline behaviors are organized by purpose in subfolders and namespaces:
 ## Dependencies
 
 - [FluentValidation](https://www.nuget.org/packages/FluentValidation)
-- [MediatR](https://www.nuget.org/packages/MediatR)
+- [Mediator.Abstractions](https://www.nuget.org/packages/Mediator.Abstractions)
 - [Microsoft.Extensions.Caching.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Abstractions)
 - [Microsoft.Extensions.Caching.Memory](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Memory)
 - [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions)

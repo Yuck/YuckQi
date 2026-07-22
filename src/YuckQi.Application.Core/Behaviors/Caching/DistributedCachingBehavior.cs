@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,7 +12,7 @@ public record DistributedCachingBehaviorOptions(TimeSpan? CacheDuration);
 
 public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache cache, IOptions<DistributedCachingBehaviorOptions> configuration, ILogger<DistributedCachingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, IHasCacheKey
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TRequest request, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {
         var stopwatch = Stopwatch.StartNew();
         var type = typeof(TRequest).Name;
@@ -39,7 +39,7 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
 
         logger.LogInformation("Distributed cache miss for '{type}' with key '{key}'.", type, key);
 
-        var response = await next(cancellationToken);
+        var response = await next(request, cancellationToken);
 
         var options = new DistributedCacheEntryOptions();
         var cacheDuration = configuration.Value.CacheDuration;

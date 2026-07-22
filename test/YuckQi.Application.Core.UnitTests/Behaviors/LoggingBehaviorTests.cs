@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -16,11 +16,11 @@ public class LoggingBehaviorTests
         var behavior = new LoggingBehavior<Ping, Int32>(logger.Object);
         var request = new Ping();
 
-        var result = await behavior.Handle(request, t => Next(), CancellationToken.None);
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         Assert.That(result, Is.EqualTo(expected));
 
-        Task<Int32> Next() => Task.FromResult(expected);
+        ValueTask<Int32> Next() => new(expected);
     }
 
     [Test]
@@ -30,12 +30,12 @@ public class LoggingBehaviorTests
         var behavior = new LoggingBehavior<Ping, Int32>(logger.Object);
         var request = new Ping();
 
-        await behavior.Handle(request, t => Next(), CancellationToken.None);
+        await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
         logger.Verify(t => t.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((t, u) => t.ToString()!.Contains("started", StringComparison.OrdinalIgnoreCase)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, String>>()), Times.Once);
         logger.Verify(t => t.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((t, u) => t.ToString()!.Contains("completed", StringComparison.OrdinalIgnoreCase)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, String>>()), Times.Once);
 
-        Task<Int32> Next() => Task.FromResult(0);
+        ValueTask<Int32> Next() => new(0);
     }
 
     public sealed class Ping : IRequest<Int32>;
