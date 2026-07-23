@@ -20,7 +20,7 @@ Handlers follow a template-method pattern: you implement provider-specific logic
 
 | Folder | Contents |
 |--------|----------|
-| **src** | NuGet packages (net8.0). Each package may be published independently. |
+| **src** | NuGet packages (net10.0). Each package may be published independently. |
 | **test** | Unit test projects aligned to each source project. |
 
 ### Source Packages
