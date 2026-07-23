@@ -8,7 +8,7 @@ using YuckQi.Domain.Validation.Extensions;
 
 namespace YuckQi.Application.Core.Behaviors.Validation;
 
-public class ValidationBehavior<TRequest, TResponse>(IEnumerable<AbstractValidator<TRequest>> validators, ILogger<ValidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : IHasValidationResults, new()
+public class ValidationBehavior<TRequest, TResponse>(IEnumerable<AbstractValidator<TRequest>> validators, ILogger<ValidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage where TResponse : IHasValidationResults, new()
 {
     public async ValueTask<TResponse> Handle(TRequest request, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {

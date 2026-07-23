@@ -7,7 +7,7 @@ A .NET library for bootstrapping a domain application project. Provides Mediator
 ### Abstractions
 
 - **`IHasCacheInvalidationKeys`** &ndash; aspect marker for Mediator *response* types that trigger cache invalidation; exposes `CacheKeys` (`IReadOnlySet<String>`) to remove after the handler runs
-- **`IHasCacheKey`** &ndash; aspect marker for cacheable Mediator requests with cache key and expiration
+- **`IHasCacheKey`** &ndash; aspect marker for cacheable Mediator messages (`IMessage`) with a cache key
 - **`IHasValidationResults`** &ndash; aspect marker for Mediator *response* types that carry validation results; exposes `ValidationResults` (`IReadOnlyCollection<Result>`) for validation behavior
 
 ### Behaviors
@@ -23,7 +23,7 @@ Pipeline behaviors are organized by purpose in subfolders and namespaces:
 
 **Logging** (`YuckQi.Application.Core.Behaviors.Logging`)
 
-- **`LoggingBehavior<TRequest, TResponse>`** &ndash; Logs request handling start and completion
+- **`LoggingBehavior<TRequest, TResponse>`** &ndash; Logs message handling start and completion
 
 **Validation** (`YuckQi.Application.Core.Behaviors.Validation`)
 
