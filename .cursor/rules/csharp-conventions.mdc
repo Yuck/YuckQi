@@ -70,7 +70,7 @@ When creating or editing `.cs` files, apply every section below. Do not rely on 
 
 NuGet package version is defined in `src/Directory.Build.props` as `<Version>`. When updating the version:
 
-- **Major**: Matches the .NET SDK version targeted (e.g. `8` for `net8.0`). Change when upgrading the target framework.
+- **Major**: Matches the .NET SDK version targeted (e.g. `10` for `net10.0`). Change when upgrading the target framework.
 - **Minor**: Increment only when there are **breaking changes** (removed or changed public API, changed behavior that breaks existing callers).
 - **Revision** (third segment): Increment for all other releases—new features, bug fixes, refactors, and any non-breaking changes.
 
