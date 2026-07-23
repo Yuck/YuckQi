@@ -6,7 +6,7 @@ using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 
 namespace YuckQi.Application.Core.Behaviors.Caching;
 
-public class MemoryCacheInvalidationBehavior<TRequest, TResponse>(IMemoryCache cache, ILogger<MemoryCacheInvalidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : IHasCacheInvalidationKeys
+public class MemoryCacheInvalidationBehavior<TRequest, TResponse>(IMemoryCache cache, ILogger<MemoryCacheInvalidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage where TResponse : IHasCacheInvalidationKeys
 {
     public async ValueTask<TResponse> Handle(TRequest request, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {
