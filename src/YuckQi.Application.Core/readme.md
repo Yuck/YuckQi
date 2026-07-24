@@ -27,7 +27,8 @@ Pipeline behaviors are organized by purpose in subfolders and namespaces:
 
 **Validation** (`YuckQi.Application.Core.Behaviors.Validation`)
 
-- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error when `TResponse` implements `IHasValidationResults`
+- **`ValidationResponse`** / **`ValidationResponse<T>`** &ndash; recommended Mediator `TResponse` for use with `ValidationBehavior`. Implements `IHasValidationResults`. On validation failure the behavior returns `new ValidationResponse` / `new ValidationResponse<T> { ValidationResults = … }` with `Value` left null; on success handlers return the envelope with `Value` set. Keep payload/`T` free of validation concerns (and free of the `new()` constraint), so `required` members on payloads remain valid.
+- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error when `TResponse` implements `IHasValidationResults` (prefer `ValidationResponse` / `ValidationResponse<T>` as `TResponse`)
 
 ## Dependencies
 
