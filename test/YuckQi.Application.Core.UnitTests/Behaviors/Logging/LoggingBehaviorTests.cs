@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using YuckQi.Application.Core.Behaviors.Logging;
 
-namespace YuckQi.Application.Core.UnitTests.Behaviors;
+namespace YuckQi.Application.Core.UnitTests.Behaviors.Logging;
 
 public class LoggingBehaviorTests
 {

@@ -3,10 +3,11 @@ using Mediator;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
+using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Abstract.Interfaces;
 
 namespace YuckQi.Application.Core.Behaviors.Caching;
 
-public class DistributedCacheInvalidationBehavior<TRequest, TResponse>(IDistributedCache cache, ILogger<DistributedCacheInvalidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage where TResponse : IHasCacheInvalidationKeys
+public class DistributedCacheInvalidationBehavior<TRequest, TResponse>(IDistributedCache cache, ICacheDependencyGraph dependencyGraph, ILogger<DistributedCacheInvalidationBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage where TResponse : IHasCacheInvalidationKeys
 {
     public async ValueTask<TResponse> Handle(TRequest request, MessageHandlerDelegate<TRequest, TResponse> next, CancellationToken cancellationToken)
     {
@@ -17,8 +18,9 @@ public class DistributedCacheInvalidationBehavior<TRequest, TResponse>(IDistribu
         if (keys is null)
             return response;
 
+        var expanded = dependencyGraph.GetExpandedCacheKeys(keys);
         var type = typeof(TResponse).Name;
-        foreach (var key in keys)
+        foreach (var key in expanded)
         {
             if (String.IsNullOrWhiteSpace(key))
                 continue;

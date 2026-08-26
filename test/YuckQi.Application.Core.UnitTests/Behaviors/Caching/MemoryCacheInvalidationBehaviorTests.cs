@@ -5,8 +5,10 @@ using Moq;
 using NUnit.Framework;
 using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Caching;
+using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph;
+using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Factories;
 
-namespace YuckQi.Application.Core.UnitTests.Behaviors;
+namespace YuckQi.Application.Core.UnitTests.Behaviors.Caching;
 
 public class MemoryCacheInvalidationBehaviorTests
 {
@@ -15,8 +17,8 @@ public class MemoryCacheInvalidationBehaviorTests
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
         var logger = new Mock<ILogger<MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
-        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, logger.Object);
-        var response = new InvalidationPingResponse(99, new HashSet<String> { "key1", "key2" });
+        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, CacheDependencyGraph.Empty, logger.Object);
+        var response = new InvalidationPingResponse(99, new HashSet<CacheKey> { "key1", "key2" });
 
         memoryCache.Set("key1", 1);
         memoryCache.Set("key2", 2);
@@ -33,7 +35,7 @@ public class MemoryCacheInvalidationBehaviorTests
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
         var logger = new Mock<ILogger<MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
-        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, logger.Object);
+        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, CacheDependencyGraph.Empty, logger.Object);
         var response = new InvalidationPingResponse(3, null!);
 
         var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
@@ -46,8 +48,8 @@ public class MemoryCacheInvalidationBehaviorTests
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
         var logger = new Mock<ILogger<MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
-        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, logger.Object);
-        var response = new InvalidationPingResponse(0, new HashSet<String>());
+        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, CacheDependencyGraph.Empty, logger.Object);
+        var response = new InvalidationPingResponse(0, new HashSet<CacheKey>());
 
         memoryCache.Set("other", 1);
 
@@ -58,24 +60,33 @@ public class MemoryCacheInvalidationBehaviorTests
     }
 
     [Test]
-    public async Task Handle_WhenKeyNullOrWhiteSpace_SkipsItAndRemovesOthers()
+    public async Task Handle_WhenDependencyGraphConfigured_RemovesExpandedKeys()
     {
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
         var logger = new Mock<ILogger<MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
-        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, logger.Object);
-        var response = new InvalidationPingResponse(0, new HashSet<String> { " ", "valid", "" });
+        var graph = CacheDependencyGraph.Create(t => t.When("order", u => u.InvalidatesGlobal("order-list")
+                                                                           .InvalidatesFromParameter("customer-summary", "customer")));
+        var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, graph, logger.Object);
+        var seed = CacheKeyFactory.Create("order", 42, ("customer", 7));
+        var response = new InvalidationPingResponse(1, new HashSet<CacheKey> { seed });
 
-        memoryCache.Set("valid", 1);
+        memoryCache.Set((String) seed, 1);
+        memoryCache.Set("order-list", 2);
+        memoryCache.Set("customer-summary:7", 3);
+        memoryCache.Set("untouched", 4);
 
         await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
-        Assert.That(memoryCache.TryGetValue("valid", out _), Is.False);
+        Assert.That(memoryCache.TryGetValue((String) seed, out _), Is.False);
+        Assert.That(memoryCache.TryGetValue("order-list", out _), Is.False);
+        Assert.That(memoryCache.TryGetValue("customer-summary:7", out _), Is.False);
+        Assert.That(memoryCache.TryGetValue("untouched", out var cached) && cached is Int32 i && i == 4);
     }
 
     public sealed class InvalidationPingRequest : IRequest<InvalidationPingResponse>;
 
-    public sealed record InvalidationPingResponse(Int32 Value, IReadOnlySet<String>? CacheKeys) : IHasCacheInvalidationKeys
+    public sealed record InvalidationPingResponse(Int32 Value, IReadOnlySet<CacheKey>? CacheKeys) : IHasCacheInvalidationKeys
     {
-        IReadOnlySet<String> IHasCacheInvalidationKeys.CacheKeys => CacheKeys ?? new HashSet<String>();
+        IReadOnlySet<CacheKey> IHasCacheInvalidationKeys.CacheKeys => CacheKeys ?? new HashSet<CacheKey>();
     }
 }

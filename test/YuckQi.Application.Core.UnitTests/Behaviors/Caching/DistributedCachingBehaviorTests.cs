@@ -9,7 +9,7 @@ using NUnit.Framework;
 using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Caching;
 
-namespace YuckQi.Application.Core.UnitTests.Behaviors;
+namespace YuckQi.Application.Core.UnitTests.Behaviors.Caching;
 
 public class DistributedCachingBehaviorTests
 {
@@ -63,6 +63,6 @@ public class DistributedCachingBehaviorTests
 
     public sealed class CacheablePingRequest : IRequest<Int32>, IHasCacheKey
     {
-        public String CacheKey { get; set; } = "ping";
+        public CacheKey CacheKey { get; set; } = "ping";
     }
 }
