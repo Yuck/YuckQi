@@ -9,7 +9,7 @@ public sealed class CacheDependencyGraphBuilder
 
     public ICacheDependencyGraph Build()
     {
-        var dependencies = _dependencies.ToDictionary(t => t.Key, t => (IReadOnlyList<Func<CacheKeyContext, IEnumerable<CacheKey>>>) t.Value.AsReadOnly(), StringComparer.Ordinal);
+        var dependencies = _dependencies.ToDictionary(t => t.Key, t => (IReadOnlyList<Func<CacheKeyContext, IEnumerable<CacheKey>>>) t.Value.ToArray(), StringComparer.Ordinal);
 
         return new CacheDependencyGraph(dependencies);
     }

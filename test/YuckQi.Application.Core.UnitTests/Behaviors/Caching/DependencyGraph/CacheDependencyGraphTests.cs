@@ -1,12 +1,33 @@
 using NUnit.Framework;
 using YuckQi.Application.Core.Behaviors.Caching;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph;
+using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Builders;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Factories;
 
 namespace YuckQi.Application.Core.UnitTests.Behaviors.Caching.DependencyGraph;
 
 public class CacheDependencyGraphTests
 {
+    [Test]
+    public void Build_SnapshotsDependencies_SoLaterBuilderChangesDoNotAffectGraph()
+    {
+        var builder = new CacheDependencyGraphBuilder();
+
+        builder.When("order", t => t.Invalidates("order-detail"));
+
+        var graph = builder.Build();
+
+        builder.When("order", t => t.InvalidatesGlobal("order-list"));
+
+        var expanded = graph.GetExpandedCacheKeys([CacheKeyFactory.Create("order", 42)]);
+
+        Assert.That(expanded.Select(t => (String) t), Is.EquivalentTo(new[]
+        {
+            "order:42",
+            "order-detail:42"
+        }));
+    }
+
     [Test]
     public void GetExpandedCacheKeys_WhenEmptyGraph_ReturnsKeysOnly()
     {
