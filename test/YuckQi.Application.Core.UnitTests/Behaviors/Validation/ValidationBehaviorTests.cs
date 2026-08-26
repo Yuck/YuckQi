@@ -7,7 +7,7 @@ using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Validation;
 using YuckQi.Domain.Validation;
 
-namespace YuckQi.Application.Core.UnitTests.Behaviors;
+namespace YuckQi.Application.Core.UnitTests.Behaviors.Validation;
 
 public class ValidationBehaviorTests
 {

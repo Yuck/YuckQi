@@ -7,7 +7,7 @@ using NUnit.Framework;
 using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Caching;
 
-namespace YuckQi.Application.Core.UnitTests.Behaviors;
+namespace YuckQi.Application.Core.UnitTests.Behaviors.Caching;
 
 public class MemoryCachingBehaviorTests
 {
@@ -22,7 +22,7 @@ public class MemoryCachingBehaviorTests
         var expected = 42;
         var next = false;
 
-        memoryCache.Set(request.CacheKey, expected);
+        memoryCache.Set((String) request.CacheKey, expected);
 
         var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
@@ -51,7 +51,7 @@ public class MemoryCachingBehaviorTests
 
         Assert.That(result, Is.EqualTo(expected));
 
-        Assert.That(memoryCache.TryGetValue(request.CacheKey, out var cached));
+        Assert.That(memoryCache.TryGetValue((String) request.CacheKey, out var cached));
         Assert.That(cached, Is.EqualTo(expected));
 
         ValueTask<Int32> Next() => new(expected);
@@ -59,6 +59,6 @@ public class MemoryCachingBehaviorTests
 
     public sealed class CacheablePingRequest : IRequest<Int32>, IHasCacheKey
     {
-        public String CacheKey { get; set; } = "ping";
+        public CacheKey CacheKey { get; set; } = "ping";
     }
 }

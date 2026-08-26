@@ -15,7 +15,7 @@ public class MemoryCachingBehavior<TRequest, TResponse>(IMemoryCache cache, IOpt
     {
         var stopwatch = Stopwatch.StartNew();
         var type = typeof(TRequest).Name;
-        var key = request.CacheKey;
+        var key = (String) request.CacheKey;
 
         try
         {

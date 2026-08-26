@@ -1,8 +1,9 @@
 using Mediator;
+using YuckQi.Application.Core.Behaviors.Caching;
 
 namespace YuckQi.Application.Core.Aspects.Abstract.Interfaces;
 
 public interface IHasCacheKey : IMessage
 {
-    String CacheKey { get; }
+    CacheKey CacheKey { get; }
 }
