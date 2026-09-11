@@ -6,8 +6,8 @@ A .NET library for bootstrapping a domain model project. Provides base entity ty
 
 ### Entities
 
-- **`IDomainEntity<TIdentifier>`** &ndash; interface for entities with a typed identifier
-- **`DomainEntityBase<TIdentifier>`** &ndash; abstract record implementing `IDomainEntity` with a required `Identifier` property
+- **`IDomainEntity<TIdentifier>`** &ndash; interface for entities with an optional typed identifier
+- **`DomainEntityBase<TIdentifier>`** &ndash; abstract record implementing `IDomainEntity` with an optional `Identifier` property
 - **`TypeEntityBase<TIdentifier>`** &ndash; abstract record for lookup/type entities with `Name` and optional `ShortName`
 
 ### Value Objects
