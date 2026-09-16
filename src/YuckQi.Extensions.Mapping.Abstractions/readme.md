@@ -4,7 +4,7 @@ Mapping abstractions for an object-to-object mapper. Defines the `IMapper` inter
 
 ## Key Types
 
-- **`IMapper`** &ndash; interface with generic and non-generic overloads for mapping between object types
+- **`IMapper`** &ndash; interface with generic and non-generic overloads for mapping between object types; null sources short-circuit to null, while destination-bearing overloads require a non-null destination
 
 ## Installation
 
