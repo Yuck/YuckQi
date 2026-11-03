@@ -29,14 +29,14 @@ public class SearchHandlerTests
     }
 
     [Test]
-    public void SearchAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task SearchAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new SearchHandler<SurLaTableRecord, Int32, TestDbContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
         var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => 1);
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Search(parameters, page, sort, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Search(parameters, page, sort, null, CancellationToken.None));
     }
 
     [Test]

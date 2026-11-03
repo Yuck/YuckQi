@@ -39,12 +39,12 @@ public class PhysicalDeletionHandlerTests
     }
 
     [Test]
-    public void Delete_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Delete_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new PhysicalDeletionHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var entity = new SurLaTableDocument { Identifier = 1, Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 

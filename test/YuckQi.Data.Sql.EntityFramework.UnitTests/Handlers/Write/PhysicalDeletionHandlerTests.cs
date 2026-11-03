@@ -34,12 +34,12 @@ public class PhysicalDeletionHandlerTests
     }
 
     [Test]
-    public void DeleteAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task DeleteAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new PhysicalDeletionHandler<SurLaTableRecord, Int32, TestDbContext>();
         var entity = new SurLaTableRecord { Identifier = 1, Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Delete(entity, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Delete(entity, null, CancellationToken.None));
     }
 
     [Test]

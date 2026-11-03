@@ -103,11 +103,11 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void Get_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Get_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableDocument, Int32, IDynamoDBContext>(HashKeyFactory);
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -116,12 +116,12 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void Get_Async_WithFilterCriteria_AndNullScope_ThrowsArgumentNullException()
+    public async Task Get_Async_WithFilterCriteria_AndNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableDocument, Int32, IDynamoDBContext>(HashKeyFactory);
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -130,11 +130,11 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void GetList_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetList_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableDocument, Int32, IDynamoDBContext>(HashKeyFactory);
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -143,12 +143,12 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void GetList_Async_WithFilterCriteria_AndNullScope_ThrowsArgumentNullException()
+    public async Task GetList_Async_WithFilterCriteria_AndNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableDocument, Int32, IDynamoDBContext>(HashKeyFactory);
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -171,12 +171,12 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void Get_Async_WithObjectParameters_AndNullScope_ThrowsArgumentNullException()
+    public async Task Get_Async_WithObjectParameters_AndNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableDocument, Int32, IDynamoDBContext>(HashKeyFactory);
         var parameters = new { Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -199,12 +199,12 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void GetList_Async_WithObjectParameters_AndNullScope_ThrowsArgumentNullException()
+    public async Task GetList_Async_WithObjectParameters_AndNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableDocument, Int32, IDynamoDBContext>(HashKeyFactory);
         var parameters = new { Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 

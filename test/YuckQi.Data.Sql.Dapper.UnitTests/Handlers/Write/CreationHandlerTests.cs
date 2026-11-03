@@ -37,12 +37,12 @@ public class CreationHandlerTests
     }
 
     [Test]
-    public void CreateAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task CreateAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new CreationHandler<SurLaTableEntity, Int32, IDbTransaction>();
         var entity = new SurLaTableEntity { Identifier = 1, Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Create(entity, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Create(entity, null, CancellationToken.None));
     }
 
     [Test]
@@ -56,13 +56,13 @@ public class CreationHandlerTests
     }
 
     [Test]
-    public void CreateAsync_WithMockScope_ThrowsCreationException()
+    public async Task CreateAsync_WithMockScope_ThrowsCreationException()
     {
         var handler = new CreationHandler<SurLaTableEntity, Int32, IDbTransaction>();
         var entity = new SurLaTableEntity { Identifier = 0, Name = "ABC" };
         var transaction = CreateMockTransaction();
 
-        Assert.ThrowsAsync<InvalidOperationException>(() => handler.Create(entity, transaction, CancellationToken.None));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Create(entity, transaction, CancellationToken.None));
     }
 
     private static IDbTransaction CreateMockTransaction()

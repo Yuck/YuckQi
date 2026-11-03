@@ -45,14 +45,14 @@ public class SearchHandlerTests
     }
 
     [Test]
-    public void Search_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Search_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
         var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -60,7 +60,7 @@ public class SearchHandlerTests
     }
 
     [Test]
-    public void Search_Async_WithScope_ThrowsNotImplementedException()
+    public async Task Search_Async_WithScope_ThrowsNotImplementedException()
     {
         var scope = new Mock<IDynamoDBContext>();
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
@@ -68,7 +68,7 @@ public class SearchHandlerTests
         var page = new Page(1, 10);
         var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
 
-        Assert.ThrowsAsync<NotImplementedException>(Act);
+        await Assert.ThrowsAsync<NotImplementedException>(Act);
 
         return;
 
@@ -91,14 +91,14 @@ public class SearchHandlerTests
     }
 
     [Test]
-    public void Search_Async_WithObjectParameters_WithNullScope_ThrowsArgumentNullException()
+    public async Task Search_Async_WithObjectParameters_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new { Name = "ABC" };
         var page = new Page(1, 10);
         var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -122,7 +122,7 @@ public class SearchHandlerTests
     }
 
     [Test]
-    public void Search_Async_WithScope_WhenDoSearchReturnsEmpty_InvokesDoCount()
+    public async Task Search_Async_WithScope_WhenDoSearchReturnsEmpty_InvokesDoCount()
     {
         var scope = new Mock<IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
@@ -130,7 +130,7 @@ public class SearchHandlerTests
         var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
         var handler = new SearchHandlerThatReturnsEmptyForSearch<SurLaTableDocument, Int32, IDynamoDBContext>();
 
-        Assert.ThrowsAsync<NullReferenceException>(Act);
+        await Assert.ThrowsAsync<NullReferenceException>(Act);
 
         return;
 

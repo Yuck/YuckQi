@@ -53,12 +53,12 @@ public class UnitOfWorkTests
     }
 
     [Test]
-    public void SaveChanges_WithCancellationToken_DoesNotThrow()
+    public async Task SaveChanges_WithCancellationToken_DoesNotThrow()
     {
         var entities = new Dictionary<Type, IDictionary>();
         var uow = new UnitOfWork<Object>(entities);
 
-        Assert.DoesNotThrowAsync(() => uow.SaveChanges(CancellationToken.None));
+        await Assert.DoesNotThrowAsync(() => uow.SaveChanges(CancellationToken.None));
     }
 
     [Test]

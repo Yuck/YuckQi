@@ -63,12 +63,12 @@ public class RevisionHandlerTests
     }
 
     [Test]
-    public void Revise_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Revise_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RevisionHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var entity = new SurLaTableDocument { Identifier = 1, Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -76,12 +76,12 @@ public class RevisionHandlerTests
     }
 
     [Test]
-    public void Revise_Batch_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Revise_Batch_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RevisionHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var entities = new[] { new SurLaTableDocument { Identifier = 1, Name = "ABC" } };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
