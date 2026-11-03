@@ -118,7 +118,7 @@ public class SqlGenerator<TRecord> : ISqlGenerator
                                     : "null";
 
             return t.Operation == FilterOperation.Contains
-                       ? $"({column} {comparison} {parameter} escape '\\')"
+                       ? $"({column} {comparison} replace({parameter}, '[', '\\[') escape '\\')"
                        : $"({column} {comparison} {parameter})";
         }) ?? []);
         var where = $"{(String.IsNullOrWhiteSpace(filter) ? String.Empty : $"where {filter}")}";

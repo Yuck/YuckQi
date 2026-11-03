@@ -90,12 +90,12 @@ public class FilterCriteriaExtensionTests
     }
 
     [Test]
-    public void FilterCriteria_ContainsOperation_EscapesSqlServerCharacterClassWildcard()
+    public void FilterCriteria_ContainsOperation_DoesNotEscapeOpeningBracket()
     {
         var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, "A[B-C]") };
         var parameters = criteria.ToDynamicParameters();
 
-        Assert.That(parameters.Get<Object>("thing"), Is.EqualTo(@"%A\[B-C]%"));
+        Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("%A[B-C]%"));
     }
 
     [Test]

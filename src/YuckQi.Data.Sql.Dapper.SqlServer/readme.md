@@ -4,7 +4,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 
 ## Key Types
 
-- **`SqlGenerator<TRecord>`** &ndash; SQL Server-specific `ISqlGenerator` implementation using bracket-quoted identifiers, `dbo` default schema, `OFFSET ... FETCH` pagination, and `LIKE` with `ESCAPE` for `FilterOperation.Contains` (case sensitivity follows the column collation)
+- **`SqlGenerator<TRecord>`** &ndash; SQL Server-specific `ISqlGenerator` implementation using bracket-quoted identifiers, `dbo` default schema, `OFFSET ... FETCH` pagination, and `LIKE` with `ESCAPE` for `FilterOperation.Contains` (case sensitivity follows the column collation; `[` is treated as a literal via `REPLACE`)
 - **`RetrievalHandler`** &ndash; concrete retrieval handler pre-configured for SQL Server
 - **`SearchHandler`** &ndash; concrete paginated search handler pre-configured for SQL Server
 

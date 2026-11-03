@@ -127,7 +127,7 @@ public class SqlGeneratorTests
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Guy") };
         var sql = generator.GenerateGetQuery(parameters).Replace(Environment.NewLine, " ");
 
-        Assert.That(sql, Is.EqualTo("select [Id], [Name] from [dbo].[SurLaTable] where ([Name] like @Name escape '\\');"));
+        Assert.That(sql, Is.EqualTo("select [Id], [Name] from [dbo].[SurLaTable] where ([Name] like replace(@Name, '[', '\\[') escape '\\');"));
     }
 
     [Test]
