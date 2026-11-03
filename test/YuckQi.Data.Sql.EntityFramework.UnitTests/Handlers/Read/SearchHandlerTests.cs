@@ -111,4 +111,24 @@ public class SearchHandlerTests
         Assert.That(result.TotalCount, Is.EqualTo(1));
         Assert.That(result.Items.First().Name, Is.EqualTo("Match"));
     }
+
+    [Test]
+    public void Search_WithContainsFilter_ReturnsMatchingResults()
+    {
+        var options = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase("Search_Contains").Options;
+        using var context = new TestDbContext(options);
+        var handler = new SearchHandler<SurLaTableRecord, Int32, TestDbContext>();
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Guy") };
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("Id", SortOrder.Ascending) }.OrderBy(t => 1);
+
+        context.SurLaTable.Add(new SurLaTableRecord { Id = 1, Name = "Some Guy" });
+        context.SurLaTable.Add(new SurLaTableRecord { Id = 2, Name = "Someone Else" });
+        context.SaveChanges();
+
+        var result = handler.Search(parameters, page, sort, context);
+
+        Assert.That(result.TotalCount, Is.EqualTo(1));
+        Assert.That(result.Items.First().Name, Is.EqualTo("Some Guy"));
+    }
 }

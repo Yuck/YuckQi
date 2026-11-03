@@ -10,7 +10,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 - **`PhysicalDeletionHandler`** &ndash; deletes entities via `DbSet.Remove`
 - **`RetrievalHandler`** &ndash; retrieval by identifier or filter criteria using `DbSet.Find` and LINQ
 - **`SearchHandler`** &ndash; paginated search with filtering and sorting via LINQ
-- **`FilterCriteriaExtensions`** &ndash; builds `Expression<Func<T, Boolean>>` predicates from `FilterCriteria` for use with `IQueryable`
+- **`FilterCriteriaExtensions`** &ndash; builds `Expression<Func<T, Boolean>>` predicates from `FilterCriteria` for use with `IQueryable`; `FilterOperation.Contains` maps to `String.Contains` (case sensitivity follows the EF provider/collation)
 
 ## Dependencies
 

@@ -101,6 +101,45 @@ public class PredicateFilterExtensionTests
     }
 
     [Test]
+    public void Predicate_WithStringContains_IsConvertedToFilterExpression()
+    {
+        Expression<Func<TestDomainEntity, Boolean>> predicate = t => t.Name.Contains("test");
+
+        var filters = predicate.ToFilterExpressions();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(filters.Count, Is.EqualTo(1));
+            Assert.That(filters.First().Operation, Is.EqualTo(FilterOperation.Contains));
+            Assert.That(filters.First().Value, Is.EqualTo("test"));
+        });
+    }
+
+    [Test]
+    public void Predicate_WithCapturedStringContains_IsConvertedToFilterExpression()
+    {
+        var query = "Guy";
+        Expression<Func<TestDomainEntity, Boolean>> predicate = t => t.Name.Contains(query);
+
+        var filters = predicate.ToFilterExpressions();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(filters.Count, Is.EqualTo(1));
+            Assert.That(filters.First().Operation, Is.EqualTo(FilterOperation.Contains));
+            Assert.That(filters.First().Value, Is.EqualTo("Guy"));
+        });
+    }
+
+    [Test]
+    public void Predicate_WithStringContains_AndNullValue_ThrowsArgumentException()
+    {
+        Expression<Func<TestDomainEntity, Boolean>> predicate = t => t.Name.Contains(null!);
+
+        Assert.That(() => predicate.ToFilterExpressions(), Throws.ArgumentException);
+    }
+
+    [Test]
     public void Predicate_WithUnsupportedBinaryExpression_ThrowsNotSupportedException()
     {
         Expression<Func<TestDomainEntity, Boolean>> predicate = t => t.Name == "a" || t.Name == "b";

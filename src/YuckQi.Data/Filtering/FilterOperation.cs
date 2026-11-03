@@ -2,6 +2,7 @@
 
 public enum FilterOperation
 {
+    Contains = 7,
     Equal = 1,
     GreaterThan = 2,
     GreaterThanOrEqual = 3,

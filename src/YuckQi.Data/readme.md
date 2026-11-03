@@ -23,7 +23,7 @@ All data operations follow a **Template Method** pattern where public methods ca
 
 ### Supporting Types
 
-- **Filtering** &ndash; `FilterCriteria` and `FilterOperation` for building query predicates
+- **Filtering** &ndash; `FilterCriteria` and `FilterOperation` for building query predicates (`Contains` is substring match; `In` is set membership)
 - **Sorting** &ndash; `SortCriteria` and `SortOrder` for ordering results
 - **Options** &ndash; `CreationOptions`, `RevisionOptions`, and `PropertyHandling` for controlling automatic property assignment
 - **Unit of Work** &ndash; `IUnitOfWork<TScope>` abstraction; `UnitOfWork<TScope, TDbConnection>` SQL implementation backed by `IDbTransaction` for transactional SQL workflows; provider packages document their own unit of work and transaction behavior

@@ -68,6 +68,36 @@ public class FilterCriteriaExtensionTests
     }
 
     [Test]
+    public void FilterCriteria_ContainsOperation_WrapsValueAsSubstringPattern()
+    {
+        var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, "Guy") };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(1));
+            Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("%Guy%"));
+        });
+    }
+
+    [Test]
+    public void FilterCriteria_ContainsOperation_EscapesWildcardsAndEscapeCharacter()
+    {
+        var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, @"100%_off\") };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.That(parameters.Get<Object>("thing"), Is.EqualTo(@"%100\%\_off\\%"));
+    }
+
+    [Test]
+    public void FilterCriteria_ContainsOperation_WithNullValue_ThrowsArgumentException()
+    {
+        var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, null) };
+
+        Assert.Throws<ArgumentException>(() => criteria.ToDynamicParameters());
+    }
+
+    [Test]
     public void FilterCriteria_InOperation_IsValid()
     {
         var criteria = new[] { new FilterCriteria("thing", FilterOperation.In, new[] { 10, 20, 30 }) };

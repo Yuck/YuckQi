@@ -4,7 +4,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 
 ## Key Types
 
-- **`SqlGenerator<TRecord>`** &ndash; MySQL-specific `ISqlGenerator` implementation using backtick-quoted identifiers and `LIMIT`/`OFFSET` pagination
+- **`SqlGenerator<TRecord>`** &ndash; MySQL-specific `ISqlGenerator` implementation using backtick-quoted identifiers, `LIMIT`/`OFFSET` pagination, and `LIKE` with `ESCAPE` for `FilterOperation.Contains` (case sensitivity follows the connection collation)
 - **`RetrievalHandler`** &ndash; concrete retrieval handler pre-configured for MySQL
 - **`SearchHandler`** &ndash; concrete paginated search handler pre-configured for MySQL
 

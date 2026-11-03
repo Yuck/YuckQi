@@ -37,13 +37,14 @@ internal static class FilterCriteriaExtensions
 
         return criteria.Operation switch
         {
+            FilterOperation.Contains => ToContainsExpression(property, value),
             FilterOperation.Equal => Expression.Equal(property, constant),
-            FilterOperation.NotEqual => Expression.NotEqual(property, constant),
             FilterOperation.GreaterThan => Expression.GreaterThan(property, constant),
             FilterOperation.GreaterThanOrEqual => Expression.GreaterThanOrEqual(property, constant),
+            FilterOperation.In => ToInExpression(property, value),
             FilterOperation.LessThan => Expression.LessThan(property, constant),
             FilterOperation.LessThanOrEqual => Expression.LessThanOrEqual(property, constant),
-            FilterOperation.In => ToInExpression(property, value),
+            FilterOperation.NotEqual => Expression.NotEqual(property, constant),
             _ => throw new NotSupportedException()
         };
     }
@@ -61,6 +62,20 @@ internal static class FilterCriteriaExtensions
                          });
 
         return (MemberExpression) result;
+    }
+
+    private static Expression ToContainsExpression(MemberExpression property, Object? value)
+    {
+        if (value is null)
+            throw new ArgumentException($"{nameof(value)} is required for {nameof(FilterOperation.Contains)}.");
+
+        var text = Convert.ToString(value) ?? String.Empty;
+        var method = typeof(String).GetMethod(nameof(String.Contains), [typeof(String)]) ?? throw new InvalidOperationException();
+        var instance = property.Type == typeof(String)
+                           ? (Expression) property
+                           : Expression.Call(property, nameof(ToString), Type.EmptyTypes);
+
+        return Expression.Call(instance, method, Expression.Constant(text));
     }
 
     private static Expression ToInExpression(MemberExpression property, Object? value)

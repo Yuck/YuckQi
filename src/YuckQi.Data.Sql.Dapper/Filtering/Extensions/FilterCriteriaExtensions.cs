@@ -7,6 +7,8 @@ namespace YuckQi.Data.Sql.Dapper.Filtering.Extensions;
 
 public static class FilterCriteriaExtensions
 {
+    private const String LikeEscapeCharacter = "\\";
+
     public static DynamicParameters ToDynamicParameters(this IEnumerable<FilterCriteria>? parameters, IReadOnlyDictionary<Type, DbType>? dbTypeMap = null)
     {
         var result = new DynamicParameters();
@@ -34,7 +36,7 @@ public static class FilterCriteriaExtensions
             else
             {
                 var name = parameter.FieldName;
-                var value = parameter.Value;
+                var value = GetBoundValue(parameter);
                 var type = value?.GetType();
                 var dbType = dbTypeMap is not null && type is not null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
 
@@ -42,5 +44,21 @@ public static class FilterCriteriaExtensions
             }
 
         return result;
+    }
+
+    private static Object? GetBoundValue(FilterCriteria parameter)
+    {
+        if (parameter.Operation != FilterOperation.Contains)
+            return parameter.Value;
+
+        if (parameter.Value is null)
+            throw new ArgumentException($"{nameof(parameter.Value)} is required for {nameof(FilterOperation.Contains)}.");
+
+        var text = Convert.ToString(parameter.Value) ?? String.Empty;
+        var escaped = text.Replace(LikeEscapeCharacter, LikeEscapeCharacter + LikeEscapeCharacter, StringComparison.Ordinal)
+                          .Replace("%", LikeEscapeCharacter + "%", StringComparison.Ordinal)
+                          .Replace("_", LikeEscapeCharacter + "_", StringComparison.Ordinal);
+
+        return $"%{escaped}%";
     }
 }

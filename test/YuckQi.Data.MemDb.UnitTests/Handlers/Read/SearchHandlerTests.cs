@@ -282,6 +282,109 @@ public class SearchHandlerTests
     }
 
     [Test]
+    public void Search_ContainsFilter_WhenMatch_ReturnsMatchingEntity()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "Some Guy" }, scope);
+        creator.Create(new SurLaTable { Identifier = 2, Name = "Someone Else" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Guy") };
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var found = searcher.Search(parameters, page, sort, scope);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(found.TotalCount, Is.EqualTo(1));
+            Assert.That(found.Items.Single().Name, Is.EqualTo("Some Guy"));
+        });
+    }
+
+    [Test]
+    public void Search_ContainsFilter_WhenNoMatch_DoesNotContainEntity()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "Some Guy" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Nope") };
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var found = searcher.Search(parameters, page, sort, scope);
+
+        Assert.That(found.TotalCount, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void Search_ContainsFilter_IsCaseInsensitive()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "Some Guy" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "guy") };
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var found = searcher.Search(parameters, page, sort, scope);
+
+        Assert.That(found.TotalCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Search_ContainsFilter_TreatsWildcardsAsLiteral()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "100% off" }, scope);
+        creator.Create(new SurLaTable { Identifier = 2, Name = "100X off" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "100%") };
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var found = searcher.Search(parameters, page, sort, scope);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(found.TotalCount, Is.EqualTo(1));
+            Assert.That(found.Items.Single().Name, Is.EqualTo("100% off"));
+        });
+    }
+
+    [Test]
+    public void Search_ContainsFilter_WithNullValue_ThrowsArgumentException()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "Some Guy" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, null) };
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+
+        Assert.Throws<ArgumentException>(Act);
+
+        return;
+
+        void Act() => searcher.Search(parameters, page, sort, scope);
+    }
+
+    [Test]
     public void Search_UnsupportedFilterOperation_ThrowsNotSupportedException()
     {
         var entities = new ConcurrentDictionary<Int32, SurLaTable>();

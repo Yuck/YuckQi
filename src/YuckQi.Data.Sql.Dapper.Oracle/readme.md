@@ -4,7 +4,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 
 ## Key Types
 
-- **`SqlGenerator<TRecord>`** &ndash; Oracle-specific `ISqlGenerator` implementation using double-quoted identifiers, `:param` bind variables, and `OFFSET ... FETCH` pagination
+- **`SqlGenerator<TRecord>`** &ndash; Oracle-specific `ISqlGenerator` implementation using double-quoted identifiers, `:param` bind variables, `OFFSET ... FETCH` pagination, and `LIKE` with `ESCAPE` for `FilterOperation.Contains` (case sensitivity follows the session/column collation)
 - **`RetrievalHandler`** &ndash; concrete retrieval handler pre-configured for Oracle
 - **`SearchHandler`** &ndash; concrete paginated search handler pre-configured for Oracle
 
