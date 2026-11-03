@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using YuckQi.Data.Filtering;
 
 namespace YuckQi.Data.Extensions;
@@ -15,18 +16,40 @@ public static class PredicateFilterExtensions
                 return Collect(binary.Left, parameter).Concat(Collect(binary.Right, parameter));
 
             if (expression is BinaryExpression comparison)
-            {
-                var (member, constant) = GetMemberAndConstant(comparison.Left, comparison.Right);
+                return [ToComparisonFilter(comparison, parameter)];
 
-                var operation = GetOperation(comparison.NodeType);
-                var converted = Expression.Convert(member, typeof(Object));
-                var lambda = Expression.Lambda<Func<TDomainEntity, Object>>(converted, parameter);
-                var value = constant.Value;
-
-                return [new FilterExpression<TDomainEntity>(lambda, operation, value)];
-            }
+            if (expression is MethodCallExpression methodCall)
+                return [ToContainsFilter(methodCall, parameter)];
 
             throw new NotSupportedException($"Expression of type '{expression.NodeType}' is not supported.");
+        }
+
+        static FilterExpression<TDomainEntity> ToComparisonFilter(BinaryExpression comparison, ParameterExpression parameter)
+        {
+            var (member, constant) = GetMemberAndConstant(comparison.Left, comparison.Right);
+            var operation = GetOperation(comparison.NodeType);
+            var converted = Expression.Convert(member, typeof(Object));
+            var lambda = Expression.Lambda<Func<TDomainEntity, Object>>(converted, parameter);
+            var value = constant.Value;
+
+            return new FilterExpression<TDomainEntity>(lambda, operation, value);
+        }
+
+        static FilterExpression<TDomainEntity> ToContainsFilter(MethodCallExpression methodCall, ParameterExpression parameter)
+        {
+            if (methodCall.Object is null || methodCall.Method.DeclaringType != typeof(String) || methodCall.Method.Name != nameof(String.Contains) || methodCall.Arguments.Count != 1)
+                throw new NotSupportedException($"Expression of type '{methodCall.NodeType}' is not supported.");
+
+            var member = UnwrapMember(methodCall.Object) ?? throw new NotSupportedException("Comparison must be between a member and a constant.");
+            var value = GetConstantValue(methodCall.Arguments[0]);
+
+            if (value is null)
+                throw new ArgumentException($"{nameof(FilterExpression<TDomainEntity>.Value)} is required for {nameof(FilterOperation.Contains)}.");
+
+            var converted = Expression.Convert(member, typeof(Object));
+            var lambda = Expression.Lambda<Func<TDomainEntity, Object>>(converted, parameter);
+
+            return new FilterExpression<TDomainEntity>(lambda, FilterOperation.Contains, value);
         }
 
         static (MemberExpression member, ConstantExpression constant) GetMemberAndConstant(Expression left, Expression right)
@@ -39,6 +62,27 @@ public static class PredicateFilterExtensions
 
             if (rightMember is not null && left is ConstantExpression leftConstant)
                 return (rightMember, leftConstant);
+
+            throw new NotSupportedException("Comparison must be between a member and a constant.");
+        }
+
+        static Object? GetConstantValue(Expression expression)
+        {
+            if (expression is UnaryExpression { NodeType: ExpressionType.Convert } unary)
+                return GetConstantValue(unary.Operand);
+
+            if (expression is ConstantExpression constant)
+                return constant.Value;
+
+            if (expression is MemberExpression { Expression: ConstantExpression instance } member)
+            {
+                return member.Member switch
+                {
+                    FieldInfo field => field.GetValue(instance.Value),
+                    PropertyInfo property => property.GetValue(instance.Value),
+                    _ => throw new NotSupportedException("Comparison must be between a member and a constant.")
+                };
+            }
 
             throw new NotSupportedException("Comparison must be between a member and a constant.");
         }

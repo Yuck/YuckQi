@@ -24,11 +24,11 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void GetAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableRecord, Int32, TestDbContext>();
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(1, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(1, null, CancellationToken.None));
     }
 
     [Test]
@@ -101,12 +101,12 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void GetAsync_ByFilterCriteria_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetAsync_ByFilterCriteria_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableRecord, Int32, TestDbContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(parameters, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(parameters, null, CancellationToken.None));
     }
 
     [Test]
@@ -136,11 +136,11 @@ public class RetrievalHandlerTests
     }
 
     [Test]
-    public void GetListAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetListAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RetrievalHandler<SurLaTableRecord, Int32, TestDbContext>();
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.GetList(null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.GetList(null, CancellationToken.None));
     }
 
     [Test]

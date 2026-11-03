@@ -45,6 +45,7 @@ public class FilterCriteriaTests
     }
 
     [Test]
+    [TestCase(FilterOperation.Contains)]
     [TestCase(FilterOperation.Equal)]
     [TestCase(FilterOperation.NotEqual)]
     [TestCase(FilterOperation.GreaterThan)]

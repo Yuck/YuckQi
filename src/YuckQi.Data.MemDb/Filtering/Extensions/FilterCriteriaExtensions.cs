@@ -13,6 +13,7 @@ internal static class FilterCriteriaExtensions
         var value = Expression.Constant(criteria.Value);
         var body = criteria.Operation switch
         {
+            FilterOperation.Contains => ToContainsExpression(property, criteria.Value),
             FilterOperation.Equal => Expression.Equal(property, value) as Expression,
             FilterOperation.GreaterThan => Expression.GreaterThan(property, value),
             FilterOperation.GreaterThanOrEqual => Expression.GreaterThanOrEqual(property, value),
@@ -33,5 +34,19 @@ internal static class FilterCriteriaExtensions
         var generic = contains.MakeGenericMethod(property.Type);
 
         return generic;
+    }
+
+    private static Expression ToContainsExpression(MemberExpression property, Object? value)
+    {
+        if (value is null)
+            throw new ArgumentException($"{nameof(value)} is required for {nameof(FilterOperation.Contains)}.");
+
+        var text = Convert.ToString(value) ?? String.Empty;
+        var method = typeof(String).GetMethod(nameof(String.Contains), [typeof(String), typeof(StringComparison)]) ?? throw new InvalidOperationException();
+        var instance = property.Type == typeof(String)
+                           ? (Expression) Expression.Coalesce(property, Expression.Constant(String.Empty))
+                           : Expression.Call(property, nameof(ToString), Type.EmptyTypes);
+
+        return Expression.Call(instance, method, Expression.Constant(text), Expression.Constant(StringComparison.OrdinalIgnoreCase));
     }
 }

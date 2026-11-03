@@ -44,12 +44,12 @@ public class RevisionHandlerTests
     }
 
     [Test]
-    public void ReviseAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task ReviseAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new RevisionHandler<SurLaTableRecord, Int32, TestDbContext>(null);
         var entity = new SurLaTableRecord { Identifier = 1, Name = "ABC", RevisionMoment = DateTimeOffset.UtcNow };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Revise(entity, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Revise(entity, null, CancellationToken.None));
     }
 
     [Test]

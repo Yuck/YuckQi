@@ -63,12 +63,12 @@ public class CreationHandlerTests
     }
 
     [Test]
-    public void Create_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Create_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new CreationHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var entity = new SurLaTableDocument { Identifier = 1, Name = "ABC" };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 
@@ -76,12 +76,12 @@ public class CreationHandlerTests
     }
 
     [Test]
-    public void Create_Batch_Async_WithNullScope_ThrowsArgumentNullException()
+    public async Task Create_Batch_Async_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new CreationHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var entities = new[] { new SurLaTableDocument { Identifier = 1, Name = "ABC" } };
 
-        Assert.ThrowsAsync<ArgumentNullException>(Act);
+        await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
         return;
 

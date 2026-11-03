@@ -75,6 +75,7 @@ public class SqlGenerator<TRecord> : ISqlGenerator
     {
         return operation switch
         {
+            FilterOperation.Contains => "like",
             FilterOperation.Equal => value is not null ? "=" : "is",
             FilterOperation.GreaterThan => ">",
             FilterOperation.GreaterThanOrEqual => ">=",
@@ -98,6 +99,9 @@ public class SqlGenerator<TRecord> : ISqlGenerator
             if (t is { Operation: FilterOperation.In, Value: not IEnumerable })
                 throw new ArgumentException($"{nameof(t.Value)} must be convertible to {nameof(IEnumerable)}.");
 
+            if (t is { Operation: FilterOperation.Contains, Value: null })
+                throw new ArgumentException($"{nameof(t.Value)} is required for {nameof(FilterOperation.Contains)}.");
+
             var column = $"\"{t.FieldName}\"";
             var value = t.Value;
             var comparison = BuildComparison(value, t.Operation);
@@ -112,7 +116,9 @@ public class SqlGenerator<TRecord> : ISqlGenerator
                                     ? $":{t.FieldName}"
                                     : "null";
 
-            return $"({column} {comparison} {parameter})";
+            return t.Operation == FilterOperation.Contains
+                       ? $"({column} {comparison} {parameter} escape '\\')"
+                       : $"({column} {comparison} {parameter})";
         }) ?? []);
         var where = $"{(String.IsNullOrWhiteSpace(filter) ? String.Empty : $"where {filter}")}";
 

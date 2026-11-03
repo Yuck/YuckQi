@@ -39,11 +39,11 @@ public class RetrievalHandlerBaseTests
     }
 
     [Test]
-    public void GetAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new TestRetrievalHandler(CreateMockSqlGenerator(), new Dictionary<Type, DbType>());
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(1, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(1, null, CancellationToken.None));
     }
 
     [Test]
@@ -78,12 +78,12 @@ public class RetrievalHandlerBaseTests
     }
 
     [Test]
-    public void GetAsync_ByFilterCriteria_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetAsync_ByFilterCriteria_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new TestRetrievalHandler(CreateMockSqlGenerator(), new Dictionary<Type, DbType>());
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(parameters, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Get(parameters, null, CancellationToken.None));
     }
 
     [Test]
@@ -119,11 +119,11 @@ public class RetrievalHandlerBaseTests
     }
 
     [Test]
-    public void GetListAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetListAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new TestRetrievalHandler(CreateMockSqlGenerator(), new Dictionary<Type, DbType>());
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.GetList(null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.GetList(null, CancellationToken.None));
     }
 
     [Test]
@@ -158,12 +158,12 @@ public class RetrievalHandlerBaseTests
     }
 
     [Test]
-    public void GetListAsync_ByFilterCriteria_WithNullScope_ThrowsArgumentNullException()
+    public async Task GetListAsync_ByFilterCriteria_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new TestRetrievalHandler(CreateMockSqlGenerator(), new Dictionary<Type, DbType>());
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.GetList(parameters, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.GetList(parameters, null, CancellationToken.None));
     }
 
     [Test]

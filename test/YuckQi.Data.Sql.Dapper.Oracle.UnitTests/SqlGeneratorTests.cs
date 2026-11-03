@@ -121,6 +121,25 @@ public class SqlGeneratorTests
     }
 
     [Test]
+    public void GenerateGetQuery_WithContainsOperation_IsValid()
+    {
+        var generator = new SqlGenerator<SurLaTableRecord>();
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Guy") };
+        var sql = generator.GenerateGetQuery(parameters).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select \"Id\", \"Name\" from \"SurLaTable\" where (\"Name\" like :Name escape '\\');"));
+    }
+
+    [Test]
+    public void GenerateGetQuery_WithContainsOperation_AndNullValue_ThrowsArgumentException()
+    {
+        var generator = new SqlGenerator<SurLaTableRecord>();
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, null) };
+
+        Assert.Throws<ArgumentException>(() => { _ = generator.GenerateGetQuery(parameters); });
+    }
+
+    [Test]
     public void GenerateGetQuery_WithInOperation_IsValid()
     {
         var generator = new SqlGenerator<SurLaTableRecord>();

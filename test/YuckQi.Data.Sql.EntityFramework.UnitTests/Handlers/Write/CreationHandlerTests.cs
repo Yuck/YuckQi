@@ -35,12 +35,12 @@ public class CreationHandlerTests
     }
 
     [Test]
-    public void CreateAsync_WithNullScope_ThrowsArgumentNullException()
+    public async Task CreateAsync_WithNullScope_ThrowsArgumentNullException()
     {
         var handler = new CreationHandler<SurLaTableRecord, Int32, TestDbContext>();
         var entity = new SurLaTableRecord { Identifier = 1, Name = "ABC", CreationMoment = DateTimeOffset.UtcNow };
 
-        Assert.ThrowsAsync<ArgumentNullException>(() => handler.Create(entity, null, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Create(entity, null, CancellationToken.None));
     }
 
     [Test]
