@@ -90,6 +90,15 @@ public class FilterCriteriaExtensionTests
     }
 
     [Test]
+    public void FilterCriteria_ContainsOperation_EscapesSqlServerCharacterClassWildcard()
+    {
+        var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, "A[B-C]") };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.That(parameters.Get<Object>("thing"), Is.EqualTo(@"%A\[B-C]%"));
+    }
+
+    [Test]
     public void FilterCriteria_ContainsOperation_WithNullValue_ThrowsArgumentException()
     {
         var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, null) };

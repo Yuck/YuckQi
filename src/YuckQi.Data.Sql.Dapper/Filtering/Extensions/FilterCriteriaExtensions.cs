@@ -57,7 +57,8 @@ public static class FilterCriteriaExtensions
         var text = Convert.ToString(parameter.Value) ?? String.Empty;
         var escaped = text.Replace(LikeEscapeCharacter, LikeEscapeCharacter + LikeEscapeCharacter, StringComparison.Ordinal)
                           .Replace("%", LikeEscapeCharacter + "%", StringComparison.Ordinal)
-                          .Replace("_", LikeEscapeCharacter + "_", StringComparison.Ordinal);
+                          .Replace("_", LikeEscapeCharacter + "_", StringComparison.Ordinal)
+                          .Replace("[", LikeEscapeCharacter + "[", StringComparison.Ordinal);
 
         return $"%{escaped}%";
     }
