@@ -88,7 +88,7 @@ public class SearchHandlerTests
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var scope = new Object();
         for (var i = 0; i < 50; i++)
-            creator.Create(new SurLaTable { Identifier = i, Name = "ABC" }, scope);
+            creator.Create(new SurLaTable { Name = "ABC" }, scope);
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.LessThanOrEqual, 25) };
         var page = new Page(1, 10);
@@ -115,7 +115,7 @@ public class SearchHandlerTests
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var scope = new Object();
         for (var i = 0; i < 50; i++)
-            creator.Create(new SurLaTable { Identifier = i, Name = GetRandomName() }, scope);
+            creator.Create(new SurLaTable { Name = GetRandomName() }, scope);
 
         Assert.That(entities, Has.Count.EqualTo(50));
 
@@ -146,7 +146,7 @@ public class SearchHandlerTests
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var scope = new Object();
         for (var i = 0; i < 50; i++)
-            creator.Create(new SurLaTable { Identifier = i, Name = GetRandomName() }, scope);
+            creator.Create(new SurLaTable { Name = GetRandomName() }, scope);
 
         Assert.That(entities, Has.Count.EqualTo(50));
 
@@ -204,7 +204,7 @@ public class SearchHandlerTests
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var scope = new Object();
         for (var i = 1; i <= 10; i++)
-            creator.Create(new SurLaTable { Identifier = i, Name = $"Item{i}" }, scope);
+            creator.Create(new SurLaTable { Name = $"Item{i}" }, scope);
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.GreaterThan, 5) };
         var page = new Page(1, 50);
@@ -226,7 +226,7 @@ public class SearchHandlerTests
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var scope = new Object();
         for (var i = 1; i <= 10; i++)
-            creator.Create(new SurLaTable { Identifier = i, Name = $"Item{i}" }, scope);
+            creator.Create(new SurLaTable { Name = $"Item{i}" }, scope);
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.GreaterThanOrEqual, 5) };
         var page = new Page(1, 50);
@@ -248,7 +248,7 @@ public class SearchHandlerTests
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var scope = new Object();
         for (var i = 1; i <= 10; i++)
-            creator.Create(new SurLaTable { Identifier = i, Name = $"Item{i}" }, scope);
+            creator.Create(new SurLaTable { Name = $"Item{i}" }, scope);
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.LessThan, 5) };
         var page = new Page(1, 50);

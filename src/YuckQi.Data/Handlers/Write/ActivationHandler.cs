@@ -24,9 +24,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
         if (entity.ActivationMoment is not null)
             return entity;
 
-        entity.ActivationMoment = DateTime.UtcNow;
-
-        return _reviser.Revise(entity, scope);
+        return Revise(entity, DateTime.UtcNow, scope);
     }
 
     public Task<TDomainEntity> Activate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -36,9 +34,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
         if (entity.ActivationMoment is not null)
             return Task.FromResult(entity);
 
-        entity.ActivationMoment = DateTime.UtcNow;
-
-        return _reviser.Revise(entity, scope, cancellationToken);
+        return Revise(entity, DateTime.UtcNow, scope, cancellationToken);
     }
 
     public TDomainEntity Deactivate(TDomainEntity entity, TScope? scope)
@@ -48,9 +44,7 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
         if (entity.ActivationMoment is null)
             return entity;
 
-        entity.ActivationMoment = null;
-
-        return _reviser.Revise(entity, scope);
+        return Revise(entity, null, scope);
     }
 
     public Task<TDomainEntity> Deactivate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -60,8 +54,42 @@ public class ActivationHandler<TDomainEntity, TIdentifier, TScope, TData> : IAct
         if (entity.ActivationMoment is null)
             return Task.FromResult(entity);
 
-        entity.ActivationMoment = null;
+        return Revise(entity, null, scope, cancellationToken);
+    }
 
-        return _reviser.Revise(entity, scope, cancellationToken);
+    private TDomainEntity Revise(TDomainEntity entity, DateTimeOffset? activationMoment, TScope? scope)
+    {
+        var previous = entity.ActivationMoment;
+
+        entity.ActivationMoment = activationMoment;
+
+        try
+        {
+            return _reviser.Revise(entity, scope);
+        }
+        catch
+        {
+            entity.ActivationMoment = previous;
+
+            throw;
+        }
+    }
+
+    private async Task<TDomainEntity> Revise(TDomainEntity entity, DateTimeOffset? activationMoment, TScope? scope, CancellationToken cancellationToken)
+    {
+        var previous = entity.ActivationMoment;
+
+        entity.ActivationMoment = activationMoment;
+
+        try
+        {
+            return await _reviser.Revise(entity, scope, cancellationToken);
+        }
+        catch
+        {
+            entity.ActivationMoment = previous;
+
+            throw;
+        }
     }
 }

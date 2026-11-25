@@ -24,7 +24,7 @@ public abstract class RevisionHandlerBase<TDomainEntity, TIdentifier, TScope, TD
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        return entities.Select(entity => Revise(entity, scope));
+        return entities.Select(entity => Revise(entity, scope)).ToList();
     }
 
     public async Task<TDomainEntity> Revise(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -38,8 +38,10 @@ public abstract class RevisionHandlerBase<TDomainEntity, TIdentifier, TScope, TD
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        var tasks = entities.Select(entity => Revise(entity, scope, cancellationToken));
-        var results = await Task.WhenAll(tasks);
+        var results = new List<TDomainEntity>();
+
+        foreach (var entity in entities)
+            results.Add(await Revise(entity, scope, cancellationToken));
 
         return results;
     }
