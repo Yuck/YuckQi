@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Filtering.Extensions;
+using YuckQi.Data.Filtering.Internal;
 using YuckQi.Data.Handlers.Read.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
@@ -43,6 +44,7 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
     public TDomainEntity? Get(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
+        FilterCriteriaGuard.ThrowIfEmptyOrInvalid(parameters);
 
         return DoGet(parameters, scope);
     }
@@ -50,6 +52,7 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
     public Task<TDomainEntity?> Get(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
+        FilterCriteriaGuard.ThrowIfEmptyOrInvalid(parameters);
 
         return DoGet(parameters, scope, cancellationToken);
     }
@@ -58,12 +61,18 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
     {
         ArgumentNullException.ThrowIfNull(scope);
 
+        if (parameters is TIdentifier identifier)
+            return Get(identifier, scope);
+
         return Get(parameters.ToFilterCollection(), scope);
     }
 
     public Task<TDomainEntity?> Get(Object parameters, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
+
+        if (parameters is TIdentifier identifier)
+            return Get(identifier, scope, cancellationToken);
 
         return Get(parameters.ToFilterCollection(), scope, cancellationToken);
     }
@@ -99,6 +108,7 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
     public IReadOnlyCollection<TDomainEntity> GetList(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
+        FilterCriteriaGuard.ThrowIfEmptyOrInvalid(parameters);
 
         return DoGetList(parameters, scope);
     }
@@ -106,6 +116,7 @@ public abstract class RetrievalHandlerBase<TDomainEntity, TIdentifier, TScope, T
     public Task<IReadOnlyCollection<TDomainEntity>> GetList(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
+        FilterCriteriaGuard.ThrowIfEmptyOrInvalid(parameters);
 
         return DoGetList(parameters, scope, cancellationToken);
     }

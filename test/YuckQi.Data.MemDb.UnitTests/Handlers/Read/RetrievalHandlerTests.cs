@@ -110,6 +110,96 @@ public class RetrievalHandlerTests
     }
 
     [Test]
+    public void Get_ByObject_WithNullableIdentifier_ReturnsEntity()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
+        creator.Create(new SurLaTable { Identifier = 2, Name = "DEF" }, scope);
+
+        Int32? identifier = 2;
+        var retrieved = retriever.Get(identifier, scope);
+
+        Assert.That(retrieved?.Name, Is.EqualTo("DEF"));
+    }
+
+    [Test]
+    public void Get_ByObject_WithMistypedIdentifier_Throws()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
+
+        Assert.Throws<ArgumentException>(() => retriever.Get(1L, scope));
+    }
+
+    [Test]
+    public void GetList_ByObject_WithMistypedIdentifier_Throws()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
+
+        Assert.Throws<ArgumentException>(() => retriever.GetList(1L, scope));
+    }
+
+    [Test]
+    public void Get_ByFilterCriteria_WhenEmpty_Throws()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
+
+        Assert.Throws<ArgumentException>(() => retriever.Get(Array.Empty<FilterCriteria>(), scope));
+    }
+
+    [Test]
+    public void Get_ByFilterCriteria_WithUnknownOperation_WhenNoMatch_Throws()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", "XYZ"), new FilterCriteria("Name", FilterOperation.Unknown, "ABC") };
+
+        Assert.Throws<ArgumentException>(() => retriever.Get(parameters, scope));
+    }
+
+    [Test]
+    public void GetList_ByFilterCriteria_WithUnknownOperation_WhenEmptyStore_Throws()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Unknown, "ABC") };
+
+        Assert.Throws<ArgumentException>(() => retriever.GetList(parameters, new Object()));
+    }
+
+    [Test]
+    public void GetList_ByFilterCriteria_WhenEmpty_Throws()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var retriever = new RetrievalHandler<SurLaTable, Int32, Object>(entities);
+
+        Assert.Throws<ArgumentException>(() => retriever.GetList(Array.Empty<FilterCriteria>(), new Object()));
+    }
+
+    [Test]
     public void Get_ByIdentifier_NotFound_ReturnsDefault()
     {
         var entities = new ConcurrentDictionary<Int32, SurLaTable>();

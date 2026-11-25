@@ -405,6 +405,57 @@ public class SearchHandlerTests
         void Act() => searcher.Search(parameters, page, sort, scope);
     }
 
+    [Test]
+    public void Search_UnknownFilterOperation_ThrowsArgumentException()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var creator = new CreationHandler<SurLaTable, Int32, Object>(entities);
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+
+        creator.Create(new SurLaTable { Identifier = 1, Name = "ABC" }, scope);
+
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.Unknown, "ABC") };
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+
+        Assert.Throws<ArgumentException>(Act);
+
+        return;
+
+        void Act() => searcher.Search(parameters, page, sort, scope);
+    }
+
+    [Test]
+    public void Search_ByObject_WithEmptyDictionary_ThrowsArgumentException()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+
+        Assert.Throws<ArgumentException>(Act);
+
+        return;
+
+        void Act() => searcher.Search(new Dictionary<String, Object?>(), page, sort, new Object());
+    }
+
+    [Test]
+    public void Search_ByObject_WithScalar_ThrowsArgumentException()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>();
+        var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
+        var page = new Page(1, 50);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+
+        Assert.Throws<ArgumentException>(Act);
+
+        return;
+
+        void Act() => searcher.Search(1, page, sort, new Object());
+    }
+
     public record SurLaTable : DomainEntityBase<Int32>, ICreationMoment
     {
         public DateTimeOffset CreationMoment { get; set; }

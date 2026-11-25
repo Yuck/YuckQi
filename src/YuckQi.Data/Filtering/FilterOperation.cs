@@ -9,5 +9,6 @@ public enum FilterOperation
     In = 6,
     LessThan = 4,
     LessThanOrEqual = 5,
-    NotEqual = 0
+    NotEqual = 8,
+    Unknown = 0
 }
