@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using YuckQi.Application.Core.Behaviors.Caching;
 
 namespace YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Factories;
 

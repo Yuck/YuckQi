@@ -5,7 +5,6 @@ using NUnit.Framework;
 using YuckQi.Data.DocumentDb.MongoDb.Attributes;
 using YuckQi.Data.DocumentDb.MongoDb.Handlers.Read;
 using YuckQi.Data.Filtering;
-using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 

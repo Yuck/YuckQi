@@ -1,4 +1,3 @@
-using YuckQi.Application.Core.Behaviors.Caching;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Factories;
 
 namespace YuckQi.Application.Core.Behaviors.Caching.DependencyGraph;

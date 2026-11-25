@@ -68,7 +68,7 @@ public class RevisionHandlerTests
 
         Assert.That(result, Is.EqualTo(entity));
         var record = context.SurLaTable.Find(1);
-        Assert.That(record!.Name, Is.EqualTo("New"));
+        Assert.That(record?.Name, Is.EqualTo("New"));
     }
 
     [Test]
@@ -87,6 +87,6 @@ public class RevisionHandlerTests
 
         Assert.That(result, Is.EqualTo(entity));
         var record = await context.SurLaTable.FindAsync([1], CancellationToken.None);
-        Assert.That(record!.Name, Is.EqualTo("Updated"));
+        Assert.That(record?.Name, Is.EqualTo("Updated"));
     }
 }

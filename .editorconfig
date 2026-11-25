@@ -24,4 +24,6 @@ dotnet_style_qualification_for_method = false:suggestion
 dotnet_style_qualification_for_event = false:suggestion
 
 [*.cs]
+dotnet_diagnostic.CS8604.severity = error
+dotnet_diagnostic.IDE0005.severity = error
 dotnet_sort_system_directives_first = true

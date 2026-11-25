@@ -32,10 +32,15 @@ public class LoggingBehaviorTests
 
         await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
 
-        logger.Verify(t => t.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((t, u) => t.ToString()!.Contains("started", StringComparison.OrdinalIgnoreCase)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, String>>()), Times.Once);
-        logger.Verify(t => t.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((t, u) => t.ToString()!.Contains("completed", StringComparison.OrdinalIgnoreCase)), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, String>>()), Times.Once);
+        logger.Verify(t => t.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((t, u) => IsLogStateContaining(t, "started")), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, String>>()), Times.Once);
+        logger.Verify(t => t.Log(LogLevel.Information, It.IsAny<EventId>(), It.Is<It.IsAnyType>((t, u) => IsLogStateContaining(t, "completed")), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, String>>()), Times.Once);
 
         ValueTask<Int32> Next() => new(0);
+    }
+
+    private static Boolean IsLogStateContaining(Object? state, String text)
+    {
+        return state?.ToString()?.Contains(text, StringComparison.OrdinalIgnoreCase) is true;
     }
 
     public sealed class Ping : IRequest<Int32>;

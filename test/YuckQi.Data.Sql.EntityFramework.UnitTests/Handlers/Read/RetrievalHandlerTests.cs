@@ -69,8 +69,8 @@ public class RetrievalHandlerTests
         var result = handler.Get(1, context);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Identifier, Is.EqualTo(1));
-        Assert.That(result.Name, Is.EqualTo("ABC"));
+        Assert.That(result?.Identifier, Is.EqualTo(1));
+        Assert.That(result?.Name, Is.EqualTo("ABC"));
     }
 
     [Test]
@@ -87,8 +87,8 @@ public class RetrievalHandlerTests
         var result = await handler.Get(1, context, CancellationToken.None);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Identifier, Is.EqualTo(1));
-        Assert.That(result.Name, Is.EqualTo("XYZ"));
+        Assert.That(result?.Identifier, Is.EqualTo(1));
+        Assert.That(result?.Name, Is.EqualTo("XYZ"));
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class RetrievalHandlerTests
         var result = handler.Get(parameters, context);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Name, Is.EqualTo("ABC"));
+        Assert.That(result?.Name, Is.EqualTo("ABC"));
     }
 
     [Test]
@@ -193,6 +193,6 @@ public class RetrievalHandlerTests
         var result = handler.Get(parameters, context);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Identifier, Is.GreaterThan(1));
+        Assert.That(result?.Identifier, Is.GreaterThan(1));
     }
 }

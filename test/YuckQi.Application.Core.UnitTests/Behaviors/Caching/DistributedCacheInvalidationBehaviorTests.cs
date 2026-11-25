@@ -37,7 +37,7 @@ public class DistributedCacheInvalidationBehaviorTests
         var cache = new Mock<IDistributedCache>();
         var logger = new Mock<ILogger<DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
         var behavior = new DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(cache.Object, CacheDependencyGraph.Empty, logger.Object);
-        var response = new InvalidationPingResponse(3, null!);
+        var response = new InvalidationPingResponse(3, null);
 
         var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 

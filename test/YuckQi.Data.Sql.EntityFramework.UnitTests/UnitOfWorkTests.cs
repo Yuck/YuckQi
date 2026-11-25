@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using YuckQi.Data.Sql.EntityFramework;
 
 namespace YuckQi.Data.Sql.EntityFramework.UnitTests;
 

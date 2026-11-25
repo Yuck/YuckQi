@@ -2,6 +2,7 @@ using System.Data;
 using Dapper;
 using YuckQi.Data.Handlers.Write.Abstract;
 using YuckQi.Data.Handlers.Write.Options;
+using YuckQi.Data.Sql.Dapper.Internal;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
@@ -18,6 +19,8 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Creati
 
         var record = MapToData(entity) ?? throw new InvalidOperationException();
 
+        SimpleCrudScaffold<TRecord>.IncludeOmittedInsertColumns();
+
         return scope.Connection.Insert<TIdentifier?, TRecord>(record, scope);
     }
 
@@ -26,6 +29,8 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Creati
         ArgumentNullException.ThrowIfNull(scope);
 
         var record = MapToData(entity) ?? throw new InvalidOperationException();
+
+        SimpleCrudScaffold<TRecord>.IncludeOmittedInsertColumns();
 
         return scope.Connection.InsertAsync<TIdentifier?, TRecord>(record, scope);
     }

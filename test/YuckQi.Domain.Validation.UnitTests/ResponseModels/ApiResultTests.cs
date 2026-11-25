@@ -22,15 +22,15 @@ public class ApiResultTests
         var response = JsonSerializer.Deserialize<ApiResult<String>>(json, options);
 
         Assert.That(response, Is.Not.Null);
-        Assert.That(response!.Content, Is.Not.Null);
-        Assert.That(response!.Content, Is.EqualTo(content));
-        Assert.That(response!.Detail, Is.Not.Null);
-        Assert.That(response!.Detail, Is.Not.Empty);
-        Assert.That(response!.Detail, Has.Count.EqualTo(1));
-        Assert.That(response!.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t.Message == message));
-        Assert.That(response!.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t.Code == code));
-        Assert.That(response!.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t.Property == property));
-        Assert.That(response!.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t.Type == type));
+        Assert.That(response?.Content, Is.Not.Null);
+        Assert.That(response?.Content, Is.EqualTo(content));
+        Assert.That(response?.Detail, Is.Not.Null);
+        Assert.That(response?.Detail, Is.Not.Empty);
+        Assert.That(response?.Detail, Has.Count.EqualTo(1));
+        Assert.That(response?.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t?.Message == message));
+        Assert.That(response?.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t?.Code == code));
+        Assert.That(response?.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t?.Property == property));
+        Assert.That(response?.Detail, Has.Exactly(1).Matches<ApiResultDetail>(t => t?.Type == type));
     }
 
     [Test]

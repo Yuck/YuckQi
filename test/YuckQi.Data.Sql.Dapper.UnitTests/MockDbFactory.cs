@@ -7,18 +7,18 @@ namespace YuckQi.Data.Sql.Dapper.UnitTests;
 
 internal static class MockDbFactory
 {
-    public static IDbTransaction CreateTransaction()
+    public static IDbTransaction CreateTransaction(ICollection<String>? commandTexts = null)
     {
-        var connection = CreateConnection();
+        var connection = CreateConnection(commandTexts);
         var transaction = new Mock<DbTransaction>();
 
-        transaction.Protected().SetupGet<DbConnection>("DbConnection").Returns(connection.Object);
+        transaction.Protected().SetupGet<DbConnection>("DbConnection").Returns(connection);
         transaction.Setup(t => t.IsolationLevel).Returns(IsolationLevel.ReadCommitted);
 
         return transaction.Object;
     }
 
-    private static Mock<DbConnection> CreateConnection()
+    public static DbConnection CreateConnection(ICollection<String>? commandTexts = null)
     {
         var connection = new Mock<DbConnection>();
 
@@ -28,12 +28,12 @@ internal static class MockDbFactory
         connection.Setup(t => t.ServerVersion).Returns("1.0");
         connection.Protected()
                   .Setup<DbCommand>("CreateDbCommand")
-                  .Returns(() => CreateCommand());
+                  .Returns(() => CreateCommand(commandTexts));
 
-        return connection;
+        return connection.Object;
     }
 
-    private static DbCommand CreateCommand()
+    private static DbCommand CreateCommand(ICollection<String>? commandTexts)
     {
         var parameters = new List<DbParameter>();
         var parameterCollection = new Mock<DbParameterCollection>();
@@ -58,18 +58,25 @@ internal static class MockDbFactory
         command.Protected()
                .Setup<DbParameter>("CreateDbParameter")
                .Returns(() => CreateParameter());
-        command.Setup(t => t.ExecuteNonQuery()).Returns(1);
-        command.Setup(t => t.ExecuteScalar()).Returns(0);
-        command.Setup(t => t.ExecuteNonQueryAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
-        command.Setup(t => t.ExecuteScalarAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Object?>(0));
+        command.Setup(t => t.ExecuteNonQuery()).Callback(Record).Returns(1);
+        command.Setup(t => t.ExecuteScalar()).Callback(Record).Returns(0);
+        command.Setup(t => t.ExecuteNonQueryAsync(It.IsAny<CancellationToken>())).Callback(Record).ReturnsAsync(1);
+        command.Setup(t => t.ExecuteScalarAsync(It.IsAny<CancellationToken>())).Callback(Record).Returns(Task.FromResult<Object?>(0));
         command.Protected()
                .Setup<DbDataReader>("ExecuteDbDataReader", ItExpr.IsAny<CommandBehavior>())
+               .Callback(Record)
                .Returns(() => CreateDataReader());
         command.Protected()
                .Setup<Task<DbDataReader>>("ExecuteDbDataReaderAsync", ItExpr.IsAny<CommandBehavior>(), ItExpr.IsAny<CancellationToken>())
+               .Callback(Record)
                .Returns(() => Task.FromResult(CreateDataReader()));
 
         return command.Object;
+
+        void Record()
+        {
+            commandTexts?.Add(command.Object.CommandText);
+        }
     }
 
     private static DbParameter CreateParameter()

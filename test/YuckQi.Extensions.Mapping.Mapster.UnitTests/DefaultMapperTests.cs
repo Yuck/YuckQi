@@ -1,6 +1,5 @@
 using Mapster;
 using NUnit.Framework;
-using YuckQi.Extensions.Mapping.Mapster;
 
 namespace YuckQi.Extensions.Mapping.Mapster.UnitTests;
 
@@ -237,8 +236,8 @@ public class DefaultMapperTests
         var result = mapper.MapOrNull(source, destination, typeof(SourceType), typeof(DestinationType));
 
         Assert.That(result, Is.SameAs(destination));
-        Assert.That(((DestinationType) result!).Id, Is.EqualTo(1));
-        Assert.That(((DestinationType) result).Name, Is.EqualTo("A"));
+        Assert.That(destination.Id, Is.EqualTo(1));
+        Assert.That(destination.Name, Is.EqualTo("A"));
     }
 
     [Test]
@@ -280,9 +279,9 @@ public class DefaultMapperTests
         var result = mapper.MapOrNull(source, typeof(SourceType), typeof(DestinationType));
 
         Assert.That(result, Is.InstanceOf<DestinationType>());
-        var dest = (DestinationType) result!;
-        Assert.That(dest.Id, Is.EqualTo(2));
-        Assert.That(dest.Name, Is.EqualTo("B"));
+        var dest = result as DestinationType;
+        Assert.That(dest?.Id, Is.EqualTo(2));
+        Assert.That(dest?.Name, Is.EqualTo("B"));
     }
 
     [Test]
@@ -313,8 +312,8 @@ public class DefaultMapperTests
         var result = mapper.MapOrNull<DestinationType>(source);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Id, Is.EqualTo(3));
-        Assert.That(result.Name, Is.EqualTo("C"));
+        Assert.That(result?.Id, Is.EqualTo(3));
+        Assert.That(result?.Name, Is.EqualTo("C"));
     }
 
     [Test]
@@ -346,8 +345,8 @@ public class DefaultMapperTests
         var result = mapper.MapOrNull(source, destination);
 
         Assert.That(result, Is.SameAs(destination));
-        Assert.That(result!.Id, Is.EqualTo(5));
-        Assert.That(result.Name, Is.EqualTo("E"));
+        Assert.That(destination.Id, Is.EqualTo(5));
+        Assert.That(destination.Name, Is.EqualTo("E"));
     }
 
     [Test]
@@ -392,8 +391,8 @@ public class DefaultMapperTests
         var result = mapper.MapOrNull<SourceType, DestinationType>(source);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Id, Is.EqualTo(4));
-        Assert.That(result.Name, Is.EqualTo("D"));
+        Assert.That(result?.Id, Is.EqualTo(4));
+        Assert.That(result?.Name, Is.EqualTo("D"));
     }
 
     [Test]
