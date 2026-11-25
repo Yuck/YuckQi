@@ -45,6 +45,19 @@ public class FilterCriteriaTests
     }
 
     [Test]
+    public void DefaultOperation_IsUnknown()
+    {
+        var operation = default(FilterOperation);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(operation, Is.EqualTo(FilterOperation.Unknown));
+            Assert.That(operation, Is.Not.EqualTo(FilterOperation.NotEqual));
+            Assert.That(operation, Is.Not.EqualTo(FilterOperation.Equal));
+        }
+    }
+
+    [Test]
     [TestCase(FilterOperation.Contains)]
     [TestCase(FilterOperation.Equal)]
     [TestCase(FilterOperation.NotEqual)]

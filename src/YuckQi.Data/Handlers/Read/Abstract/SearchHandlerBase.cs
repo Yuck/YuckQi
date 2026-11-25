@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Filtering.Extensions;
+using YuckQi.Data.Filtering.Internal;
 using YuckQi.Data.Handlers.Read.Abstract.Interfaces;
 using YuckQi.Data.Sorting;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
@@ -32,6 +33,7 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
     public IPage<TDomainEntity> Search(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
+        FilterCriteriaGuard.ThrowIfInvalid(parameters);
 
         var entities = DoSearch(parameters, page, sort, scope);
         var total = DoCount(parameters, scope);
@@ -42,6 +44,7 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
     public async Task<IPage<TDomainEntity>> Search(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
+        FilterCriteriaGuard.ThrowIfInvalid(parameters);
 
         var entities = await DoSearch(parameters, page, sort, scope, cancellationToken);
         var total = await DoCount(parameters, scope, cancellationToken);

@@ -34,6 +34,8 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
 
     public TDomainEntity? Get(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)
     {
+        ThrowIfEmptyOrInvalid(parameters);
+
         var entities = GetEntities(parameters);
         var entity = entities.SingleOrDefault();
 
@@ -47,6 +49,9 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
 
     public TDomainEntity? Get(Object parameters, TScope? scope)
     {
+        if (parameters is TIdentifier identifier)
+            return Get(identifier, scope);
+
         return Get(parameters.ToFilterCollection(), scope);
     }
 
@@ -79,6 +84,8 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
 
     public IReadOnlyCollection<TDomainEntity> GetList(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope)
     {
+        ThrowIfEmptyOrInvalid(parameters);
+
         return [.. GetEntities(parameters)];
     }
 
@@ -95,6 +102,27 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
     public Task<IReadOnlyCollection<TDomainEntity>> GetList(Object parameters, TScope? scope, CancellationToken cancellationToken)
     {
         return Task.FromResult(GetList(parameters, scope));
+    }
+
+    private static void ThrowIfEmptyOrInvalid(IReadOnlyCollection<FilterCriteria> parameters)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+
+        if (parameters.Count == 0)
+            throw new ArgumentException("At least one filter is required. To get every entity, call GetList with only a scope.", nameof(parameters));
+
+        var index = 0;
+
+        foreach (var parameter in parameters)
+        {
+            if (parameter is null)
+                throw new ArgumentException($"The filter at index {index} is null.", nameof(parameters));
+
+            if (parameter.Operation == FilterOperation.Unknown)
+                throw new ArgumentException($"The filter on '{parameter.FieldName}' does not specify a {nameof(FilterOperation)}.", nameof(parameters));
+
+            index++;
+        }
     }
 
     private IEnumerable<TDomainEntity> GetEntities(IReadOnlyCollection<FilterCriteria> parameters)

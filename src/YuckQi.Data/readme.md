@@ -29,6 +29,22 @@ All data operations follow a **Template Method** pattern where public methods ca
 - **Unit of Work** &ndash; `IUnitOfWork<TScope>` abstraction; `UnitOfWork<TScope, TDbConnection>` SQL implementation backed by `IDbTransaction` for transactional SQL workflows; provider packages document their own unit of work and transaction behavior
 - **Exceptions** &ndash; `CreationException`, `RevisionException`, `PhysicalDeletionException`
 
+### Filter Parameters
+
+The `Object parameters` overloads of `Get`, `GetList` and `Search` accept a `FilterCriteria`, a collection of `FilterCriteria`, a dictionary of field names to values, or an object whose public readable properties name the fields to filter on (indexers are skipped). Every filter in a collection must specify a `FilterOperation`; `FilterOperation.Unknown` (the default value) is rejected with an `ArgumentException`.
+
+Anything else throws instead of becoming an empty filter: `null` throws `ArgumentNullException`; primitives, enums, types from `System` namespaces (such as `String`, `Guid`, `DateTime`, `BigInteger`, `Uri` and `KeyValuePair<,>`), other collections, objects with no readable properties, and inputs that produce no filters (such as an empty dictionary) throw `ArgumentException`. A `null` filter or one whose operation is `FilterOperation.Unknown` also throws `ArgumentException`. A value of the handler's identifier type passed to `Get(Object, ...)`, such as a boxed `Int32` or a non-null `Int32?` for an `Int32` key, is looked up by identifier.
+
+`Get` and `GetList` with an empty filter collection throw `ArgumentException`; call `GetList(scope)` to get every entity. `Search` still accepts an empty `FilterCriteria` collection and pages through every entity.
+
+Upgrading to 10.5.0:
+
+- `FilterOperation.Unknown = 0` is new, and `NotEqual` is now `8` (it was `0`). A `FilterCriteria` deserialized or bound without an operation used to mean `NotEqual`; it is now rejected. Operations stored or sent as numbers must use the new value for `NotEqual`; other values are unchanged.
+- `ToFilterCollection` and the `Object parameters` overloads throw for `null`, scalar values, non-filter collections and objects with no readable properties, where they used to produce no filters and run an unfiltered query.
+- `Get` with an empty filter collection throws instead of returning the first entity, and `GetList` with one throws instead of returning every entity; use `GetList(scope)` for that.
+- Empty dictionaries and other `Object` parameters that produce no filters throw in `Get`, `GetList` and `Search`.
+- Dictionaries are now read as field name/value pairs instead of filtering on `Comparer`, `Count`, `Keys` and `Values`.
+
 ### Design Patterns
 
 - **Scope pattern** &ndash; all operations accept a `TScope?` representing the data store context (e.g., `IDbTransaction`)
