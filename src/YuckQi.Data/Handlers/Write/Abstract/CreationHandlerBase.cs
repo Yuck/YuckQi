@@ -27,7 +27,9 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
 
     public virtual IEnumerable<TDomainEntity> Create(IEnumerable<TDomainEntity> entities, TScope? scope)
     {
-        return entities.Select(entity => Create(entity, scope));
+        ArgumentNullException.ThrowIfNull(scope);
+
+        return entities.Select(entity => Create(entity, scope)).ToList();
     }
 
     public async Task<TDomainEntity> Create(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -44,8 +46,10 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
     {
         ArgumentNullException.ThrowIfNull(scope);
 
-        var tasks = entities.Select(entity => Create(entity, scope, cancellationToken));
-        var results = await Task.WhenAll(tasks);
+        var results = new List<TDomainEntity>();
+
+        foreach (var entity in entities)
+            results.Add(await Create(entity, scope, cancellationToken));
 
         return results;
     }
@@ -64,7 +68,7 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
 
     protected TDomainEntity PreProcess(TDomainEntity entity)
     {
-        if (_options.IdentifierFactory is not null)
+        if (_options.IdentifierFactory is not null && ! entity.Identifier.IsSet())
             entity.Identifier = _options.IdentifierFactory();
         if (_options.CreationMomentAssignment == PropertyHandling.Auto)
             entity.CreationMoment = DateTime.UtcNow;

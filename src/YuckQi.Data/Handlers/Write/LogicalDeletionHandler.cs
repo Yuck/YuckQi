@@ -24,9 +24,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
         if (entity.DeletionMoment is not null)
             return entity;
 
-        entity.DeletionMoment = DateTime.UtcNow;
-
-        return _reviser.Revise(entity, scope);
+        return Revise(entity, DateTime.UtcNow, scope);
     }
 
     public Task<TDomainEntity> Delete(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -36,9 +34,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
         if (entity.DeletionMoment is not null)
             return Task.FromResult(entity);
 
-        entity.DeletionMoment = DateTime.UtcNow;
-
-        return _reviser.Revise(entity, scope, cancellationToken);
+        return Revise(entity, DateTime.UtcNow, scope, cancellationToken);
     }
 
     public TDomainEntity Restore(TDomainEntity entity, TScope? scope)
@@ -48,9 +44,7 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
         if (entity.DeletionMoment is null)
             return entity;
 
-        entity.DeletionMoment = null;
-
-        return _reviser.Revise(entity, scope);
+        return Revise(entity, null, scope);
     }
 
     public Task<TDomainEntity> Restore(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -60,8 +54,42 @@ public class LogicalDeletionHandler<TDomainEntity, TIdentifier, TScope, TData> :
         if (entity.DeletionMoment is null)
             return Task.FromResult(entity);
 
-        entity.DeletionMoment = null;
+        return Revise(entity, null, scope, cancellationToken);
+    }
 
-        return _reviser.Revise(entity, scope, cancellationToken);
+    private TDomainEntity Revise(TDomainEntity entity, DateTimeOffset? deletionMoment, TScope? scope)
+    {
+        var previous = entity.DeletionMoment;
+
+        entity.DeletionMoment = deletionMoment;
+
+        try
+        {
+            return _reviser.Revise(entity, scope);
+        }
+        catch
+        {
+            entity.DeletionMoment = previous;
+
+            throw;
+        }
+    }
+
+    private async Task<TDomainEntity> Revise(TDomainEntity entity, DateTimeOffset? deletionMoment, TScope? scope, CancellationToken cancellationToken)
+    {
+        var previous = entity.DeletionMoment;
+
+        entity.DeletionMoment = deletionMoment;
+
+        try
+        {
+            return await _reviser.Revise(entity, scope, cancellationToken);
+        }
+        catch
+        {
+            entity.DeletionMoment = previous;
+
+            throw;
+        }
     }
 }
