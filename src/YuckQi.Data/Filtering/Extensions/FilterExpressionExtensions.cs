@@ -1,4 +1,3 @@
-using YuckQi.Data.Filtering;
 using YuckQi.Data.Resolvers;
 using YuckQi.Data.Resolvers.Abstract.Interfaces;
 

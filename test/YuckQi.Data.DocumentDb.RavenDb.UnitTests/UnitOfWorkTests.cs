@@ -2,7 +2,6 @@ using Moq;
 using NUnit.Framework;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
-using YuckQi.Data.DocumentDb.RavenDb;
 
 namespace YuckQi.Data.DocumentDb.RavenDb.UnitTests;
 

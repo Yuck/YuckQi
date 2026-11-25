@@ -1,4 +1,3 @@
-using YuckQi.Application.Core.Behaviors.Caching;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Abstract.Interfaces;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Builders;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Factories;
@@ -46,10 +45,10 @@ public sealed class CacheDependencyGraph : ICacheDependencyGraph
         while (queue.Count > 0)
         {
             var key = queue.Dequeue();
-            if ( ! CacheKeyFactory.TryParse(key, out var parts))
+            if (! CacheKeyFactory.TryParse(key, out var parts))
                 continue;
 
-            if ( ! _dependencies.TryGetValue(parts.Resource, out var factories))
+            if (! _dependencies.TryGetValue(parts.Resource, out var factories))
                 continue;
 
             var context = new CacheKeyContext(parts);

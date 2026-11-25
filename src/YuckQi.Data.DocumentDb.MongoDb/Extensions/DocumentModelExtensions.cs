@@ -42,7 +42,6 @@ public static class DocumentModelExtensions
         if (type is null)
             return null;
 
-        // This isn't great since it should be enforced at compile time
         if (type != typeof(TDocument))
             throw new ArgumentException($"Type of '{type.FullName}' must match '{typeof(TDocument).Name}'.");
 

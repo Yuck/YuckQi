@@ -1,4 +1,3 @@
-using YuckQi.Application.Core.Behaviors.Caching;
 using YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Abstract.Interfaces;
 
 namespace YuckQi.Application.Core.Behaviors.Caching.DependencyGraph.Builders;
@@ -19,7 +18,7 @@ public sealed class CacheDependencyGraphBuilder
         ArgumentException.ThrowIfNullOrWhiteSpace(resource);
         ArgumentNullException.ThrowIfNull(configure);
 
-        if ( ! _dependencies.TryGetValue(resource, out var factories))
+        if (! _dependencies.TryGetValue(resource, out var factories))
         {
             factories = [];
 

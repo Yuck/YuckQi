@@ -20,10 +20,10 @@ public class ApiResultDetailTests
         var response = JsonSerializer.Deserialize<ApiResultDetail>(json, options);
 
         Assert.That(response, Is.Not.Null);
-        Assert.That(response!.Message, Is.EqualTo(message));
-        Assert.That(response!.Code, Is.EqualTo(code));
-        Assert.That(response!.Property, Is.EqualTo(property));
-        Assert.That(response!.Type, Is.EqualTo(type));
+        Assert.That(response?.Message, Is.EqualTo(message));
+        Assert.That(response?.Code, Is.EqualTo(code));
+        Assert.That(response?.Property, Is.EqualTo(property));
+        Assert.That(response?.Type, Is.EqualTo(type));
     }
 
     [Test]

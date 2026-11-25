@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using YuckQi.Domain.Validation;
 
 namespace YuckQi.Domain.Validation.UnitTests;
 

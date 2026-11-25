@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
-using YuckQi.Data.Extensions;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Filtering.Extensions;
 using YuckQi.Data.Handlers.Read.Abstract.Interfaces;
@@ -25,7 +24,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
     {
         var predicate = expression.Compile();
 
-        return entities.Values.Where(t => predicate(t)).SingleOrDefault();
+        return entities.Values.SingleOrDefault(predicate);
     }
 
     public Task<TDomainEntity?> Get(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken)
@@ -58,7 +57,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
 
     public IReadOnlyCollection<TDomainEntity> GetList(TScope? scope)
     {
-        return [.. entities.Values.Select(t => t)];
+        return [.. entities.Values];
     }
 
     public Task<IReadOnlyCollection<TDomainEntity>> GetList(TScope? scope, CancellationToken cancellationToken)
@@ -70,7 +69,7 @@ public class RetrievalHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDict
     {
         var predicate = expression.Compile();
 
-        return [.. entities.Values.Where(t => predicate(t))];
+        return [.. entities.Values.Where(predicate)];
     }
 
     public Task<IReadOnlyCollection<TDomainEntity>> GetList(Expression<Func<TDomainEntity, Boolean>> expression, TScope? scope, CancellationToken cancellationToken)

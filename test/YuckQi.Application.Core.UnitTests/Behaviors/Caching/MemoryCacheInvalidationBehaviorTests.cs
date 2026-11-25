@@ -36,7 +36,7 @@ public class MemoryCacheInvalidationBehaviorTests
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
         var logger = new Mock<ILogger<MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
         var behavior = new MemoryCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(memoryCache, CacheDependencyGraph.Empty, logger.Object);
-        var response = new InvalidationPingResponse(3, null!);
+        var response = new InvalidationPingResponse(3, null);
 
         var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
 
