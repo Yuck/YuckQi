@@ -16,8 +16,8 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(1));
-            Assert.That(parameters.ParameterNames.First(), Is.EqualTo("thing"));
-            Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("a test"));
+            Assert.That(parameters.ParameterNames.First(), Is.EqualTo("p0"));
+            Assert.That(parameters.Get<Object>("p0"), Is.EqualTo("a test"));
         });
     }
 
@@ -30,8 +30,8 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(1));
-            Assert.That(parameters.ParameterNames.First(), Is.EqualTo("thing"));
-            Assert.That(parameters.Get<Object>("thing"), Is.Null);
+            Assert.That(parameters.ParameterNames.First(), Is.EqualTo("p0"));
+            Assert.That(parameters.Get<Object>("p0"), Is.Null);
         });
     }
 
@@ -52,10 +52,10 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(2));
-            Assert.That(parameters.ParameterNames.First(), Is.EqualTo("thing"));
-            Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("a test"));
-            Assert.That(parameters.ParameterNames.Last(), Is.EqualTo("other"));
-            Assert.That(parameters.Get<Object>("other"), Is.EqualTo(1234.56M));
+            Assert.That(parameters.ParameterNames.First(), Is.EqualTo("p0"));
+            Assert.That(parameters.Get<Object>("p0"), Is.EqualTo("a test"));
+            Assert.That(parameters.ParameterNames.Last(), Is.EqualTo("p1"));
+            Assert.That(parameters.Get<Object>("p1"), Is.EqualTo(1234.56M));
         });
     }
 
@@ -76,7 +76,7 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(1));
-            Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("%Guy%"));
+            Assert.That(parameters.Get<Object>("p0"), Is.EqualTo("%Guy%"));
         });
     }
 
@@ -86,7 +86,7 @@ public class FilterCriteriaExtensionTests
         var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, @"100%_off\") };
         var parameters = criteria.ToDynamicParameters();
 
-        Assert.That(parameters.Get<Object>("thing"), Is.EqualTo(@"%100\%\_off\\%"));
+        Assert.That(parameters.Get<Object>("p0"), Is.EqualTo(@"%100\%\_off\\%"));
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class FilterCriteriaExtensionTests
         var criteria = new[] { new FilterCriteria("thing", FilterOperation.Contains, "A[B-C]") };
         var parameters = criteria.ToDynamicParameters();
 
-        Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("%A[B-C]%"));
+        Assert.That(parameters.Get<Object>("p0"), Is.EqualTo("%A[B-C]%"));
     }
 
     [Test]
@@ -115,9 +115,9 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(3));
-            Assert.That(parameters.Get<Object>("thing0"), Is.EqualTo(10));
-            Assert.That(parameters.Get<Object>("thing1"), Is.EqualTo(20));
-            Assert.That(parameters.Get<Object>("thing2"), Is.EqualTo(30));
+            Assert.That(parameters.Get<Object>("p0_0"), Is.EqualTo(10));
+            Assert.That(parameters.Get<Object>("p0_1"), Is.EqualTo(20));
+            Assert.That(parameters.Get<Object>("p0_2"), Is.EqualTo(30));
         });
     }
 
@@ -139,7 +139,7 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(1));
-            Assert.That(parameters.Get<Object>("thing"), Is.EqualTo("a test"));
+            Assert.That(parameters.Get<Object>("p0"), Is.EqualTo("a test"));
         });
     }
 
@@ -153,8 +153,8 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(2));
-            Assert.That(parameters.Get<Object>("thing0"), Is.EqualTo(10));
-            Assert.That(parameters.Get<Object>("thing1"), Is.EqualTo(20));
+            Assert.That(parameters.Get<Object>("p0_0"), Is.EqualTo(10));
+            Assert.That(parameters.Get<Object>("p0_1"), Is.EqualTo(20));
         });
     }
 
@@ -168,7 +168,72 @@ public class FilterCriteriaExtensionTests
         Assert.Multiple(() =>
         {
             Assert.That(parameters.ParameterNames.Count(), Is.EqualTo(1));
-            Assert.That(parameters.Get<Object>("thing"), Is.Null);
+            Assert.That(parameters.Get<Object>("p0"), Is.Null);
+        });
+    }
+
+    [Test]
+    public void FilterCriteria_MultipleCriteriaOnSameField_BindEachValue()
+    {
+        var criteria = new[] { new FilterCriteria("Age", FilterOperation.GreaterThanOrEqual, 18), new FilterCriteria("Age", FilterOperation.LessThanOrEqual, 65) };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameters.ParameterNames, Is.EqualTo(new[] { "p0", "p1" }));
+            Assert.That(parameters.Get<Object>("p0"), Is.EqualTo(18));
+            Assert.That(parameters.Get<Object>("p1"), Is.EqualTo(65));
+        });
+    }
+
+    [Test]
+    public void FilterCriteria_InOperation_DoesNotCollideWithOtherFieldNames()
+    {
+        var criteria = new[] { new FilterCriteria("Address", FilterOperation.In, new[] { "a", "b" }), new FilterCriteria("Address1", "c") };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameters.ParameterNames, Is.EqualTo(new[] { "p0_0", "p0_1", "p1" }));
+            Assert.That(parameters.Get<Object>("p0_1"), Is.EqualTo("b"));
+            Assert.That(parameters.Get<Object>("p1"), Is.EqualTo("c"));
+        });
+    }
+
+    [Test]
+    public void FilterCriteria_InOperation_WithStringValue_ThrowsArgumentException()
+    {
+        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, "ABC") };
+
+        Assert.Throws<ArgumentException>(() => criteria.ToDynamicParameters());
+    }
+
+    [Test]
+    public void FilterCriteria_InOperation_WithByteArrayValue_ThrowsArgumentException()
+    {
+        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, new Byte[] { 1, 2, 3 }) };
+
+        Assert.Throws<ArgumentException>(() => criteria.ToDynamicParameters());
+    }
+
+    [Test]
+    public void FilterCriteria_InOperation_WithNullValue_ThrowsArgumentException()
+    {
+        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, null) };
+
+        Assert.Throws<ArgumentException>(() => criteria.ToDynamicParameters());
+    }
+
+    [Test]
+    public void FilterCriteria_InOperation_WithNullElement_BindsNull()
+    {
+        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, new String?[] { "a", null }) };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameters.ParameterNames, Is.EqualTo(new[] { "p0_0", "p0_1" }));
+            Assert.That(parameters.Get<Object>("p0_1"), Is.Null);
         });
     }
 }

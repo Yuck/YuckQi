@@ -9,6 +9,19 @@ public static class FilterCriteriaExtensions
 {
     private const String LikeEscapeCharacter = "\\";
 
+    public static IReadOnlyList<Object?> GetInValues(this FilterCriteria parameter)
+    {
+        ArgumentNullException.ThrowIfNull(parameter);
+
+        if (parameter.Value is String or Byte[])
+            throw new ArgumentException($"{nameof(parameter.Value)} for {nameof(FilterOperation.In)} on '{parameter.FieldName}' must be a collection of values, not a single {parameter.Value.GetType().Name}.");
+
+        if (parameter.Value is not IEnumerable enumerable)
+            throw new ArgumentException($"{nameof(parameter.Value)} must be convertible to {nameof(IEnumerable)}.");
+
+        return enumerable.Cast<Object?>().ToArray();
+    }
+
     public static DynamicParameters ToDynamicParameters(this IEnumerable<FilterCriteria>? parameters, IReadOnlyDictionary<Type, DbType>? dbTypeMap = null)
     {
         var result = new DynamicParameters();
@@ -16,34 +29,34 @@ public static class FilterCriteriaExtensions
         if (parameters is null)
             return result;
 
+        var index = 0;
+
         foreach (var parameter in parameters)
+        {
             if (parameter.Operation == FilterOperation.In)
             {
-                var set = parameter.Value is IEnumerable enumerable
-                              ? enumerable.Cast<Object>().ToArray()
-                              : throw new ArgumentException($"{nameof(parameter.Value)} must be convertible to {nameof(IEnumerable)}.");
+                var values = parameter.GetInValues();
 
-                for (var i = 0; i < set.Length; i++)
-                {
-                    var name = $"{parameter.FieldName}{i}";
-                    var value = set[i];
-                    var type = value?.GetType();
-                    var dbType = dbTypeMap is not null && type is not null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
-
-                    result.Add(name, value, dbType);
-                }
+                for (var i = 0; i < values.Count; i++)
+                    AddParameter(result, FilterParameterNames.ForElement(index, i), values[i], dbTypeMap);
             }
             else
             {
-                var name = parameter.FieldName;
-                var value = GetBoundValue(parameter);
-                var type = value?.GetType();
-                var dbType = dbTypeMap is not null && type is not null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
-
-                result.Add(name, value, dbType);
+                AddParameter(result, FilterParameterNames.ForCriterion(index), GetBoundValue(parameter), dbTypeMap);
             }
 
+            index++;
+        }
+
         return result;
+    }
+
+    private static void AddParameter(DynamicParameters parameters, String name, Object? value, IReadOnlyDictionary<Type, DbType>? dbTypeMap)
+    {
+        var type = value?.GetType();
+        var dbType = dbTypeMap is not null && type is not null && dbTypeMap.TryGetValue(type, out var mapped) ? (DbType?) mapped : null;
+
+        parameters.Add(name, value, dbType);
     }
 
     private static Object? GetBoundValue(FilterCriteria parameter)
