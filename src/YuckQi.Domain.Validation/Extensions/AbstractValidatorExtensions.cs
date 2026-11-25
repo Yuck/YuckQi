@@ -39,14 +39,33 @@ public static class AbstractValidatorExtensions
     {
         ArgumentNullException.ThrowIfNull(validationResult);
 
-        if (validationResult.IsValid)
-            return new Result<T>(item);
+        var detail = GetResultDetail(validationResult);
+        var result = new Result<T>(item, detail);
+        if (result.IsValid)
+            return result;
 
-        return new Result<T>(default, GetResultDetail(validationResult));
+        return new Result<T>(default, detail);
     }
-    
+
+    private static ResultCode GetResultCode(ValidationFailure failure)
+    {
+        if (String.IsNullOrWhiteSpace(failure.ErrorCode))
+            return ResultCode.InvalidRequestDetail;
+
+        return new ResultCode(failure.ErrorCode);
+    }
+
     private static IReadOnlyCollection<ResultDetail> GetResultDetail(ValidationResult result)
     {
-        return [..result.Errors.Select(t => new ResultDetail(new ResultMessage(t.ErrorMessage), ResultCode.InvalidRequestDetail, t.PropertyName))];
+        return [..result.Errors.Select(t => new ResultDetail(new ResultMessage(t.ErrorMessage), GetResultCode(t), t.PropertyName, GetResultType(t)))];
+    }
+
+    private static ResultType GetResultType(ValidationFailure failure)
+    {
+        return failure.Severity switch
+        {
+            Severity.Warning or Severity.Info => ResultType.Warning,
+            _ => ResultType.Error
+        };
     }
 }
