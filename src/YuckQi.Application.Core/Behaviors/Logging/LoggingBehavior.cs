@@ -13,10 +13,25 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
 
         logger.LogInformation("Handling '{type}' started.", type);
 
-        var response = await next(request, cancellationToken);
+        try
+        {
+            var response = await next(request, cancellationToken);
 
-        logger.LogInformation("Handling '{type}' completed ({elapsed:g} elapsed).", type, stopwatch.Elapsed);
+            logger.LogInformation("Handling '{type}' completed ({elapsed:g} elapsed).", type, stopwatch.Elapsed);
 
-        return response;
+            return response;
+        }
+        catch (OperationCanceledException exception) when (cancellationToken.IsCancellationRequested)
+        {
+            logger.LogInformation(exception, "Handling '{type}' canceled ({elapsed:g} elapsed).", type, stopwatch.Elapsed);
+
+            throw;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Handling '{type}' failed ({elapsed:g} elapsed).", type, stopwatch.Elapsed);
+
+            throw;
+        }
     }
 }
