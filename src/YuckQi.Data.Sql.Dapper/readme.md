@@ -18,11 +18,13 @@ Database-specific packages (MySql, Oracle, PostgreSql, SqlServer) provide concre
 
 ## `DateOnly` and `TimeOnly` Properties
 
-SimpleCRUD only generates insert/update columns for the types on its built-in "simple type" list, which leaves out `DateOnly` and `TimeOnly`. `CreationHandler` and `RevisionHandler` add those columns (including the nullable forms), so you don't need `[Editable(true)]` on them. The added columns follow SimpleCRUD's usual attribute rules: `[Column]`, `[Key]`, `[Required]`, `[IgnoreInsert]`, `[IgnoreUpdate]`, `[NotMapped]`, `[ReadOnly]` and `[Editable]` work the same as they do for a `DateTime` property.
+SimpleCRUD only generates insert/update columns for the types on its built-in "simple type" list, which leaves out `DateOnly` and `TimeOnly`. `CreationHandler` and `RevisionHandler` add those columns (including the nullable forms), so you don't need `[Editable(true)]` on them. The added columns follow SimpleCRUD's usual attribute rules: `[Column]`, `[Key]`, `[Required]`, `[IgnoreInsert]`, `[IgnoreUpdate]`, `[NotMapped]`, `[ReadOnly]` and `[Editable]` work the same as they do for a `DateTime` property. If another property already maps to the same column name, the column is written once, from that other property.
+
+The handlers do this by updating the column lists SimpleCRUD caches for each record type. They check those cached lists, and any cached UPDATE statement, on every write and restore the added columns if SimpleCRUD has rebuilt them, so you can still call SimpleCRUD's `Insert`/`Update` directly on the same record types elsewhere. A direct SimpleCRUD call writes only the columns SimpleCRUD itself knows about. A direct call made at the same moment a handler is restoring the cache can also leave that one handler statement without the added columns.
 
 Upgrading: you can remove `[Editable(true)]` attributes that were only there for `DateOnly`/`TimeOnly` columns. These values now go to Dapper as parameters, so Dapper must be able to bind them. If your Dapper version or database provider can't, register an `SqlMapper.TypeHandler<DateOnly>` and `SqlMapper.TypeHandler<TimeOnly>`. Without one, the write fails with an error instead of writing `NULL`.
 
-This works by reading private members of Dapper.SimpleCRUD (tested against 2.3.0), and only for record types that have `DateOnly`/`TimeOnly` properties. If a future SimpleCRUD version removes those members, the write throws an `InvalidOperationException` that names the missing member.
+This works by reading private members of Dapper.SimpleCRUD (tested against 2.3.0), and only for record types that have `DateOnly`/`TimeOnly` properties. If a future SimpleCRUD version removes those members or changes `GetColumnName`'s signature, the write throws an `InvalidOperationException` that names the member.
 
 ## Dependencies
 

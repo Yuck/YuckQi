@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Data;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Dapper;
 using NUnit.Framework;
@@ -115,6 +117,89 @@ public class TemporalScaffoldTests
         Assert.That(DescribeUpdateIgnoringColumnOrder(temporal.Single()), Is.EqualTo(DescribeUpdateIgnoringColumnOrder(baseline.Single())));
     }
 
+    [Test]
+    public void Revise_AfterDirectSimpleCrudUpdate_UpdatesAllColumns()
+    {
+        var commands = new List<String>();
+        var handler = new RevisionHandler<WarmUpdateRecord, Int32, IDbTransaction>(null);
+        var record = new WarmUpdateRecord { Identifier = 1, Day = new DateOnly(2026, 11, 25) };
+
+        MockDbFactory.CreateConnection(commands).Update(record);
+        handler.Revise(record, MockDbFactory.CreateTransaction(commands));
+        handler.Revise(record, MockDbFactory.CreateTransaction(commands));
+
+        Assert.That(commands[0], Does.Not.Contain("[Day]"));
+        Assert.That(CountOccurrences(commands[1], "[Day] = @Day"), Is.EqualTo(1));
+        Assert.That(commands[2], Is.EqualTo(commands[1]));
+    }
+
+    [Test]
+    public void Create_AfterSimpleCrudRebuildsItsCache_IncludesColumnsAgain()
+    {
+        var commands = new List<String>();
+        var handler = new CreationHandler<RebuiltInsertCacheRecord, Int32, IDbTransaction>();
+        var record = new RebuiltInsertCacheRecord { Identifier = 1, Day = new DateOnly(2026, 11, 25) };
+
+        handler.Create(record, MockDbFactory.CreateTransaction(commands));
+        ForgetSimpleCrudCachedSql<RebuiltInsertCacheRecord>();
+        MockDbFactory.CreateConnection(commands).Insert<Int32?, RebuiltInsertCacheRecord>(record);
+        handler.Create(record, MockDbFactory.CreateTransaction(commands));
+
+        Assert.That(commands[1], Does.Not.Contain("[Day]"));
+        Assert.That(commands[2], Is.EqualTo(commands[0]));
+        Assert.That(CountOccurrences(commands[2], "[Day]"), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Revise_AfterSimpleCrudRebuildsItsCache_UpdatesColumnsAgain()
+    {
+        var commands = new List<String>();
+        var handler = new RevisionHandler<RebuiltUpdateCacheRecord, Int32, IDbTransaction>(null);
+        var record = new RebuiltUpdateCacheRecord { Identifier = 1, Day = new DateOnly(2026, 11, 25) };
+
+        handler.Revise(record, MockDbFactory.CreateTransaction(commands));
+        ForgetSimpleCrudCachedSql<RebuiltUpdateCacheRecord>();
+        MockDbFactory.CreateConnection(commands).Update(record);
+        handler.Revise(record, MockDbFactory.CreateTransaction(commands));
+
+        Assert.That(commands[1], Does.Not.Contain("[Day]"));
+        Assert.That(commands[2], Is.EqualTo(commands[0]));
+        Assert.That(CountOccurrences(commands[2], "[Day] = @Day"), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Create_WithColumnNameCollision_KeepsColumnsAndValuesAligned()
+    {
+        var commands = new List<String>();
+
+        new CreationHandler<CollisionRecord, Int32, IDbTransaction>().Create(new CollisionRecord { Identifier = 1 }, MockDbFactory.CreateTransaction(commands));
+
+        Assert.That(DescribeInsertIgnoringColumnOrder(commands.Single()), Does.Contain("[Day]=@LegacyDay"));
+        Assert.That(CountOccurrences(commands.Single(), "[Day]"), Is.EqualTo(1));
+        Assert.That(commands.Single(), Does.Not.Contain("@Day"));
+    }
+
+    [Test]
+    public void Revise_WithColumnNameCollision_AssignsColumnOnce()
+    {
+        var commands = new List<String>();
+
+        new RevisionHandler<CollisionRecord, Int32, IDbTransaction>(null).Revise(new CollisionRecord { Identifier = 1 }, MockDbFactory.CreateTransaction(commands));
+
+        Assert.That(commands.Single(), Does.Contain("[Day] = @LegacyDay"));
+        Assert.That(CountOccurrences(commands.Single(), "[Day]"), Is.EqualTo(1));
+        Assert.That(commands.Single(), Does.Not.Contain("@Day"));
+    }
+
+    private static void ForgetSimpleCrudCachedSql<TRecord>()
+    {
+        if (typeof(SimpleCRUD).GetField("StringBuilderCacheDict", BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) is not ConcurrentDictionary<String, String> cache)
+            throw new AssertionException("Dapper.SimpleCRUD's SQL cache was not found.");
+
+        foreach (var key in cache.Keys.Where(t => t.StartsWith($"{typeof(TRecord).FullName}_", StringComparison.Ordinal)))
+            cache.TryRemove(key, out _);
+    }
+
     private static String DescribeInsertIgnoringColumnOrder(String sql)
     {
         var match = Regex.Match(sql, @"^(insert into \S+) \((.*)\) values \((.*)\)$");
@@ -195,6 +280,55 @@ public class TemporalScaffoldTests
         public DateTimeOffset RevisionMoment { get; set; }
 
         public TimeOnly StartLocalTime { get; set; }
+    }
+
+    [Table("WarmUpdate")]
+    public record WarmUpdateRecord : DomainEntityBase<Int32>, IRevisionMoment
+    {
+        public DateOnly Day { get; set; }
+
+        [Key]
+        public Int32 Id { get => Identifier; set => Identifier = value; }
+
+        public DateTimeOffset RevisionMoment { get; set; }
+    }
+
+    [Table("RebuiltInsertCache")]
+    public record RebuiltInsertCacheRecord : DomainEntityBase<Int32>, ICreationMoment
+    {
+        public DateTimeOffset CreationMoment { get; set; }
+
+        public DateOnly Day { get; set; }
+
+        [Key]
+        public Int32 Id { get => Identifier; set => Identifier = value; }
+    }
+
+    [Table("RebuiltUpdateCache")]
+    public record RebuiltUpdateCacheRecord : DomainEntityBase<Int32>, IRevisionMoment
+    {
+        public DateOnly Day { get; set; }
+
+        [Key]
+        public Int32 Id { get => Identifier; set => Identifier = value; }
+
+        public DateTimeOffset RevisionMoment { get; set; }
+    }
+
+    [Table("Collision")]
+    public record CollisionRecord : DomainEntityBase<Int32>, ICreationMoment, IRevisionMoment
+    {
+        public DateTimeOffset CreationMoment { get; set; }
+
+        public DateOnly Day { get; set; }
+
+        [Key]
+        public Int32 Id { get => Identifier; set => Identifier = value; }
+
+        [Column("Day")]
+        public DateTime LegacyDay { get; set; }
+
+        public DateTimeOffset RevisionMoment { get; set; }
     }
 
     [Table("WarmCache")]
