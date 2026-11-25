@@ -43,7 +43,7 @@ Pipeline behaviors are organized by purpose in subfolders and namespaces:
 **Validation** (`YuckQi.Application.Core.Behaviors.Validation`)
 
 - **`ValidationResponse`** / **`ValidationResponse<T>`** &ndash; recommended Mediator `TResponse` for use with `ValidationBehavior`. Implements `IHasValidationResults`. On validation failure the behavior returns `new ValidationResponse` / `new ValidationResponse<T> { ValidationResults = … }` with `Value` left null; on success handlers return the envelope with `Value` set. Keep payload/`T` free of validation concerns (and free of the `new()` constraint), so `required` members on payloads remain valid.
-- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error when `TResponse` implements `IHasValidationResults` (prefer `ValidationResponse` / `ValidationResponse<T>` as `TResponse`). Validators are resolved as `IEnumerable<IValidator<TRequest>>`, the service type that `AddValidatorsFromAssembly` / `AddValidatorsFromAssemblyContaining` register, and run one at a time in registration order, so validators can share a scoped `DbContext` or connection. Only results that have details are reported. When none of them has an error, the handler runs and the behavior returns a shallow copy of its response with those results (warnings) appended to `ValidationResults`. The handler's own instance is not changed, so a response held in a cache or shared between requests does not pick up warnings. A `null` response is returned as is.
+- **`ValidationBehavior<TRequest, TResponse>`** &ndash; Runs FluentValidation validators and short-circuits on error when `TResponse` implements `IHasValidationResults` (prefer `ValidationResponse` / `ValidationResponse<T>` as `TResponse`). Validators are resolved as `IEnumerable<IValidator<TRequest>>`, the service type that `AddValidatorsFromAssembly` / `AddValidatorsFromAssemblyContaining` register, and run one at a time in registration order, so validators can share a scoped `DbContext` or connection. Only results that have details are reported, as plain `Result` instances that carry the details but not the request. When none of them has an error, the handler runs and the behavior returns a shallow copy of its response with those results (warnings) appended to `ValidationResults`. The handler's own instance is not changed, so a response held in a cache or shared between requests does not pick up warnings. A `null` response is returned as is.
 
 Upgrading to 10.5.0:
 
@@ -51,6 +51,7 @@ Upgrading to 10.5.0:
 - Validators run sequentially instead of concurrently.
 - A failed validation's `ValidationResults` no longer include empty results from validators that passed.
 - On success, warning results are returned on a shallow copy of the handler's response instead of being dropped. When there are warnings, the returned instance is not the one the handler returned.
+- Validator rules with `Severity.Warning` or `Severity.Info` no longer short-circuit; the handler runs and those failures are returned as warnings. Validation results carry the failure's FluentValidation `ErrorCode` instead of always `InvalidRequestDetail` (see `YuckQi.Domain.Validation`).
 - `LoggingBehavior` logs failures (error level, with the exception) and cancellations, with the elapsed time.
 
 ## Caching guide

@@ -53,7 +53,7 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         {
             var result = await validator.GetResult(request, cancellationToken);
             if (result.Detail.Count > 0)
-                results.Add(result);
+                results.Add(new Result(result.Detail));
         }
 
         return results;

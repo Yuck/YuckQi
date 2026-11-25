@@ -69,6 +69,29 @@ public class ValidationBehaviorTests
     }
 
     [Test]
+    public async Task Handle_WhenValidatorsFailWithWarning_CallsNextAndReturnsResponseWithWarnings()
+    {
+        var validators = new IValidator<PingRequest>[] { new WarningValidator() };
+        var logger = new Mock<ILogger<ValidationBehavior<PingRequest, ValidatedStub>>>();
+        var behavior = new ValidationBehavior<PingRequest, ValidatedStub>(validators, logger.Object);
+        var request = new PingRequest { Value = "x" };
+        var next = false;
+
+        var result = await behavior.Handle(request, (t, u) => Next(), CancellationToken.None);
+
+        Assert.That(next, Is.True);
+        Assert.That(result.ValidationResults.SelectMany(t => t.Detail).Select(t => t.Type), Is.EquivalentTo(new[] { ResultType.Warning }));
+        Assert.That(result.ValidationResults.Select(t => t.GetType()), Is.All.EqualTo(typeof(Result)));
+
+        ValueTask<ValidatedStub> Next()
+        {
+            next = true;
+
+            return new ValueTask<ValidatedStub>(new ValidatedStub());
+        }
+    }
+
+    [Test]
     public async Task Handle_WhenSomeValidatorsFail_ReturnsOnlyResultsWithDetail()
     {
         var validators = new IValidator<PingRequest>[] { new NotEmptyValidator(), new FailingValidator() };
@@ -159,6 +182,14 @@ public class ValidationBehaviorTests
         public FailingValidator()
         {
             RuleFor(t => t.Value).MinimumLength(2).WithMessage("too short");
+        }
+    }
+
+    public sealed class WarningValidator : AbstractValidator<PingRequest>
+    {
+        public WarningValidator()
+        {
+            RuleFor(t => t.Value).MinimumLength(2).WithSeverity(Severity.Warning);
         }
     }
 
