@@ -1,22 +1,14 @@
 using System.Collections;
-using System.Reflection;
-using Dapper;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Sorting;
 using YuckQi.Data.Sql.Dapper.Abstract.Interfaces;
+using YuckQi.Data.Sql.Dapper.Schema;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.Dapper.MySql;
 
 public class SqlGenerator<TRecord> : ISqlGenerator
 {
-    private static readonly String DefaultTableName = typeof(TRecord).Name;
-    private static readonly TableAttribute? TableAttribute = typeof(TRecord).GetCustomAttribute(typeof(TableAttribute)) as TableAttribute;
-
-    private static String? SchemaName => TableAttribute?.Schema;
-
-    private static String TableName => TableAttribute?.Name ?? DefaultTableName;
-
     public String GenerateCountQuery(IReadOnlyCollection<FilterCriteria> parameters)
     {
         var select = "select count(*)";
@@ -42,7 +34,7 @@ public class SqlGenerator<TRecord> : ISqlGenerator
     public String GenerateSearchQuery(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort)
     {
         var columns = BuildColumnsSql();
-        var sorting = String.Join(", ", sort.Select(t => $"`{t.Expression}`{(t.Order == SortOrder.Descending ? " desc" : String.Empty)}"));
+        var sorting = String.Join(", ", sort.Select(t => $"{BuildColumnSql(t.Expression)}{(t.Order == SortOrder.Descending ? " desc" : String.Empty)}"));
 
         var select = $"select {columns}";
         var from = BuildFromSql();
@@ -54,18 +46,20 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         return sql;
     }
 
+    private static String BuildColumnSql(String fieldName)
+    {
+        return QuoteIdentifier(RecordSchema<TRecord>.GetColumnName(fieldName));
+    }
+
     private static String BuildColumnsSql()
     {
-        var properties = typeof(TRecord).GetProperties().Where(t => t.CustomAttributes.All(u => u.AttributeType != typeof(IgnoreSelectAttribute)));
-        var columns = String.Join(", ", properties.Select(t =>
+        var columns = String.Join(", ", RecordSchema<TRecord>.SelectableProperties.Select(t =>
         {
-            var attribute = t.CustomAttributes.SingleOrDefault(u => u.AttributeType == typeof(ColumnAttribute));
-            var custom = attribute?.ConstructorArguments.FirstOrDefault().Value as String;
-            var column = String.IsNullOrWhiteSpace(custom)
-                             ? $"`{t.Name}`"
-                             : $"`{custom}` `{t.Name}`";
+            var column = RecordSchema<TRecord>.GetColumnName(t);
 
-            return column;
+            return column == t.Name
+                       ? QuoteIdentifier(t.Name)
+                       : $"{QuoteIdentifier(column)} {QuoteIdentifier(t.Name)}";
         }));
 
         return columns;
@@ -89,20 +83,24 @@ public class SqlGenerator<TRecord> : ISqlGenerator
 
     private static String BuildFromSql()
     {
-        return String.IsNullOrWhiteSpace(SchemaName) ? $"from `{TableName}`" : $"from `{SchemaName}`.`{TableName}`";
+        var table = QuoteIdentifier(RecordSchema<TRecord>.TableName);
+        var schema = RecordSchema<TRecord>.SchemaName;
+
+        return schema is null ? $"from {table}" : $"from {QuoteIdentifier(schema)}.{table}";
     }
 
     private static String BuildWhereSql(IEnumerable<FilterCriteria>? parameters)
     {
         var filter = String.Join(" and ", parameters?.Select(t =>
         {
+            var column = BuildColumnSql(t.FieldName);
+
             if (t is { Operation: FilterOperation.In, Value: not IEnumerable })
                 throw new ArgumentException($"{nameof(t.Value)} must be convertible to {nameof(IEnumerable)}.");
 
             if (t is { Operation: FilterOperation.Contains, Value: null })
                 throw new ArgumentException($"{nameof(t.Value)} is required for {nameof(FilterOperation.Contains)}.");
 
-            var column = $"`{t.FieldName}`";
             var value = t.Value;
             var comparison = BuildComparison(value, t.Operation);
             var set = t.Value is IEnumerable enumerable
@@ -128,5 +126,10 @@ public class SqlGenerator<TRecord> : ISqlGenerator
     private static String CombineSql(params String[] fragments)
     {
         return String.Join(Environment.NewLine, fragments.Where(t => ! String.IsNullOrWhiteSpace(t)));
+    }
+
+    private static String QuoteIdentifier(String identifier)
+    {
+        return $"`{identifier.Replace("`", "``", StringComparison.Ordinal)}`";
     }
 }
