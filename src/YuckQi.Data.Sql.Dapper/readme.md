@@ -12,9 +12,28 @@ Provides handler implementations that operate over an `IDbTransaction` scope:
 - **`RetrievalHandlerBase`** &ndash; abstract base for retrieval with `ISqlGenerator`-driven queries
 - **`SearchHandlerBase`** &ndash; abstract base for paginated search with `ISqlGenerator`-driven queries
 - **`ISqlGenerator`** &ndash; interface for generating provider-specific SQL (implemented by database-specific packages)
+- **`RecordSchema<TRecord>`** &ndash; resolves a record's table name, schema, selectable properties and column names for the `SqlGenerator`s, and rejects filter and sort names that are not mapped properties of the record
 - **`FilterCriteriaExtensions`** &ndash; builds Dapper `DynamicParameters` from `FilterCriteria`; `Contains` values are wrapped as `%value%` with `%`, `_`, and `\` escaped so they are literal. SQL Server's `SqlGenerator` also treats `[` as literal (a `LIKE` character-class wildcard on that dialect only)
 
 Database-specific packages (MySql, Oracle, PostgreSql, SqlServer) provide concrete `ISqlGenerator` implementations and ready-to-use retrieval/search handlers.
+
+## Record Mapping for Reads
+
+The database-specific `SqlGenerator`s build filtered `Get`, `GetList`, `Search` and `Count` queries from `RecordSchema<TRecord>`, which reads the same attributes SimpleCRUD uses for writes. Attributes are matched by type name, so both the Dapper.SimpleCRUD attributes and their `System.ComponentModel.DataAnnotations` equivalents work. When a member carries both, the Dapper.SimpleCRUD attribute wins:
+
+- **Table and schema** &ndash; `[Table("name", Schema = "schema")]`, defaulting to the record type's name with no schema. Tables without a schema are left unqualified, so the database's default schema applies, the same as for SimpleCRUD writes. Custom SimpleCRUD `ITableNameResolver` / `IColumnNameResolver` registrations are not used for reads.
+- **Columns** &ndash; `[Column("name")]`, defaulting to the property name. Selected columns are aliased back to the property name.
+- **Mapped properties** &ndash; public instance properties with a setter (including `init`), an auto-property backing field, or a name matching a constructor parameter (ignoring case, as Dapper's constructor mapping does), so `class R(Int32 id) { public Int32 Id => id; }` is mapped. `[NotMapped]` properties, other computed properties such as `String Display => ...`, static properties and indexers are not mapped. `[IgnoreSelect]` properties are mapped but not selected. Properties of any type are mapped, including collections such as `IReadOnlyList<Guid>`, since Dapper type handlers and providers such as Npgsql can read them; mark navigation properties `[NotMapped]` or `[IgnoreSelect]`.
+
+### Filter and Sort Names
+
+Only `FilterCriteria.FieldName` and `SortCriteria.Expression` values that name a mapped property of the record, or its column, are accepted. Matches are tried in order: property name, column name, property name ignoring case, column name ignoring case; the first rule that matches exactly one property is used. Any other name throws an `ArgumentException` before SQL is built, so filter and sort names taken from user input cannot inject SQL. Filters and sorts on a `[Column]`-mapped property use the mapped column name. Table, schema and column identifiers are quoted with the dialect's quote character doubled.
+
+Upgrading to 10.5.0:
+
+- The SQL Server and PostgreSQL generators no longer qualify tables with `dbo` / `public` by default; add `Schema = "..."` to `[Table]` if reads relied on that.
+- Filter and sort names that are not a mapped property or column of the record now throw `ArgumentException` instead of being sent to the database.
+- `[NotMapped]` and computed properties are no longer selected, and DataAnnotations `[Table]` / `[Column]` attributes now apply to reads as well as writes.
 
 ## `DateOnly` and `TimeOnly` Properties
 
