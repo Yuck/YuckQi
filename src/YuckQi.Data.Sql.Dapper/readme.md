@@ -11,9 +11,10 @@ Provides handler implementations that operate over an `IDbTransaction` scope:
 - **`PhysicalDeletionHandler`** &ndash; deletes records via `SimpleCRUD.Delete`
 - **`RetrievalHandlerBase`** &ndash; abstract base for retrieval with `ISqlGenerator`-driven queries
 - **`SearchHandlerBase`** &ndash; abstract base for paginated search with `ISqlGenerator`-driven queries
-- **`ISqlGenerator`** &ndash; interface for generating provider-specific SQL (implemented by database-specific packages)
+- **`ISqlGenerator`** &ndash; interface for generating provider-specific SQL (implemented by database-specific packages). The handlers bind filter values with `ToDynamicParameters`, so an implementation must reference them by the names `FilterParameterNames` returns (`@p0`, `@p1_0`), not by field name; any other name fails when the query runs
 - **`RecordSchema<TRecord>`** &ndash; resolves a record's table name, schema, selectable properties and column names for the `SqlGenerator`s, and rejects filter and sort names that are not mapped properties of the record
 - **`FilterCriteriaExtensions`** &ndash; builds Dapper `DynamicParameters` from `FilterCriteria`; `Contains` values are wrapped as `%value%` with `%`, `_`, and `\` escaped so they are literal. SQL Server's `SqlGenerator` also treats `[` as literal (a `LIKE` character-class wildcard on that dialect only)
+- **`FilterParameterNames`** &ndash; the parameter names shared by `ToDynamicParameters` and the `SqlGenerator`s; use it in a custom `ISqlGenerator` so its SQL matches the bound parameters
 
 Database-specific packages (MySql, Oracle, PostgreSql, SqlServer) provide concrete `ISqlGenerator` implementations and ready-to-use retrieval/search handlers.
 
@@ -29,11 +30,19 @@ The database-specific `SqlGenerator`s build filtered `Get`, `GetList`, `Search` 
 
 Only `FilterCriteria.FieldName` and `SortCriteria.Expression` values that name a mapped property of the record, or its column, are accepted. Matches are tried in order: property name, column name, property name ignoring case, column name ignoring case; the first rule that matches exactly one property is used. Any other name throws an `ArgumentException` before SQL is built, so filter and sort names taken from user input cannot inject SQL. Filters and sorts on a `[Column]`-mapped property use the mapped column name. Table, schema and column identifiers are quoted with the dialect's quote character doubled.
 
+### Filter Parameters
+
+Filter values are bound by position, not by field name: the criterion at index `i` is bound as `p{i}`, and element `j` of an `In` criterion as `p{i}_{j}` (`@p0`, `@p1_0`; `:p0` on Oracle). Several criteria on one field, such as `Age >= 18` and `Age <= 65`, each get their own parameter, and fields named after Oracle reserved words such as `Date` or `Level` bind normally. A criterion with a `null` value is written as SQL `null` but still uses its position, so later names don't shift.
+
+`In` takes a collection of values. A `String` or `Byte[]` value throws an `ArgumentException` instead of being split into characters or bytes; wrap it as `new[] { "ABC" }` to match the single value.
+
 Upgrading to 10.5.0:
 
 - The SQL Server and PostgreSQL generators no longer qualify tables with `dbo` / `public` by default; add `Schema = "..."` to `[Table]` if reads relied on that.
 - Filter and sort names that are not a mapped property or column of the record now throw `ArgumentException` instead of being sent to the database.
 - `[NotMapped]` and computed properties are no longer selected, and DataAnnotations `[Table]` / `[Column]` attributes now apply to reads as well as writes.
+- Filter parameters are named by position (`p0`, `p1_0`) instead of by field name (`Name`, `Name0`). Custom `ISqlGenerator`s used with these handlers must use `FilterParameterNames` to match.
+- `In` with a `String` or `Byte[]` value now throws `ArgumentException` instead of matching each character or byte.
 
 ## `DateOnly` and `TimeOnly` Properties
 

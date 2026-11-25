@@ -1,7 +1,8 @@
-using System.Collections;
 using YuckQi.Data.Filtering;
 using YuckQi.Data.Sorting;
 using YuckQi.Data.Sql.Dapper.Abstract.Interfaces;
+using YuckQi.Data.Sql.Dapper.Filtering;
+using YuckQi.Data.Sql.Dapper.Filtering.Extensions;
 using YuckQi.Data.Sql.Dapper.Schema;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
 
@@ -81,6 +82,31 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         };
     }
 
+    private static String BuildFilterSql(FilterCriteria criteria, Int32 index)
+    {
+        var column = BuildColumnSql(criteria.FieldName);
+
+        if (criteria is { Operation: FilterOperation.Contains, Value: null })
+            throw new ArgumentException($"{nameof(criteria.Value)} is required for {nameof(FilterOperation.Contains)}.");
+
+        var comparison = BuildComparison(criteria.Value, criteria.Operation);
+
+        if (criteria.Operation == FilterOperation.In)
+        {
+            var values = criteria.GetInValues();
+            var set = values.Count != 0 ? String.Join(",", values.Select((_, i) => BuildParameterSql(FilterParameterNames.ForElement(index, i)))) : "null";
+
+            return $"({column} {comparison} ({set}))";
+        }
+
+        var parameter = criteria.Value is not null ? BuildParameterSql(FilterParameterNames.ForCriterion(index)) : "null";
+
+        if (criteria.Operation == FilterOperation.Contains)
+            return $"({column} {comparison} {parameter} escape '\\')";
+
+        return $"({column} {comparison} {parameter})";
+    }
+
     private static String BuildFromSql()
     {
         var table = QuoteIdentifier(RecordSchema<TRecord>.TableName);
@@ -89,35 +115,14 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         return schema is null ? $"from {table}" : $"from {QuoteIdentifier(schema)}.{table}";
     }
 
+    private static String BuildParameterSql(String name)
+    {
+        return $":{name}";
+    }
+
     private static String BuildWhereSql(IEnumerable<FilterCriteria>? parameters)
     {
-        var filter = String.Join(" and ", parameters?.Select(t =>
-        {
-            var column = BuildColumnSql(t.FieldName);
-
-            if (t is { Operation: FilterOperation.In, Value: not IEnumerable })
-                throw new ArgumentException($"{nameof(t.Value)} must be convertible to {nameof(IEnumerable)}.");
-
-            if (t is { Operation: FilterOperation.Contains, Value: null })
-                throw new ArgumentException($"{nameof(t.Value)} is required for {nameof(FilterOperation.Contains)}.");
-
-            var value = t.Value;
-            var comparison = BuildComparison(value, t.Operation);
-            var set = t.Value is IEnumerable enumerable
-                          ? enumerable.Cast<Object>().ToArray().Select((_, i) => $":{t.FieldName}{i}").ToList()
-                          : null;
-            var parameter = t.Operation == FilterOperation.In
-                                ? set is not null && set.Count != 0
-                                      ? $"({String.Join(",", set)})"
-                                      : "(null)"
-                                : value is not null
-                                    ? $":{t.FieldName}"
-                                    : "null";
-
-            return t.Operation == FilterOperation.Contains
-                       ? $"({column} {comparison} {parameter} escape '\\')"
-                       : $"({column} {comparison} {parameter})";
-        }) ?? []);
+        var filter = String.Join(" and ", parameters?.Select(BuildFilterSql) ?? []);
         var where = $"{(String.IsNullOrWhiteSpace(filter) ? String.Empty : $"where {filter}")}";
 
         return where;
