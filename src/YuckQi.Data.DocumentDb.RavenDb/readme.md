@@ -20,6 +20,12 @@ All handlers provide overloads with an explicit `TDocument` type parameter for d
 
 Document types should expose a string `Id` property for RavenDB document identity. Use `[DatabaseAttribute]` and `[CollectionAttribute]` when targeting multiple databases or custom collection names.
 
+`Create` copies the entity's `Identifier` into the document `Id` only when the identifier is set; otherwise the session assigns the document id. If the document still has no identifier after `StoreAsync`, it is evicted from the session before `CreationException` is thrown, so a later `SaveChanges` does not write it.
+
+Upgrading to 10.5.0:
+
+- A value-type `Identifier` left at its default (`0`, `Guid.Empty`) no longer becomes the document id (`"0"`, `"00000000-0000-0000-0000-000000000000"`). Every unset create used to target that same document.
+
 ## Dependencies
 
 - [RavenDB.Client](https://www.nuget.org/packages/RavenDB.Client)

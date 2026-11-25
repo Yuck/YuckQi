@@ -44,6 +44,8 @@ Upgrading to 10.5.0:
 - `Get` with an empty filter collection throws instead of returning the first entity, and `GetList` with one throws instead of returning every entity; use `GetList(scope)` for that.
 - Empty dictionaries and other `Object` parameters that produce no filters throw in `Get`, `GetList` and `Search`.
 - Dictionaries are now read as field name/value pairs instead of filtering on `Comparer`, `Count`, `Keys` and `Values`.
+- `Create` throws `CreationException` when the provider returns `default(TIdentifier)` (such as `0` or `Guid.Empty`), not only `null`. The entity's `Identifier` is left unchanged when this happens. See the [YuckQi.Domain](https://www.nuget.org/packages/YuckQi.Domain) readme for how unset identifiers are defined. Providers undo their write where they can before the exception is raised; each provider readme says how.
+- `CreationOptions` has a new `allowDefaultIdentifier` parameter (default `false`). Set it to `true` when `0`, `Guid.Empty` or another default value is a real identifier, such as an enum-backed lookup whose `Unknown` member is `0`; only `null` then counts as unset. Revision and deletion handlers do not reject default identifiers.
 
 ### Design Patterns
 

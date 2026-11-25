@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using YuckQi.Data.Exceptions;
 using YuckQi.Data.Handlers.Write.Abstract.Interfaces;
 using YuckQi.Data.Handlers.Write.Options;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
+using YuckQi.Domain.Entities.Extensions;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Handlers.Write.Abstract;
@@ -18,7 +20,7 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
         ArgumentNullException.ThrowIfNull(scope);
 
         entity = PreProcess(entity);
-        entity.Identifier = DoCreate(entity, scope) ?? throw new CreationException<TDomainEntity>();
+        entity.Identifier = GetCreatedIdentifier(DoCreate(entity, scope));
 
         return entity;
     }
@@ -33,7 +35,7 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
         ArgumentNullException.ThrowIfNull(scope);
 
         entity = PreProcess(entity);
-        entity.Identifier = await DoCreate(entity, scope, cancellationToken) ?? throw new CreationException<TDomainEntity>();
+        entity.Identifier = GetCreatedIdentifier(await DoCreate(entity, scope, cancellationToken));
 
         return entity;
     }
@@ -52,6 +54,14 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
 
     protected abstract Task<TIdentifier?> DoCreate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken);
 
+    protected Boolean IsIdentifierSet([NotNullWhen(true)] TIdentifier? identifier)
+    {
+        if (_options.AllowDefaultIdentifier)
+            return identifier is not null;
+
+        return identifier.IsSet();
+    }
+
     protected TDomainEntity PreProcess(TDomainEntity entity)
     {
         if (_options.IdentifierFactory is not null)
@@ -62,5 +72,13 @@ public abstract class CreationHandlerBase<TDomainEntity, TIdentifier, TScope, TD
             revised.RevisionMoment = entity.CreationMoment;
 
         return entity;
+    }
+
+    private TIdentifier GetCreatedIdentifier(TIdentifier? identifier)
+    {
+        if (IsIdentifierSet(identifier))
+            return identifier;
+
+        throw new CreationException<TDomainEntity>();
     }
 }

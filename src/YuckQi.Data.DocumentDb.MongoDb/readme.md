@@ -17,6 +17,12 @@ Provides concrete handler implementations that operate over an `IClientSessionHa
 
 All handlers provide overloads with an explicit `TDocument` type parameter for domain-to-document mapping.
 
+A single-entity `Create` whose inserted document has an unset `_id` (`null`, or `0` / `Guid.Empty` for value types unless `CreationOptions` is created with `allowDefaultIdentifier: true`) deletes that document in the same session before throwing `CreationException`.
+
+Upgrading to 10.5.0:
+
+- Creating a document whose `_id` ends up `0` or `Guid.Empty` now deletes it again and throws `CreationException`. It used to be inserted and reported as created.
+
 ## Dependencies
 
 - [MongoDB.Driver](https://www.nuget.org/packages/MongoDB.Driver)

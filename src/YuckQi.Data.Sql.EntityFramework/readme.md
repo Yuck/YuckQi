@@ -12,6 +12,12 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 - **`SearchHandler`** &ndash; paginated search with filtering and sorting via LINQ
 - **`FilterCriteriaExtensions`** &ndash; builds `Expression<Func<T, Boolean>>` predicates from `FilterCriteria` for use with `IQueryable`; `FilterOperation.Contains` maps to `String.Contains` (case sensitivity follows the EF provider/collation)
 
+When the key read back after `Add` is unset (`null`, or `0` / `Guid.Empty` for value types unless `CreationOptions` is created with `allowDefaultIdentifier: true`), `CreationHandler` detaches the record before throwing `CreationException`, so a later `SaveChanges` does not insert it.
+
+Upgrading to 10.5.0:
+
+- `Create` with a key that EF does not generate and that is left at `0` / `Guid.Empty` now throws `CreationException` and detaches the record. It used to be tracked and inserted with the default key on `SaveChanges`.
+
 ## Dependencies
 
 - [Microsoft.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore)

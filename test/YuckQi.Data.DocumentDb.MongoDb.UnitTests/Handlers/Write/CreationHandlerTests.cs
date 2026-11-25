@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using YuckQi.Data.DocumentDb.MongoDb.Attributes;
 using YuckQi.Data.DocumentDb.MongoDb.Handlers.Write;
+using YuckQi.Data.Exceptions;
 using YuckQi.Data.Handlers.Write.Options;
 using YuckQi.Domain.Aspects.Abstract.Interfaces;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
@@ -111,6 +112,49 @@ public class CreationHandlerTests
     }
 
     [Test]
+    public void Create_WithUnsetIdentifier_DeletesInsertedDocumentAndThrowsCreationException()
+    {
+        var collection = new Mock<IMongoCollection<SurLaTableDocument>>();
+        var scope = CreateMockScope(collection);
+        var handler = new CreationHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
+        var entity = new SurLaTableDocument { Name = "ABC" };
+
+        Assert.Throws<CreationException<SurLaTableDocument>>(() => handler.Create(entity, scope.Object));
+
+        collection.Verify(t => t.DeleteOne(scope.Object, It.IsAny<FilterDefinition<SurLaTableDocument>>(), It.IsAny<DeleteOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
+    public async Task Create_Async_WithUnsetIdentifier_DeletesInsertedDocumentAndThrowsCreationException()
+    {
+        var collection = new Mock<IMongoCollection<SurLaTableDocument>>();
+        var scope = CreateMockScope(collection);
+        var handler = new CreationHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
+        var entity = new SurLaTableDocument { Name = "ABC" };
+
+        await Assert.ThrowsAsync<CreationException<SurLaTableDocument>>(async () => await handler.Create(entity, scope.Object, CancellationToken.None));
+
+        collection.Verify(t => t.DeleteOneAsync(scope.Object, It.IsAny<FilterDefinition<SurLaTableDocument>>(), It.IsAny<DeleteOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
+    public void Create_WithZeroIdentifierAndAllowDefaultIdentifier_KeepsInsertedDocument()
+    {
+        var collection = new Mock<IMongoCollection<SurLaTableDocument>>();
+        var scope = CreateMockScope(collection);
+        var handler = new CreationHandler<SurLaTableDocument, Int32, IClientSessionHandle>(new CreationOptions<Int32>(allowDefaultIdentifier: true));
+        var entity = new SurLaTableDocument { Identifier = 0, Name = "Unknown" };
+
+        var result = handler.Create(entity, scope.Object);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Identifier, Is.Zero);
+            collection.Verify(t => t.DeleteOne(It.IsAny<IClientSessionHandle>(), It.IsAny<FilterDefinition<SurLaTableDocument>>(), It.IsAny<DeleteOptions>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+    }
+
+    [Test]
     public void Create_WithAutoCreationMoment_SetsCreationMoment()
     {
         var scope = CreateMockScope();
@@ -125,8 +169,11 @@ public class CreationHandlerTests
 
     private static Mock<IClientSessionHandle> CreateMockScope()
     {
-        var collection = new Mock<IMongoCollection<SurLaTableDocument>>();
+        return CreateMockScope(new Mock<IMongoCollection<SurLaTableDocument>>());
+    }
 
+    private static Mock<IClientSessionHandle> CreateMockScope(Mock<IMongoCollection<SurLaTableDocument>> collection)
+    {
         var database = new Mock<IMongoDatabase>();
         var client = new Mock<IMongoClient>();
         var scope = new Mock<IClientSessionHandle>();

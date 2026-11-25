@@ -52,7 +52,13 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
 
         collection.InsertOne(scope, document);
 
-        return document.GetIdentifier<TDocument, TIdentifier>();
+        var identifier = document.GetIdentifier<TDocument, TIdentifier>();
+        if (IsIdentifierSet(identifier))
+            return identifier;
+
+        collection.DeleteOne(scope, GetIdentifierFilter(identifier));
+
+        return default;
     }
 
     protected override async Task<TIdentifier?> DoCreate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -65,6 +71,19 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
 
         await collection.InsertOneAsync(scope, document, cancellationToken: cancellationToken);
 
-        return document.GetIdentifier<TDocument, TIdentifier>();
+        var identifier = document.GetIdentifier<TDocument, TIdentifier>();
+        if (IsIdentifierSet(identifier))
+            return identifier;
+
+        await collection.DeleteOneAsync(scope, GetIdentifierFilter(identifier), cancellationToken: CancellationToken.None);
+
+        return default;
+    }
+
+    private static FilterDefinition<TDocument> GetIdentifierFilter(TIdentifier? identifier)
+    {
+        var field = DocumentType.GetIdentifierFieldDefinition<TDocument, TIdentifier>();
+
+        return Builders<TDocument>.Filter.Eq(field, identifier);
     }
 }
