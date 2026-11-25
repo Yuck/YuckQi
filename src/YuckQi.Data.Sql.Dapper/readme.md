@@ -43,6 +43,7 @@ Upgrading to 10.5.0:
 - `[NotMapped]` and computed properties are no longer selected, and DataAnnotations `[Table]` / `[Column]` attributes now apply to reads as well as writes.
 - Filter parameters are named by position (`p0`, `p1_0`) instead of by field name (`Name`, `Name0`). Custom `ISqlGenerator`s used with these handlers must use `FilterParameterNames` to match.
 - `In` with a `String` or `Byte[]` value now throws `ArgumentException` instead of matching each character or byte.
+- `Create` throws `CreationException` when the insert returns `0` / `Guid.Empty` as the key (for example an `Int16` identity key, which SimpleCRUD does not read back), unless `CreationOptions` is created with `allowDefaultIdentifier: true`. The row has already been inserted in the scope's transaction, so dispose the unit of work without calling `SaveChanges` to roll it back.
 
 ## `DateOnly` and `TimeOnly` Properties
 

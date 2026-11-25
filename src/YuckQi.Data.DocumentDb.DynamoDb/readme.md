@@ -16,6 +16,12 @@ Provides concrete handler implementations that operate over an `IDynamoDBContext
 
 All handlers provide overloads with an explicit `TDocument` type parameter for domain-to-document mapping.
 
+DynamoDB does not generate keys, so a single-entity `Create` throws `InvalidOperationException` before writing when `Identifier` is unset: `null`, or the default value for value-type identifiers (`0`, `Guid.Empty`) unless `CreationOptions` is created with `allowDefaultIdentifier: true`. Set the identifier yourself or pass an `IdentifierFactory` in `CreationOptions`.
+
+Upgrading to 10.5.0:
+
+- A single-entity `Create` with an unset identifier now throws instead of writing an item keyed `0` / `Guid.Empty`.
+
 ## Dependencies
 
 - [AWSSDK.DynamoDBv2](https://www.nuget.org/packages/AWSSDK.DynamoDBv2)

@@ -6,10 +6,18 @@ namespace YuckQi.Data.Sql.EntityFramework.UnitTests;
 
 internal class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
 {
+    public DbSet<ManualKeyRecord> ManualKey => Set<ManualKeyRecord>();
+
     public DbSet<SurLaTableRecord> SurLaTable => Set<SurLaTableRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ManualKeyRecord>(t =>
+        {
+            t.HasKey(u => u.Id);
+            t.Property(u => u.Id).ValueGeneratedNever();
+            t.Ignore(u => u.Identifier);
+        });
         modelBuilder.Entity<SurLaTableRecord>(t =>
         {
             t.HasKey(u => u.Id);

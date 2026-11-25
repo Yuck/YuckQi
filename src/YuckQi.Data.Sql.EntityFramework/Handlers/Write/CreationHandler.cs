@@ -19,7 +19,7 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Creati
 
         scope.Set<TRecord>().Add(record);
 
-        return GetIdentifier(scope, record);
+        return GetAddedIdentifier(scope, record);
     }
 
     protected override async Task<TIdentifier?> DoCreate(TDomainEntity entity, TScope? scope, CancellationToken cancellationToken)
@@ -30,7 +30,18 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TRecord>(Creati
 
         await scope.Set<TRecord>().AddAsync(record, cancellationToken);
 
-        return GetIdentifier(scope, record);
+        return GetAddedIdentifier(scope, record);
+    }
+
+    private TIdentifier? GetAddedIdentifier(DbContext context, TRecord record)
+    {
+        var identifier = GetIdentifier(context, record);
+        if (IsIdentifierSet(identifier))
+            return identifier;
+
+        context.Entry(record).State = EntityState.Detached;
+
+        return default;
     }
 
     private static TIdentifier? GetIdentifier(DbContext context, TRecord record)

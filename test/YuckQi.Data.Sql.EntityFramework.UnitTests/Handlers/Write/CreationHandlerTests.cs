@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using YuckQi.Data.Exceptions;
 using YuckQi.Data.Handlers.Write.Options;
 using YuckQi.Data.Sql.EntityFramework.Handlers.Write;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
@@ -71,6 +72,57 @@ public class CreationHandlerTests
 
         Assert.That(result.Identifier, Is.EqualTo(1));
         Assert.That(context.ChangeTracker.Entries<SurLaTableRecord>().Count(), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Create_WithUnsetManualKey_ThrowsCreationExceptionAndDetachesRecord()
+    {
+        var options = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
+        using var context = new TestDbContext(options);
+        var handler = new CreationHandler<ManualKeyRecord, Int32, TestDbContext>();
+        var entity = new ManualKeyRecord { Name = "ABC", CreationMoment = DateTimeOffset.UtcNow };
+
+        Assert.Throws<CreationException<ManualKeyRecord>>(() => handler.Create(entity, context));
+
+        context.SaveChanges();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(context.ChangeTracker.Entries<ManualKeyRecord>(), Is.Empty);
+            Assert.That(context.ManualKey.Count(), Is.Zero);
+        }
+    }
+
+    [Test]
+    public async Task CreateAsync_WithUnsetManualKey_ThrowsCreationExceptionAndDetachesRecord()
+    {
+        var options = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
+        await using var context = new TestDbContext(options);
+        var handler = new CreationHandler<ManualKeyRecord, Int32, TestDbContext>();
+        var entity = new ManualKeyRecord { Name = "ABC", CreationMoment = DateTimeOffset.UtcNow };
+
+        await Assert.ThrowsAsync<CreationException<ManualKeyRecord>>(async () => await handler.Create(entity, context, CancellationToken.None));
+
+        Assert.That(context.ChangeTracker.Entries<ManualKeyRecord>(), Is.Empty);
+    }
+
+    [Test]
+    public void Create_WithZeroManualKeyAndAllowDefaultIdentifier_AddsRecord()
+    {
+        var options = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
+        using var context = new TestDbContext(options);
+        var handler = new CreationHandler<ManualKeyRecord, Int32, TestDbContext>(new CreationOptions<Int32>(allowDefaultIdentifier: true));
+        var entity = new ManualKeyRecord { Identifier = 0, Name = "Unknown", CreationMoment = DateTimeOffset.UtcNow };
+
+        var result = handler.Create(entity, context);
+
+        context.SaveChanges();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Identifier, Is.Zero);
+            Assert.That(context.ManualKey.Count(), Is.EqualTo(1));
+        }
     }
 
     [Test]

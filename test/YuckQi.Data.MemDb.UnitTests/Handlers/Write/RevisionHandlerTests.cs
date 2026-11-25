@@ -86,6 +86,19 @@ public class RevisionHandlerTests
         Assert.Throws<InvalidOperationException>(() => reviser.Revise(entity, scope));
     }
 
+    [Test]
+    public void Revise_ZeroIdentifier_RevisesStoredEntity()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>(new Dictionary<Int32, SurLaTable> { { 0, new SurLaTable { Identifier = 0, Name = "ABC" } } });
+        var reviser = new RevisionHandler<SurLaTable, Int32, Object>(entities, new RevisionOptions(PropertyHandling.Auto));
+        var scope = new Object();
+        var entity = new SurLaTable { Identifier = 0, Name = "DEF" };
+
+        reviser.Revise(entity, scope);
+
+        Assert.That(entities[0], Is.SameAs(entity));
+    }
+
     public record StringEntity : DomainEntityBase<String>, IRevisionMoment
     {
         public String Name { get; set; } = String.Empty;

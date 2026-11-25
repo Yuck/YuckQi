@@ -64,6 +64,19 @@ public class PhysicalDeletionHandlerTests
         Assert.Throws<InvalidOperationException>(() => deleter.Delete(entity, scope));
     }
 
+    [Test]
+    public void Delete_ZeroIdentifier_RemovesStoredEntity()
+    {
+        var entities = new ConcurrentDictionary<Int32, SurLaTable>(new Dictionary<Int32, SurLaTable> { { 0, new SurLaTable { Identifier = 0, Name = "ABC" } } });
+        var deleter = new PhysicalDeletionHandler<SurLaTable, Int32, Object>(entities);
+        var scope = new Object();
+        var entity = new SurLaTable { Identifier = 0, Name = "ABC" };
+
+        deleter.Delete(entity, scope);
+
+        Assert.That(entities, Is.Empty);
+    }
+
     public record StringEntity : DomainEntityBase<String>, ICreationMoment
     {
         public DateTimeOffset CreationMoment { get; set; }

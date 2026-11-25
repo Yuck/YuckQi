@@ -59,6 +59,9 @@ public class CreationHandler<TDomainEntity, TIdentifier, TScope, TDocument>(Crea
     {
         ArgumentNullException.ThrowIfNull(scope);
 
+        if (! IsIdentifierSet(entity.Identifier))
+            throw new InvalidOperationException("Entity identifier must be set.");
+
         var document = MapToData(entity) ?? throw new InvalidOperationException($"Failed to map {typeof(TDomainEntity).Name} entity to {typeof(TDocument).Name} document.");
         var table = scope.GetTargetTable<TDocument>();
 
