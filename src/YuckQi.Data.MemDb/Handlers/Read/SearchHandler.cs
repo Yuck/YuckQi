@@ -5,6 +5,7 @@ using YuckQi.Data.MemDb.Filtering.Extensions;
 using YuckQi.Data.Sorting;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
+using YuckQi.Domain.ValueObjects.Extensions;
 
 namespace YuckQi.Data.MemDb.Handlers.Read;
 
@@ -27,7 +28,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDiction
     {
         var entities = GetEntities(parameters);
         var sorted = entities.AsQueryable().OrderBy(sort);
-        var paged = sorted.Skip((page.PageNumber - 1) * page.PageSize).Take(page.PageSize);
+        var paged = sorted.Skip(page.GetOffset()).Take(page.PageSize);
 
         return [.. paged];
     }

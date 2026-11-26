@@ -108,6 +108,47 @@ public class SearchHandlerTests
         Assert.That(result, Is.Not.Null);
     }
 
+    [Test]
+    public void Search_WithCountAboveInt32_ThrowsInvalidOperationException()
+    {
+        var documents = new List<SurLaTableDocument> { new() { Identifier = 1, Name = "ABC" } };
+        var scope = CreateMockScope(documents, Int32.MaxValue + 1L);
+        var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
+        var parameters = new[] { new FilterCriteria("Name", "ABC") };
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+
+        Assert.Throws<InvalidOperationException>(() => handler.Search(parameters, page, sort, scope.Object));
+    }
+
+    [Test]
+    public async Task Search_Async_WithCountAboveInt32_ThrowsInvalidOperationException()
+    {
+        var documents = new List<SurLaTableDocument> { new() { Identifier = 1, Name = "ABC" } };
+        var scope = CreateMockScope(documents, Int32.MaxValue + 1L, async: true);
+        var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
+        var parameters = new[] { new FilterCriteria("Name", "ABC") };
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Search(parameters, page, sort, scope.Object, CancellationToken.None));
+    }
+
+    [Test]
+    public void Search_WithCountOfInt32MaxValue_ReturnsTotalCount()
+    {
+        var documents = new List<SurLaTableDocument> { new() { Identifier = 1, Name = "ABC" } };
+        var scope = CreateMockScope(documents, Int32.MaxValue);
+        var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
+        var parameters = new[] { new FilterCriteria("Name", "ABC") };
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+
+        var result = handler.Search(parameters, page, sort, scope.Object);
+
+        Assert.That(result.TotalCount, Is.EqualTo(Int32.MaxValue));
+    }
+
     private static Mock<IClientSessionHandle> CreateMockScope(List<SurLaTableDocument> documents, Int64 count, Boolean async = false)
     {
         var findFluent = new Mock<IFindFluent<SurLaTableDocument, SurLaTableDocument>>();

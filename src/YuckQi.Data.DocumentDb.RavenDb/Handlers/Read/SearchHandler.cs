@@ -5,6 +5,7 @@ using YuckQi.Data.Handlers.Read.Abstract;
 using YuckQi.Data.Sorting;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
+using YuckQi.Domain.ValueObjects.Extensions;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.RavenDb.Handlers.Read;
@@ -48,7 +49,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         ArgumentNullException.ThrowIfNull(scope);
 
         var query = sort.Aggregate(scope.Advanced.AsyncDocumentQuery<TDocument>().ApplyFilter(parameters), (t, u) => u.Order == SortOrder.Ascending ? t.OrderBy(u.Expression) : t.OrderByDescending(u.Expression));
-        var documents = await query.Skip((page.PageNumber - 1) * page.PageSize)
+        var documents = await query.Skip(page.GetOffset())
                                    .Take(page.PageSize)
                                    .ToListAsync(cancellationToken);
         var entities = MapToEntityCollection(documents);

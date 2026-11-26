@@ -5,6 +5,7 @@ using YuckQi.Data.Sorting;
 using YuckQi.Data.Sql.EntityFramework.Filtering.Extensions;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
+using YuckQi.Domain.ValueObjects.Extensions;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.Sql.EntityFramework.Handlers.Read;
@@ -39,7 +40,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TRecord>(IMapper?
 
         var predicate = parameters.ToPredicate<TRecord>();
         var query = scope.Set<TRecord>().AsQueryable().Where(predicate).OrderBy(sort);
-        var records = query.Skip((page.PageNumber - 1) * page.PageSize).Take(page.PageSize).ToList();
+        var records = query.Skip(page.GetOffset()).Take(page.PageSize).ToList();
         var entities = MapToEntityCollection(records);
 
         return entities;
@@ -51,7 +52,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TRecord>(IMapper?
 
         var predicate = parameters.ToPredicate<TRecord>();
         var query = scope.Set<TRecord>().AsQueryable().Where(predicate).OrderBy(sort);
-        var records = await query.Skip((page.PageNumber - 1) * page.PageSize).Take(page.PageSize).ToListAsync(cancellationToken);
+        var records = await query.Skip(page.GetOffset()).Take(page.PageSize).ToListAsync(cancellationToken);
         var entities = MapToEntityCollection(records);
 
         return entities;
