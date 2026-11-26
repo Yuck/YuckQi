@@ -54,6 +54,7 @@ Upgrading to 10.5.0:
 - `In` with a `null` member now matches `null` values. `ToDynamicParameters` no longer binds `null` members, so a custom `ISqlGenerator` must not reference their parameter names.
 - `Contains` now ignores case on MySQL, Oracle and SQL Server, where it used to follow the collation. PostgreSQL is unchanged.
 - A search with no sort criteria now orders by the record's key columns. Unsorted searches on SQL Server used to fail with "Invalid usage of the option FETCH"; the other providers returned pages in an undefined order.
+- `ISqlGenerator.GenerateSearchQuery` takes `IReadOnlyList<SortCriteria>` instead of `IOrderedEnumerable<SortCriteria>`. Custom generators must change their signature; the criteria are in priority order, as the built-in generators already treated them. Dotted sort paths such as `Address.City` are not a mapped property, so they throw `ArgumentException` like any other unknown name.
 - `Create` throws `CreationException` when the insert returns `0` / `Guid.Empty` as the key (for example an `Int16` identity key, which SimpleCRUD does not read back), unless `CreationOptions` is created with `allowDefaultIdentifier: true`. The row has already been inserted in the scope's transaction, so dispose the unit of work without calling `SaveChanges` to roll it back.
 
 ## `DateOnly` and `TimeOnly` Properties

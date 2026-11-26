@@ -37,7 +37,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<SurLaTableRecord>();
         var parameters = new[] { new FilterCriteria("Name", "Some Guy") };
         var page = new Page(2, 50);
-        var sort = new List<SortCriteria> { new("Name", SortOrder.Descending) }.OrderBy(t => t);
+        var sort = new List<SortCriteria> { new("Name", SortOrder.Descending) };
         var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
 
         Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` where (`Name` = @p0) order by `Name` desc limit 50 offset 50;"));
@@ -195,7 +195,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<SurLaTableRecord>();
         var parameters = Array.Empty<FilterCriteria>();
         var page = new Page(1, 10);
-        var sort = new List<SortCriteria> { new("Name`; drop table `SurLaTable`; --", SortOrder.Ascending) }.OrderBy(t => t);
+        var sort = new List<SortCriteria> { new("Name`; drop table `SurLaTable`; --", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentException>(() => { _ = generator.GenerateSearchQuery(parameters, page, sort); });
     }
@@ -236,7 +236,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<ColumnMappedRecord>();
         var parameters = Array.Empty<FilterCriteria>();
         var page = new Page(1, 10);
-        var sort = new List<SortCriteria> { new("DisplayName", SortOrder.Ascending) }.OrderBy(t => t);
+        var sort = new List<SortCriteria> { new("DisplayName", SortOrder.Ascending) };
         var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
 
         Assert.That(sql, Is.EqualTo("select `Id`, `display_name` `DisplayName` from `ColumnMapped` order by `display_name` limit 10 offset 0;"));
@@ -360,7 +360,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<SurLaTableRecord>();
         var parameters = Array.Empty<FilterCriteria>();
         var page = new Page(1, 10);
-        var sort = new List<SortCriteria>().OrderBy(t => t);
+        var sort = new List<SortCriteria>();
         var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
 
         Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` order by `Id` limit 10 offset 0;"));
@@ -372,7 +372,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<KeyedRecord>();
         var parameters = Array.Empty<FilterCriteria>();
         var page = new Page(1, 10);
-        var sort = new List<SortCriteria>().OrderBy(t => t);
+        var sort = new List<SortCriteria>();
         var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
 
         Assert.That(sql, Is.EqualTo("select `TenantId`, `record_code` `Code`, `Id` from `Keyed` order by `TenantId`, `record_code` limit 10 offset 0;"));
@@ -384,7 +384,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<QuotedColumnRecord>();
         var parameters = Array.Empty<FilterCriteria>();
         var page = new Page(1, 10);
-        var sort = new List<SortCriteria>().OrderBy(t => t);
+        var sort = new List<SortCriteria>();
         var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
 
         Assert.That(sql, Is.EqualTo("select `odd``name` `Name` from `QuotedColumn` limit 10 offset 0;"));
@@ -396,7 +396,7 @@ public class SqlGeneratorTests
         var generator = new SqlGenerator<KeyedRecord>();
         var parameters = Array.Empty<FilterCriteria>();
         var page = new Page(1, 10);
-        var sort = new List<SortCriteria> { new("Id", SortOrder.Descending) }.OrderBy(t => t);
+        var sort = new List<SortCriteria> { new("Id", SortOrder.Descending) };
         var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
 
         Assert.That(sql, Is.EqualTo("select `TenantId`, `record_code` `Code`, `Id` from `Keyed` order by `Id` desc limit 10 offset 0;"));

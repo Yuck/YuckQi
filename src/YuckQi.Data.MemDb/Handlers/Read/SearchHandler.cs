@@ -24,7 +24,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDiction
         return Task.FromResult(DoCount(parameters, scope));
     }
 
-    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         var entities = GetEntities(parameters);
         var sorted = entities.AsQueryable().OrderBy(sort);
@@ -33,7 +33,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope>(ConcurrentDiction
         return [.. paged];
     }
 
-    protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         return Task.FromResult(DoSearch(parameters, page, sort, scope));
     }

@@ -196,7 +196,7 @@ public class RetrievalHandlerBaseTests
 
         mock.Setup(t => t.GenerateCountQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>>())).Returns("SELECT COUNT(*) FROM SurLaTable");
         mock.Setup(t => t.GenerateGetQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>?>())).Returns("SELECT * FROM SurLaTable WHERE 1=1");
-        mock.Setup(t => t.GenerateSearchQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>>(), It.IsAny<IPage>(), It.IsAny<IOrderedEnumerable<SortCriteria>>())).Returns("SELECT * FROM SurLaTable WHERE 1=1");
+        mock.Setup(t => t.GenerateSearchQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>>(), It.IsAny<IPage>(), It.IsAny<IReadOnlyList<SortCriteria>>())).Returns("SELECT * FROM SurLaTable WHERE 1=1");
 
         return mock.Object;
     }

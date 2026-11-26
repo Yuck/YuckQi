@@ -8,6 +8,8 @@ internal class TestDbContext(DbContextOptions<TestDbContext> options) : DbContex
 {
     public DbSet<ManualKeyRecord> ManualKey => Set<ManualKeyRecord>();
 
+    public DbSet<PersonRecord> People => Set<PersonRecord>();
+
     public DbSet<SurLaTableRecord> SurLaTable => Set<SurLaTableRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,6 +19,12 @@ internal class TestDbContext(DbContextOptions<TestDbContext> options) : DbContex
             t.HasKey(u => u.Id);
             t.Property(u => u.Id).ValueGeneratedNever();
             t.Ignore(u => u.Identifier);
+        });
+        modelBuilder.Entity<PersonRecord>(t =>
+        {
+            t.HasKey(u => u.Id);
+            t.Property(u => u.Id).ValueGeneratedNever();
+            t.OwnsOne(u => u.Address);
         });
         modelBuilder.Entity<SurLaTableRecord>(t =>
         {

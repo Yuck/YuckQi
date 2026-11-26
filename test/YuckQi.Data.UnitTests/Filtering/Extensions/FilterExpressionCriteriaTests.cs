@@ -105,14 +105,47 @@ public class FilterExpressionCriteriaTests
         Assert.Multiple(() =>
         {
             Assert.That(criteria.Count, Is.EqualTo(2));
-
-            var byExpression = criteria.OrderBy(t => t.Expression).ToList();
-
-            Assert.That(byExpression[0].Expression, Is.EqualTo("Identifier"));
-            Assert.That(byExpression[0].Order, Is.EqualTo(SortOrder.Ascending));
-            Assert.That(byExpression[1].Expression, Is.EqualTo("Name"));
-            Assert.That(byExpression[1].Order, Is.EqualTo(SortOrder.Descending));
+            Assert.That(criteria[0].Expression, Is.EqualTo("Name"));
+            Assert.That(criteria[0].Order, Is.EqualTo(SortOrder.Descending));
+            Assert.That(criteria[1].Expression, Is.EqualTo("Identifier"));
+            Assert.That(criteria[1].Order, Is.EqualTo(SortOrder.Ascending));
         });
+    }
+
+    [Test]
+    public void SortExpressions_ToSortCriteria_PreservesInputOrderRegardlessOfDirection()
+    {
+        var sorts = new[]
+        {
+            new SortExpression<TestDomainEntity>(t => t.Identifier, SortOrder.Descending),
+            new SortExpression<TestDomainEntity>(t => t.Name, SortOrder.Ascending),
+            new SortExpression<TestDomainEntity>(t => t.Nested.Value, SortOrder.Descending)
+        };
+
+        var criteria = sorts.ToSortCriteria<TestDomainEntity, TestRecord>();
+
+        Assert.That(criteria, Is.EqualTo(new[] { new SortCriteria("Identifier", SortOrder.Descending), new SortCriteria("Name", SortOrder.Ascending), new SortCriteria("Nested.Value", SortOrder.Descending) }));
+    }
+
+    [Test]
+    public void SortExpressions_ToSortCriteria_NestedPath_UsesDottedPath()
+    {
+        var sorts = new[] { new SortExpression<TestDomainEntity>(t => t.Nested.Value) };
+
+        var criteria = sorts.ToSortCriteria<TestDomainEntity, TestRecord>();
+
+        Assert.That(criteria.Single(), Is.EqualTo(new SortCriteria("Nested.Value", SortOrder.Ascending)));
+    }
+
+    [Test]
+    public void SortExpressions_ToSortCriteria_IsNotDeferred()
+    {
+        var sorts = new List<SortExpression<TestDomainEntity>> { new(t => t.Name) };
+
+        var criteria = sorts.ToSortCriteria<TestDomainEntity, TestRecord>();
+        sorts.Add(new SortExpression<TestDomainEntity>(t => t.Identifier));
+
+        Assert.That(criteria, Has.Count.EqualTo(1));
     }
 
     [Test]

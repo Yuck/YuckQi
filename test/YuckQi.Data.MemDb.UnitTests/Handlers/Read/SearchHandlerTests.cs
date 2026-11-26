@@ -26,7 +26,7 @@ public class SearchHandlerTests
         var created = creator.Create(entity, scope);
         var parameters = new { Identifier = 1 };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         using (Assert.EnterMultipleScope())
@@ -48,7 +48,7 @@ public class SearchHandlerTests
         var created = creator.Create(entity, scope);
         var parameters = new { Name = "ABC" };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         using (Assert.EnterMultipleScope())
@@ -70,7 +70,7 @@ public class SearchHandlerTests
         var created = creator.Create(entity, scope);
         var parameters = new { Name = "ZZZ" };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         using (Assert.EnterMultipleScope())
@@ -92,7 +92,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.LessThanOrEqual, 25) };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         using (Assert.EnterMultipleScope())
@@ -121,7 +121,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.LessThanOrEqual, 25) };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         var items = found.Items.ToArray();
@@ -152,7 +152,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.In, new[] { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 }) };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         var items = found.Items.ToArray();
@@ -190,7 +190,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Descending) };
         var found = await searcher.Search(parameters, page, sort, scope, CancellationToken.None);
 
         Assert.That(found.Items, Has.Count.EqualTo(1));
@@ -208,7 +208,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.GreaterThan, 5) };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.That(found.TotalCount, Is.EqualTo(5));
@@ -230,7 +230,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.GreaterThanOrEqual, 5) };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.That(found.TotalCount, Is.EqualTo(6));
@@ -252,7 +252,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Identifier", FilterOperation.LessThan, 5) };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.That(found.TotalCount, Is.EqualTo(4));
@@ -275,7 +275,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.NotEqual, "ABC") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.That(found.TotalCount, Is.EqualTo(1));
@@ -294,7 +294,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Guy") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.Multiple(() =>
@@ -316,7 +316,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Nope") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.That(found.TotalCount, Is.EqualTo(0));
@@ -334,7 +334,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "guy") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.That(found.TotalCount, Is.EqualTo(1));
@@ -353,7 +353,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "100%") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
         var found = searcher.Search(parameters, page, sort, scope);
 
         Assert.Multiple(() =>
@@ -375,7 +375,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, null) };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentException>(Act);
 
@@ -396,7 +396,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", (FilterOperation) 99, "ABC") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
 
         Assert.Throws<NotSupportedException>(Act);
 
@@ -417,7 +417,7 @@ public class SearchHandlerTests
 
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Unknown, "ABC") };
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentException>(Act);
 
@@ -432,7 +432,7 @@ public class SearchHandlerTests
         var entities = new ConcurrentDictionary<Int32, SurLaTable>();
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentException>(Act);
 
@@ -447,13 +447,94 @@ public class SearchHandlerTests
         var entities = new ConcurrentDictionary<Int32, SurLaTable>();
         var searcher = new SearchHandler<SurLaTable, Int32, Object>(entities);
         var page = new Page(1, 50);
-        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Identifier", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentException>(Act);
 
         return;
 
         void Act() => searcher.Search(1, page, sort, new Object());
+    }
+
+    [Test]
+    public void Search_WithMultipleSortCriteria_HonoursCallerPriority()
+    {
+        var entities = CreatePeople();
+        var searcher = new SearchHandler<Person, Int32, Object>(entities);
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("LastName", SortOrder.Descending), new SortCriteria("FirstName", SortOrder.Ascending) };
+
+        var found = searcher.Search(Array.Empty<FilterCriteria>(), page, sort, new Object());
+
+        Assert.That(found.Items.Select(t => t.Identifier), Is.EqualTo(new[] { 1, 3, 4, 2 }));
+    }
+
+    [Test]
+    public void Search_WithMultipleSortCriteria_PagesInCallerPriority()
+    {
+        var entities = CreatePeople();
+        var searcher = new SearchHandler<Person, Int32, Object>(entities);
+        var page = new Page(2, 2);
+        var sort = new[] { new SortCriteria("LastName", SortOrder.Descending), new SortCriteria("FirstName", SortOrder.Ascending) };
+
+        var found = searcher.Search(Array.Empty<FilterCriteria>(), page, sort, new Object());
+
+        Assert.That(found.Items.Select(t => t.Identifier), Is.EqualTo(new[] { 4, 2 }));
+    }
+
+    [Test]
+    public async Task Search_Async_WithNestedSortCriteria_OrdersByNestedProperty()
+    {
+        var entities = CreatePeople();
+        var searcher = new SearchHandler<Person, Int32, Object>(entities);
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("Address.City", SortOrder.Ascending), new SortCriteria("Identifier", SortOrder.Descending) };
+
+        var found = await searcher.Search(Array.Empty<FilterCriteria>(), page, sort, new Object(), CancellationToken.None);
+
+        Assert.That(found.Items.Select(t => t.Identifier), Is.EqualTo(new[] { 4, 2, 3, 1 }));
+    }
+
+    [Test]
+    public void Search_WithNestedSortCriteria_WhenIntermediateIsNull_SortsNullsFirst()
+    {
+        var entities = CreatePeople();
+        var searcher = new SearchHandler<Person, Int32, Object>(entities);
+        var page = new Page(1, 10);
+        var sort = new[] { new SortCriteria("Address.City", SortOrder.Ascending), new SortCriteria("Identifier", SortOrder.Ascending) };
+
+        entities[5] = new Person { Identifier = 5, FirstName = "Eve", LastName = "Young", Address = null };
+
+        var found = searcher.Search(Array.Empty<FilterCriteria>(), page, sort, new Object());
+
+        Assert.That(found.Items.Select(t => t.Identifier), Is.EqualTo(new[] { 5, 2, 4, 1, 3 }));
+    }
+
+    private static ConcurrentDictionary<Int32, Person> CreatePeople()
+    {
+        var people = new[]
+        {
+            new Person { Identifier = 1, FirstName = "Cal", LastName = "Smith", Address = new PersonAddress { City = "Oslo" } },
+            new Person { Identifier = 2, FirstName = "Bob", LastName = "Jones", Address = new PersonAddress { City = "Bergen" } },
+            new Person { Identifier = 3, FirstName = "Dan", LastName = "Smith", Address = new PersonAddress { City = "Oslo" } },
+            new Person { Identifier = 4, FirstName = "Abe", LastName = "Jones", Address = new PersonAddress { City = "Bergen" } }
+        };
+
+        return new ConcurrentDictionary<Int32, Person>(people.Select(t => new KeyValuePair<Int32, Person>(t.Identifier, t)));
+    }
+
+    public record Person : DomainEntityBase<Int32>
+    {
+        public PersonAddress? Address { get; set; } = new();
+
+        public String FirstName { get; set; } = String.Empty;
+
+        public String LastName { get; set; } = String.Empty;
+    }
+
+    public record PersonAddress
+    {
+        public String City { get; set; } = String.Empty;
     }
 
     public record SurLaTable : DomainEntityBase<Int32>, ICreationMoment

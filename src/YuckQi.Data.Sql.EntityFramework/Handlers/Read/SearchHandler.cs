@@ -34,27 +34,44 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TRecord>(IMapper?
         return total;
     }
 
-    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
 
         var predicate = parameters.ToPredicate<TRecord>();
-        var query = scope.Set<TRecord>().AsQueryable().Where(predicate).OrderBy(sort);
+        var query = OrderBy(scope.Set<TRecord>().AsQueryable().Where(predicate), sort, scope);
         var records = query.Skip(page.GetOffset()).Take(page.PageSize).ToList();
         var entities = MapToEntityCollection(records);
 
         return entities;
     }
 
-    protected override async Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    protected override async Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
 
         var predicate = parameters.ToPredicate<TRecord>();
-        var query = scope.Set<TRecord>().AsQueryable().Where(predicate).OrderBy(sort);
+        var query = OrderBy(scope.Set<TRecord>().AsQueryable().Where(predicate), sort, scope);
         var records = await query.Skip(page.GetOffset()).Take(page.PageSize).ToListAsync(cancellationToken);
         var entities = MapToEntityCollection(records);
 
         return entities;
+    }
+
+    private static IQueryable<TRecord> OrderBy(IQueryable<TRecord> query, IReadOnlyList<SortCriteria> sort, DbContext context)
+    {
+        ArgumentNullException.ThrowIfNull(sort);
+
+        if (sort.Count > 0)
+            return query.OrderBy(sort);
+
+        var key = context.Model.FindEntityType(typeof(TRecord))?.FindPrimaryKey();
+        if (key is null)
+            return query;
+
+        var names = key.Properties.Select(t => t.Name).ToList();
+        var ordered = query.OrderBy(t => EF.Property<Object>(t, names[0]));
+
+        return names.Skip(1).Aggregate(ordered, (current, name) => current.ThenBy(t => EF.Property<Object>(t, name)));
     }
 }

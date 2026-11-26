@@ -35,7 +35,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         return Task.FromResult(count);
     }
 
-    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
 
@@ -45,7 +45,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         return result;
     }
 
-    protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

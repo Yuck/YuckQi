@@ -37,7 +37,7 @@ public class SearchHandlerBaseTests
         var handler = new TestSearchHandler(CreateMockSqlGenerator(), new Dictionary<Type, DbType>());
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentNullException>(() => handler.Search(parameters, page, sort, null));
     }
@@ -48,7 +48,7 @@ public class SearchHandlerBaseTests
         var handler = new TestSearchHandler(CreateMockSqlGenerator(), new Dictionary<Type, DbType>());
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Search(parameters, page, sort, null, CancellationToken.None));
     }
@@ -60,7 +60,7 @@ public class SearchHandlerBaseTests
         var transaction = CreateMockTransaction();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         var result = handler.Search(parameters, page, sort, transaction);
 
@@ -79,7 +79,7 @@ public class SearchHandlerBaseTests
         var transaction = CreateMockTransaction();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         var result = await handler.Search(parameters, page, sort, transaction, CancellationToken.None);
 
@@ -97,7 +97,7 @@ public class SearchHandlerBaseTests
 
         mock.Setup(t => t.GenerateCountQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>>())).Returns("SELECT COUNT(*) FROM SurLaTable");
         mock.Setup(t => t.GenerateGetQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>?>())).Returns("SELECT * FROM SurLaTable WHERE 1=1");
-        mock.Setup(t => t.GenerateSearchQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>>(), It.IsAny<IPage>(), It.IsAny<IOrderedEnumerable<SortCriteria>>())).Returns("SELECT * FROM SurLaTable WHERE 1=1");
+        mock.Setup(t => t.GenerateSearchQuery(It.IsAny<IReadOnlyCollection<FilterCriteria>>(), It.IsAny<IPage>(), It.IsAny<IReadOnlyList<SortCriteria>>())).Returns("SELECT * FROM SurLaTable WHERE 1=1");
 
         return mock.Object;
     }
