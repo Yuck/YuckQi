@@ -27,6 +27,19 @@ Upgrading to 10.5.0:
 
 - **`IPage` / `IPage<T>`** &ndash; interfaces for paging metadata (`PageNumber`, `PageSize`, `Items`, `TotalCount`)
 - **`Page` / `Page<T>`** &ndash; record implementations of the paging interfaces
+- **`PageExtensions.GetOffset()`** &ndash; returns the number of items before a page, `(PageNumber - 1) * PageSize`, after checking that the page is valid
+- **`PageGuard.ThrowIfInvalid(page)`** &ndash; checks any `IPage`, including your own implementations, against the paging rules
+
+#### Paging rules
+
+`PageNumber` and `PageSize` must be at least 1, and the page must not start past `Int32.MaxValue` items. `PageGuard.ThrowIfInvalid(page)` and `GetOffset()` throw `ArgumentOutOfRangeException` for a page that breaks these rules. `Page` itself holds whatever values it is given, so a page built from a query string is checked where it is used: the search handlers in [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) call `PageGuard.ThrowIfInvalid(page)` before querying. Call it yourself to reject a bad page earlier, for example while binding a request.
+
+`Page<T>` throws `ArgumentNullException` for `null` `Items`. Two `Page<T>` instances are equal when their page number, page size, total count and items are equal, with items compared in order using the default equality of `T`.
+
+Upgrading to 10.5.0:
+
+- `Page<T>` throws `ArgumentNullException` when `Items` is `null`.
+- `Page<T>` equality compares `Items` by content. It used to compare the collection by reference, so pages with the same items were not equal.
 
 ### Aspects
 

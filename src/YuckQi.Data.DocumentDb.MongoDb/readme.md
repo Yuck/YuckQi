@@ -22,6 +22,8 @@ A single-entity `Create` whose inserted document has an unset `_id` (`null`, or 
 Upgrading to 10.5.0:
 
 - Creating a document whose `_id` ends up `0` or `Guid.Empty` now deletes it again and throws `CreationException`. It used to be inserted and reported as created.
+- `Search` throws `InvalidOperationException` when more than `Int32.MaxValue` documents match, because `TotalCount` cannot hold the count. It used to report a negative total.
+- `Search` no longer returns the whole collection for a page size of `0`; invalid pages are rejected before the query runs.
 
 ## Dependencies
 

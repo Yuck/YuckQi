@@ -5,6 +5,7 @@ using YuckQi.Data.Sql.Dapper.Filtering;
 using YuckQi.Data.Sql.Dapper.Filtering.Extensions;
 using YuckQi.Data.Sql.Dapper.Schema;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
+using YuckQi.Domain.ValueObjects.Extensions;
 
 namespace YuckQi.Data.Sql.Dapper.SqlServer;
 
@@ -41,7 +42,7 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         var from = BuildFromSql();
         var where = BuildWhereSql(parameters);
         var order = ! String.IsNullOrWhiteSpace(sorting) ? $"order by {sorting}" : String.Empty;
-        var limit = $"offset {(page.PageNumber - 1) * page.PageSize} rows fetch first {page.PageSize} rows only";
+        var limit = $"offset {page.GetOffset()} rows fetch first {page.PageSize} rows only";
         var sql = $"{CombineSql(select, from, where, order, limit)};";
 
         return sql;

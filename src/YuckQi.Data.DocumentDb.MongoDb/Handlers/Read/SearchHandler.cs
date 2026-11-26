@@ -6,6 +6,7 @@ using YuckQi.Data.Handlers.Read.Abstract;
 using YuckQi.Data.Sorting;
 using YuckQi.Domain.Entities.Abstract.Interfaces;
 using YuckQi.Domain.ValueObjects.Abstract.Interfaces;
+using YuckQi.Domain.ValueObjects.Extensions;
 using YuckQi.Extensions.Mapping.Abstractions.Abstract.Interfaces;
 
 namespace YuckQi.Data.DocumentDb.MongoDb.Handlers.Read;
@@ -25,7 +26,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         var filter = parameters.ToFilterDefinition<TDocument>();
         var total = collection.CountDocuments(filter);
 
-        return (Int32) total;
+        return ToTotalCount(total);
     }
 
     protected override async Task<Int32> DoCount(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope, CancellationToken cancellationToken)
@@ -37,7 +38,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         var filter = parameters.ToFilterDefinition<TDocument>();
         var total = await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 
-        return (Int32) total;
+        return ToTotalCount(total);
     }
 
     protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
@@ -49,7 +50,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         var filter = parameters.ToFilterDefinition<TDocument>();
         var documents = collection.Find(filter)
                                   .Sort(GetSortDefinition(sort))
-                                  .Skip((page.PageNumber - 1) * page.PageSize)
+                                  .Skip(page.GetOffset())
                                   .Limit(page.PageSize)
                                   .ToList();
         var entities = MapToEntityCollection(documents);
@@ -66,7 +67,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         var filter = parameters.ToFilterDefinition<TDocument>();
         var documents = await collection.Find(filter)
                                         .Sort(GetSortDefinition(sort))
-                                        .Skip((page.PageNumber - 1) * page.PageSize)
+                                        .Skip(page.GetOffset())
                                         .Limit(page.PageSize)
                                         .ToListAsync(cancellationToken);
         var entities = MapToEntityCollection(documents);
@@ -86,5 +87,13 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         var combined = Builders<TDocument>.Sort.Combine(sorts);
 
         return combined;
+    }
+
+    private static Int32 ToTotalCount(Int64 total)
+    {
+        if (total > Int32.MaxValue)
+            throw new InvalidOperationException($"The search matched {total} documents, more than the largest total count a page can report ({Int32.MaxValue}).");
+
+        return (Int32) total;
     }
 }

@@ -34,6 +34,7 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
     {
         ArgumentNullException.ThrowIfNull(scope);
         FilterCriteriaGuard.ThrowIfInvalid(parameters);
+        PageGuard.ThrowIfInvalid(page);
 
         var entities = DoSearch(parameters, page, sort, scope);
         var total = DoCount(parameters, scope);
@@ -45,6 +46,7 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
     {
         ArgumentNullException.ThrowIfNull(scope);
         FilterCriteriaGuard.ThrowIfInvalid(parameters);
+        PageGuard.ThrowIfInvalid(page);
 
         var entities = await DoSearch(parameters, page, sort, scope, cancellationToken);
         var total = await DoCount(parameters, scope, cancellationToken);
