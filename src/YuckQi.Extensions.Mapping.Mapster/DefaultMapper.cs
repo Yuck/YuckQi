@@ -13,6 +13,11 @@ public class DefaultMapper(TypeAdapterConfig? configuration = null) : IMapper
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(destination);
+        ArgumentNullException.ThrowIfNull(sourceType);
+        ArgumentNullException.ThrowIfNull(destinationType);
+
+        EnsureInstanceOf(source, sourceType, nameof(source));
+        EnsureInstanceOf(destination, destinationType, nameof(destination));
 
         var result = _mapper.Map(source, destination, sourceType, destinationType);
         if (result is null)
@@ -24,6 +29,10 @@ public class DefaultMapper(TypeAdapterConfig? configuration = null) : IMapper
     public Object Map(Object source, Type sourceType, Type destinationType)
     {
         ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(sourceType);
+        ArgumentNullException.ThrowIfNull(destinationType);
+
+        EnsureInstanceOf(source, sourceType, nameof(source));
 
         var result = _mapper.Map(source, sourceType, destinationType);
         if (result is null)
@@ -66,12 +75,12 @@ public class DefaultMapper(TypeAdapterConfig? configuration = null) : IMapper
         return result;
     }
 
-    public Object? MapOrNull(Object? source, Object destination, Type sourceType, Type destinationType)
+    public Object MapOrNull(Object? source, Object destination, Type sourceType, Type destinationType)
     {
         ArgumentNullException.ThrowIfNull(destination);
 
         if (source is null)
-            return null;
+            return destination;
 
         return Map(source, destination, sourceType, destinationType);
     }
@@ -92,12 +101,12 @@ public class DefaultMapper(TypeAdapterConfig? configuration = null) : IMapper
         return Map<TDestination>(source);
     }
 
-    public TDestination? MapOrNull<TSource, TDestination>(TSource? source, TDestination destination) where TSource : class where TDestination : class
+    public TDestination MapOrNull<TSource, TDestination>(TSource? source, TDestination destination) where TSource : class where TDestination : class
     {
         ArgumentNullException.ThrowIfNull(destination);
 
         if (source is null)
-            return null;
+            return destination;
 
         return Map(source, destination);
     }
@@ -108,5 +117,13 @@ public class DefaultMapper(TypeAdapterConfig? configuration = null) : IMapper
             return null;
 
         return Map<TSource, TDestination>(source);
+    }
+
+    private static void EnsureInstanceOf(Object value, Type type, String parameterName)
+    {
+        if (type.IsInstanceOfType(value))
+            return;
+
+        throw new ArgumentException($"Expected an instance of '{type}' but received '{value.GetType()}'.", parameterName);
     }
 }
