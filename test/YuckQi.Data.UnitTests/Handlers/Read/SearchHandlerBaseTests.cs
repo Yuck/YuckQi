@@ -82,9 +82,9 @@ public class SearchHandlerBaseTests
         }
     }
 
-    private static IOrderedEnumerable<SortCriteria> CreateSort()
+    private static IReadOnlyList<SortCriteria> CreateSort()
     {
-        return new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        return new[] { new SortCriteria("Name", SortOrder.Ascending) };
     }
 
     public record SurLaTable : DomainEntityBase<Int32>
@@ -106,14 +106,14 @@ public class SearchHandlerBaseTests
             return Task.FromResult(DoCount(parameters, scope));
         }
 
-        protected override IReadOnlyCollection<SurLaTable> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, Object? scope)
+        protected override IReadOnlyCollection<SurLaTable> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, Object? scope)
         {
             Searched = true;
 
             return [];
         }
 
-        protected override Task<IReadOnlyCollection<SurLaTable>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, Object? scope, CancellationToken cancellationToken)
+        protected override Task<IReadOnlyCollection<SurLaTable>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, Object? scope, CancellationToken cancellationToken)
         {
             return Task.FromResult(DoSearch(parameters, page, sort, scope));
         }

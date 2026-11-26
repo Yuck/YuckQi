@@ -36,7 +36,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentNullException>(() => handler.Search(parameters, page, sort, null));
     }
@@ -47,7 +47,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         await Assert.ThrowsAsync<ArgumentNullException>(() => handler.Search(parameters, page, sort, null, CancellationToken.None));
     }
@@ -60,7 +60,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         var result = handler.Search(parameters, page, sort, scope.Object);
 
@@ -81,7 +81,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         var result = await handler.Search(parameters, page, sort, scope.Object, CancellationToken.None);
 
@@ -101,7 +101,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) };
 
         var result = handler.Search(parameters, page, sort, scope.Object);
 
@@ -116,7 +116,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         Assert.Throws<InvalidOperationException>(() => handler.Search(parameters, page, sort, scope.Object));
     }
@@ -129,7 +129,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => handler.Search(parameters, page, sort, scope.Object, CancellationToken.None));
     }
@@ -142,7 +142,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IClientSessionHandle>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         var result = handler.Search(parameters, page, sort, scope.Object);
 

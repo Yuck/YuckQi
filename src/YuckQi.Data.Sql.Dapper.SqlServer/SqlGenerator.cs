@@ -33,7 +33,7 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         return sql;
     }
 
-    public String GenerateSearchQuery(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort)
+    public String GenerateSearchQuery(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort)
     {
         var columns = BuildColumnsSql();
 

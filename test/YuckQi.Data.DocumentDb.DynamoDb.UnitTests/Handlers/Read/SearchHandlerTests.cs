@@ -35,7 +35,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentNullException>(Act);
 
@@ -50,7 +50,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
@@ -66,7 +66,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         await Assert.ThrowsAsync<NotImplementedException>(Act);
 
@@ -81,7 +81,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new { Name = "ABC" };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         Assert.Throws<ArgumentNullException>(Act);
 
@@ -96,7 +96,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableDocument, Int32, IDynamoDBContext>();
         var parameters = new { Name = "ABC" };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
 
         await Assert.ThrowsAsync<ArgumentNullException>(Act);
 
@@ -111,7 +111,7 @@ public class SearchHandlerTests
         var scope = new Mock<IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
         var handler = new SearchHandlerThatReturnsEmptyForSearch<SurLaTableDocument, Int32, IDynamoDBContext>();
 
         Assert.Throws<NullReferenceException>(Act);
@@ -127,7 +127,7 @@ public class SearchHandlerTests
         var scope = new Mock<IDynamoDBContext>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) }.OrderBy(t => t.Expression);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Ascending) };
         var handler = new SearchHandlerThatReturnsEmptyForSearch<SurLaTableDocument, Int32, IDynamoDBContext>();
 
         await Assert.ThrowsAsync<NullReferenceException>(Act);
@@ -139,12 +139,12 @@ public class SearchHandlerTests
 
     private sealed class SearchHandlerThatReturnsEmptyForSearch<TDomainEntity, TIdentifier, TScope> : SearchHandler<TDomainEntity, TIdentifier, TScope> where TDomainEntity : IDomainEntity<TIdentifier> where TIdentifier : IEquatable<TIdentifier> where TScope : IDynamoDBContext?
     {
-        protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+        protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
         {
             return [];
         }
 
-        protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+        protected override Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
         {
             return Task.FromResult<IReadOnlyCollection<TDomainEntity>>([]);
         }

@@ -53,7 +53,7 @@ public class SearchHandlerTests
         var handler = new SearchHandler<SurLaTableEntity, Int32, IDbTransaction>();
         var parameters = new[] { new FilterCriteria("Name", "ABC") };
         var page = new Page(1, 10);
-        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) }.OrderBy(_ => 1);
+        var sort = new[] { new SortCriteria("Name", SortOrder.Descending) };
 
         Assert.Throws<ArgumentNullException>(() => handler.Search(parameters, page, sort, null));
     }

@@ -16,21 +16,21 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope>(IMap
 
 public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TData>(IMapper? mapper = null) : HandlerBase<TDomainEntity, TData>(mapper), ISearchHandler<TDomainEntity, TIdentifier, TScope?> where TDomainEntity : IDomainEntity<TIdentifier> where TIdentifier : IEquatable<TIdentifier>
 {
-    public IPage<TDomainEntity> Search(Expression<Func<TDomainEntity, Boolean>> expression, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    public IPage<TDomainEntity> Search(Expression<Func<TDomainEntity, Boolean>> expression, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
 
         return Search(expression.ToFilterExpressions().ToFilterCriteria<TDomainEntity, TDomainEntity>(null), page, sort, scope);
     }
 
-    public Task<IPage<TDomainEntity>> Search(Expression<Func<TDomainEntity, Boolean>> expression, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    public Task<IPage<TDomainEntity>> Search(Expression<Func<TDomainEntity, Boolean>> expression, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
 
         return Search(expression.ToFilterExpressions().ToFilterCriteria<TDomainEntity, TDomainEntity>(null), page, sort, scope, cancellationToken);
     }
 
-    public IPage<TDomainEntity> Search(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    public IPage<TDomainEntity> Search(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
         FilterCriteriaGuard.ThrowIfInvalid(parameters);
@@ -42,7 +42,7 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
         return new Page<TDomainEntity>(entities, total, page.PageNumber, page.PageSize);
     }
 
-    public async Task<IPage<TDomainEntity>> Search(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    public async Task<IPage<TDomainEntity>> Search(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
         FilterCriteriaGuard.ThrowIfInvalid(parameters);
@@ -54,12 +54,12 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
         return new Page<TDomainEntity>(entities, total, page.PageNumber, page.PageSize);
     }
 
-    public IPage<TDomainEntity> Search(Object parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    public IPage<TDomainEntity> Search(Object parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         return Search(parameters.ToFilterCollection(), page, sort, scope);
     }
 
-    public Task<IPage<TDomainEntity>> Search(Object parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    public Task<IPage<TDomainEntity>> Search(Object parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         return Search(parameters.ToFilterCollection(), page, sort, scope, cancellationToken);
     }
@@ -68,7 +68,7 @@ public abstract class SearchHandlerBase<TDomainEntity, TIdentifier, TScope, TDat
 
     protected abstract Task<Int32> DoCount(IReadOnlyCollection<FilterCriteria> parameters, TScope? scope, CancellationToken cancellationToken);
 
-    protected abstract IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope);
+    protected abstract IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope);
 
-    protected abstract Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken);
+    protected abstract Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken);
 }

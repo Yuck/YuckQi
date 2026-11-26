@@ -10,5 +10,5 @@ public interface ISqlGenerator
 
     String GenerateGetQuery(IReadOnlyCollection<FilterCriteria>? parameters);
 
-    String GenerateSearchQuery(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort);
+    String GenerateSearchQuery(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort);
 }

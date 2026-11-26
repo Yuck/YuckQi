@@ -41,7 +41,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         return ToTotalCount(total);
     }
 
-    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope)
+    protected override IReadOnlyCollection<TDomainEntity> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope)
     {
         ArgumentNullException.ThrowIfNull(scope);
 
@@ -58,7 +58,7 @@ public class SearchHandler<TDomainEntity, TIdentifier, TScope, TDocument>(IMappe
         return entities;
     }
 
-    protected override async Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
+    protected override async Task<IReadOnlyCollection<TDomainEntity>> DoSearch(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IReadOnlyList<SortCriteria> sort, TScope? scope, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
 

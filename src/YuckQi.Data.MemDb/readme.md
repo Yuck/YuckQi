@@ -16,6 +16,8 @@ Entities are stored by `Identifier`. `Create` throws `InvalidOperationException`
 Upgrading to 10.5.0:
 
 - `Create` with a value-type identifier left at its default now throws `InvalidOperationException`, as it does for `null`. The entity used to be stored under key `0` / `Guid.Empty`, and the next unset entity then failed with `CreationException`. Pass `allowDefaultIdentifier: true` to keep storing default identifiers.
+- Searches with several sort criteria now sort by the first criterion and break ties with the later ones. The last criterion used to be the primary sort.
+- Sorts on dotted paths such as `Address.City` now work; they used to throw `ArgumentException`. When an object along the path is `null`, such as an entity whose `Address` is `null`, the sort value is `null`, which sorts first when ascending and last when descending.
 
 ## Dependencies
 
