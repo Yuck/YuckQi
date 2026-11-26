@@ -5,11 +5,33 @@ namespace YuckQi.Extensions.Mapping.Mapster.UnitTests;
 
 public class DefaultMapperTests
 {
-    private sealed class DestinationType
+    private class BaseSourceType
     {
         public Int32 Id { get; set; }
 
         public String Name { get; set; } = String.Empty;
+    }
+
+    private sealed class DerivedSourceType : BaseSourceType
+    {
+        public String Extra { get; set; } = String.Empty;
+    }
+
+    private sealed class DestinationType : IIdentified
+    {
+        public Int32 Id { get; set; }
+
+        public String Name { get; set; } = String.Empty;
+    }
+
+    public interface IIdentified
+    {
+        Int32 Id { get; set; }
+    }
+
+    private sealed class OtherType
+    {
+        public Int32 Id { get; set; }
     }
 
     private sealed class SourceType
@@ -96,6 +118,39 @@ public class DefaultMapperTests
     }
 
     [Test]
+    public void Map_WithSourceDestinationAndTypes_WhenSourceIsNotSourceType_ThrowsArgumentException()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new OtherType { Id = 1 };
+        var destination = new DestinationType();
+
+        Assert.That(() => mapper.Map(source, destination, typeof(SourceType), typeof(DestinationType)), Throws.ArgumentException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("source").And.Message.Contains(nameof(OtherType)));
+    }
+
+    [Test]
+    public void Map_WithSourceDestinationAndTypes_WhenDestinationIsNotDestinationType_ThrowsArgumentException()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new SourceType { Id = 1, Name = "A" };
+        var destination = new OtherType();
+
+        Assert.That(() => mapper.Map(source, destination, typeof(SourceType), typeof(DestinationType)), Throws.ArgumentException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("destination").And.Message.Contains(nameof(OtherType)));
+    }
+
+    [Test]
+    public void Map_WithSourceDestinationAndTypes_WhenDestinationImplementsDestinationType_MapsToDestination()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new SourceType { Id = 6, Name = "F" };
+        var destination = new DestinationType();
+
+        var result = mapper.Map(source, destination, typeof(SourceType), typeof(IIdentified));
+
+        Assert.That(result, Is.SameAs(destination));
+        Assert.That(destination.Id, Is.EqualTo(6));
+    }
+
+    [Test]
     public void Map_WithSourceAndTypes_ReturnsNewInstance()
     {
         var mapper = new DefaultMapper(null);
@@ -124,6 +179,39 @@ public class DefaultMapperTests
         var source = new SourceType { Id = 1, Name = "A" };
 
         Assert.That(() => mapper.Map(source, typeof(SourceType), typeof(DestinationType)), Throws.InvalidOperationException);
+    }
+
+    [Test]
+    public void Map_WithSourceAndTypes_WhenSourceDerivesFromSourceType_ReturnsNewInstance()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new DerivedSourceType { Id = 7, Name = "G", Extra = "X" };
+
+        var result = mapper.Map(source, typeof(BaseSourceType), typeof(DestinationType));
+
+        Assert.That(result, Is.InstanceOf<DestinationType>());
+        var dest = (DestinationType) result;
+        Assert.That(dest.Id, Is.EqualTo(7));
+        Assert.That(dest.Name, Is.EqualTo("G"));
+    }
+
+    [Test]
+    public void Map_WithSourceAndTypes_WhenSourceIsBoxedValueOfNullableSourceType_ReturnsValue()
+    {
+        var mapper = new DefaultMapper(null);
+
+        var result = mapper.Map(8, typeof(Int32?), typeof(Int32));
+
+        Assert.That(result, Is.EqualTo(8));
+    }
+
+    [Test]
+    public void Map_WithSourceAndTypes_WhenSourceIsNotSourceType_ThrowsArgumentException()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new OtherType { Id = 1 };
+
+        Assert.That(() => mapper.Map(source, typeof(SourceType), typeof(DestinationType)), Throws.ArgumentException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("source").And.Message.Contains(nameof(OtherType)));
     }
 
     [Test]
@@ -241,14 +329,38 @@ public class DefaultMapperTests
     }
 
     [Test]
-    public void MapOrNull_WithSourceDestinationAndTypes_WhenSourceIsNull_ReturnsNull()
+    public void MapOrNull_WithSourceDestinationAndTypes_WhenSourceIsNull_ReturnsDestinationUnchanged()
     {
         var mapper = new DefaultMapper(null);
-        var destination = new DestinationType();
+        var destination = new DestinationType { Id = 9, Name = "Unchanged" };
 
         var result = mapper.MapOrNull(null, destination, typeof(SourceType), typeof(DestinationType));
 
-        Assert.That(result, Is.Null);
+        Assert.That(result, Is.SameAs(destination));
+        Assert.That(destination.Id, Is.EqualTo(9));
+        Assert.That(destination.Name, Is.EqualTo("Unchanged"));
+    }
+
+    [Test]
+    public void MapOrNull_WithSourceDestinationAndTypes_WhenSourceIsNotSourceType_ThrowsArgumentException()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new OtherType { Id = 1 };
+        var destination = new DestinationType();
+
+        Assert.That(() => mapper.MapOrNull(source, destination, typeof(SourceType), typeof(DestinationType)), Throws.ArgumentException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("source"));
+    }
+
+    [Test]
+    public void MapOrNull_WithSourceDestinationAndTypes_WhenSourceIsNull_DoesNotCheckDestinationType()
+    {
+        var mapper = new DefaultMapper(null);
+        var destination = new OtherType { Id = 9 };
+
+        var result = mapper.MapOrNull(null, destination, typeof(SourceType), typeof(DestinationType));
+
+        Assert.That(result, Is.SameAs(destination));
+        Assert.That(destination.Id, Is.EqualTo(9));
     }
 
     [Test]
@@ -304,6 +416,15 @@ public class DefaultMapperTests
     }
 
     [Test]
+    public void MapOrNull_WithSourceAndTypes_WhenSourceIsNotSourceType_ThrowsArgumentException()
+    {
+        var mapper = new DefaultMapper(null);
+        var source = new OtherType { Id = 1 };
+
+        Assert.That(() => mapper.MapOrNull(source, typeof(SourceType), typeof(DestinationType)), Throws.ArgumentException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("source"));
+    }
+
+    [Test]
     public void MapOrNull_WithGenericDestination_ReturnsTypedDestination()
     {
         var mapper = new DefaultMapper(null);
@@ -350,7 +471,7 @@ public class DefaultMapperTests
     }
 
     [Test]
-    public void MapOrNull_WithGenericSourceDestinationAndExistingDestination_WhenSourceIsNull_ReturnsNull()
+    public void MapOrNull_WithGenericSourceDestinationAndExistingDestination_WhenSourceIsNull_ReturnsDestinationUnchanged()
     {
         var mapper = new DefaultMapper(null);
         SourceType? source = null;
@@ -358,7 +479,7 @@ public class DefaultMapperTests
 
         var result = mapper.MapOrNull(source, destination);
 
-        Assert.That(result, Is.Null);
+        Assert.That(result, Is.SameAs(destination));
         Assert.That(destination.Id, Is.EqualTo(9));
         Assert.That(destination.Name, Is.EqualTo("Unchanged"));
     }
