@@ -4,7 +4,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 
 ## Key Types
 
-- **`SqlGenerator<TRecord>`** &ndash; PostgreSQL-specific `ISqlGenerator` implementation using double-quoted identifiers, `LIMIT`/`OFFSET` pagination, and `ILIKE` with `ESCAPE` for `FilterOperation.Contains` (case-insensitive substring match)
+- **`SqlGenerator<TRecord>`** &ndash; PostgreSQL-specific `ISqlGenerator` implementation using double-quoted identifiers, `LIMIT`/`OFFSET` pagination, and `ILIKE` with `ESCAPE` for `FilterOperation.Contains` (case-insensitive substring match). A search with no sort orders by the record's key columns
 - **`RetrievalHandler`** &ndash; concrete retrieval handler pre-configured for PostgreSQL
 - **`SearchHandler`** &ndash; concrete paginated search handler pre-configured for PostgreSQL
 

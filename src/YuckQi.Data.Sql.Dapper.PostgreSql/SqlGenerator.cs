@@ -36,12 +36,11 @@ public class SqlGenerator<TRecord> : ISqlGenerator
     public String GenerateSearchQuery(IReadOnlyCollection<FilterCriteria> parameters, IPage page, IOrderedEnumerable<SortCriteria> sort)
     {
         var columns = BuildColumnsSql();
-        var sorting = String.Join(", ", sort.Select(t => $"{BuildColumnSql(t.Expression)}{(t.Order == SortOrder.Descending ? " desc" : String.Empty)}"));
 
         var select = $"select {columns}";
         var from = BuildFromSql();
         var where = BuildWhereSql(parameters);
-        var order = ! String.IsNullOrWhiteSpace(sorting) ? $"order by {sorting}" : String.Empty;
+        var order = BuildOrderSql(sort);
         var limit = $"limit {page.PageSize} offset {page.GetOffset()}";
         var sql = $"{CombineSql(select, from, where, order, limit)};";
 
@@ -75,7 +74,6 @@ public class SqlGenerator<TRecord> : ISqlGenerator
             FilterOperation.Equal => value is not null ? "=" : "is",
             FilterOperation.GreaterThan => ">",
             FilterOperation.GreaterThanOrEqual => ">=",
-            FilterOperation.In => "in",
             FilterOperation.LessThan => "<",
             FilterOperation.LessThanOrEqual => "<=",
             FilterOperation.NotEqual => value is not null ? "!=" : "is not",
@@ -90,16 +88,10 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         if (criteria is { Operation: FilterOperation.Contains, Value: null })
             throw new ArgumentException($"{nameof(criteria.Value)} is required for {nameof(FilterOperation.Contains)}.");
 
-        var comparison = BuildComparison(criteria.Value, criteria.Operation);
-
         if (criteria.Operation == FilterOperation.In)
-        {
-            var values = criteria.GetInValues();
-            var set = values.Count != 0 ? String.Join(",", values.Select((_, i) => BuildParameterSql(FilterParameterNames.ForElement(index, i)))) : "null";
+            return BuildInSql(column, criteria.GetInValues(), index);
 
-            return $"({column} {comparison} ({set}))";
-        }
-
+        var comparison = BuildComparison(criteria.Value, criteria.Operation);
         var parameter = criteria.Value is not null ? BuildParameterSql(FilterParameterNames.ForCriterion(index)) : "null";
 
         if (criteria.Operation == FilterOperation.Contains)
@@ -114,6 +106,33 @@ public class SqlGenerator<TRecord> : ISqlGenerator
         var schema = RecordSchema<TRecord>.SchemaName;
 
         return schema is null ? $"from {table}" : $"from {QuoteIdentifier(schema)}.{table}";
+    }
+
+    private static String BuildInSql(String column, IReadOnlyList<Object?> values, Int32 index)
+    {
+        var parameters = values.Select((value, i) => value is not null ? BuildParameterSql(FilterParameterNames.ForElement(index, i)) : null).OfType<String>().ToArray();
+        var set = parameters.Length != 0 ? String.Join(",", parameters) : "null";
+
+        if (parameters.Length == values.Count)
+            return $"({column} in ({set}))";
+
+        if (parameters.Length == 0)
+            return $"({column} is null)";
+
+        return $"({column} in ({set}) or {column} is null)";
+    }
+
+    private static String BuildOrderSql(IEnumerable<SortCriteria> sort)
+    {
+        var sorting = String.Join(", ", sort.Select(t => $"{BuildColumnSql(t.Expression)}{(t.Order == SortOrder.Descending ? " desc" : String.Empty)}"));
+        if (! String.IsNullOrWhiteSpace(sorting))
+            return $"order by {sorting}";
+
+        var keys = String.Join(", ", RecordSchema<TRecord>.KeyProperties.Select(t => QuoteIdentifier(RecordSchema<TRecord>.GetColumnName(t))));
+        if (! String.IsNullOrWhiteSpace(keys))
+            return $"order by {keys}";
+
+        return String.Empty;
     }
 
     private static String BuildParameterSql(String name)

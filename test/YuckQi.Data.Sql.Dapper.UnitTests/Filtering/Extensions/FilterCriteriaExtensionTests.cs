@@ -225,15 +225,20 @@ public class FilterCriteriaExtensionTests
     }
 
     [Test]
-    public void FilterCriteria_InOperation_WithNullElement_BindsNull()
+    public void FilterCriteria_InOperation_WithNullElement_SkipsNullAndKeepsElementPositions()
     {
-        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, new String?[] { "a", null }) };
+        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, new String?[] { null, "a", null, "b" }) };
         var parameters = criteria.ToDynamicParameters();
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(parameters.ParameterNames, Is.EqualTo(new[] { "p0_0", "p0_1" }));
-            Assert.That(parameters.Get<Object>("p0_1"), Is.Null);
-        });
+        Assert.That(parameters.ParameterNames, Is.EqualTo(new[] { "p0_1", "p0_3" }));
+    }
+
+    [Test]
+    public void FilterCriteria_InOperation_WithOnlyNullElements_BindsNothing()
+    {
+        var criteria = new[] { new FilterCriteria("Code", FilterOperation.In, new String?[] { null }), new FilterCriteria("Name", "x") };
+        var parameters = criteria.ToDynamicParameters();
+
+        Assert.That(parameters.ParameterNames, Is.EqualTo(new[] { "p1" }));
     }
 }

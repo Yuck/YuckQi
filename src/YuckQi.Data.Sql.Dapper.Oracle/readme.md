@@ -4,7 +4,7 @@ An implementation of [YuckQi.Data](https://www.nuget.org/packages/YuckQi.Data) f
 
 ## Key Types
 
-- **`SqlGenerator<TRecord>`** &ndash; Oracle-specific `ISqlGenerator` implementation using double-quoted identifiers, `:param` bind variables, `OFFSET ... FETCH` pagination, and `LIKE` with `ESCAPE` for `FilterOperation.Contains` (case sensitivity follows the session/column collation)
+- **`SqlGenerator<TRecord>`** &ndash; Oracle-specific `ISqlGenerator` implementation using double-quoted identifiers, `:param` bind variables, `OFFSET ... FETCH` pagination, and `lower(column) LIKE lower(value)` with `ESCAPE` for `FilterOperation.Contains` (a case-insensitive substring match whatever the session or column collation). A search with no sort orders by the record's key columns
 - **`RetrievalHandler`** &ndash; concrete retrieval handler pre-configured for Oracle
 - **`SearchHandler`** &ndash; concrete paginated search handler pre-configured for Oracle
 

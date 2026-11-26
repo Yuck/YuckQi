@@ -12,7 +12,7 @@ Provides handler implementations that operate over an `IDbTransaction` scope:
 - **`RetrievalHandlerBase`** &ndash; abstract base for retrieval with `ISqlGenerator`-driven queries
 - **`SearchHandlerBase`** &ndash; abstract base for paginated search with `ISqlGenerator`-driven queries
 - **`ISqlGenerator`** &ndash; interface for generating provider-specific SQL (implemented by database-specific packages). The handlers bind filter values with `ToDynamicParameters`, so an implementation must reference them by the names `FilterParameterNames` returns (`@p0`, `@p1_0`), not by field name; any other name fails when the query runs
-- **`RecordSchema<TRecord>`** &ndash; resolves a record's table name, schema, selectable properties and column names for the `SqlGenerator`s, and rejects filter and sort names that are not mapped properties of the record
+- **`RecordSchema<TRecord>`** &ndash; resolves a record's table name, schema, selectable properties, key properties and column names for the `SqlGenerator`s, and rejects filter and sort names that are not mapped properties of the record
 - **`FilterCriteriaExtensions`** &ndash; builds Dapper `DynamicParameters` from `FilterCriteria`; `Contains` values are wrapped as `%value%` with `%`, `_`, and `\` escaped so they are literal. SQL Server's `SqlGenerator` also treats `[` as literal (a `LIKE` character-class wildcard on that dialect only)
 - **`FilterParameterNames`** &ndash; the parameter names shared by `ToDynamicParameters` and the `SqlGenerator`s; use it in a custom `ISqlGenerator` so its SQL matches the bound parameters
 
@@ -34,7 +34,15 @@ Only `FilterCriteria.FieldName` and `SortCriteria.Expression` values that name a
 
 Filter values are bound by position, not by field name: the criterion at index `i` is bound as `p{i}`, and element `j` of an `In` criterion as `p{i}_{j}` (`@p0`, `@p1_0`; `:p0` on Oracle). Several criteria on one field, such as `Age >= 18` and `Age <= 65`, each get their own parameter, and fields named after Oracle reserved words such as `Date` or `Level` bind normally. A criterion with a `null` value is written as SQL `null` but still uses its position, so later names don't shift.
 
-`In` takes a collection of values. A `String` or `Byte[]` value throws an `ArgumentException` instead of being split into characters or bytes; wrap it as `new[] { "ABC" }` to match the single value.
+`In` takes a collection of values. A `String` or `Byte[]` value throws an `ArgumentException` instead of being split into characters or bytes; wrap it as `new[] { "ABC" }` to match the single value. A `null` member matches `null` values, the same as `Equal` with `null`: it is not bound, and the filter becomes `(column in (...) or column is null)`, or `(column is null)` when every member is `null`. The other members keep their positions, so `new Int32?[] { null, 5 }` binds only `p0_1`. An empty collection matches nothing.
+
+### `Contains`
+
+`Contains` is a case-insensitive substring match on every provider, the same as MemDb. MySQL, Oracle and SQL Server compare `lower(column)` with `lower(value)`, so the result does not depend on the column or connection collation; PostgreSQL uses `ILIKE`. SQL Server casts the column to `nvarchar(max)` first so `text` and `ntext` columns work, and MySQL converts it to `utf8mb4` first so binary string columns are lowered too. Wildcard characters in the value are matched literally.
+
+### Search Ordering
+
+A search with no sort criteria orders by the record's key columns so pages don't repeat or skip rows. The key columns are the mapped properties marked `[Key]` (Dapper.SimpleCRUD or DataAnnotations), or the property named `Id` (ignoring case) when none is marked, the same rule SimpleCRUD uses for writes. A record with neither pages in an undefined order: SQL Server orders by `(select null)`, since it rejects `OFFSET ... FETCH` without `ORDER BY`, and the other providers emit no `ORDER BY`. A search with sort criteria uses only those criteria; include a unique column, such as the key, as the last sort when the others can tie.
 
 Upgrading to 10.5.0:
 
@@ -43,6 +51,9 @@ Upgrading to 10.5.0:
 - `[NotMapped]` and computed properties are no longer selected, and DataAnnotations `[Table]` / `[Column]` attributes now apply to reads as well as writes.
 - Filter parameters are named by position (`p0`, `p1_0`) instead of by field name (`Name`, `Name0`). Custom `ISqlGenerator`s used with these handlers must use `FilterParameterNames` to match.
 - `In` with a `String` or `Byte[]` value now throws `ArgumentException` instead of matching each character or byte.
+- `In` with a `null` member now matches `null` values. `ToDynamicParameters` no longer binds `null` members, so a custom `ISqlGenerator` must not reference their parameter names.
+- `Contains` now ignores case on MySQL, Oracle and SQL Server, where it used to follow the collation. PostgreSQL is unchanged.
+- A search with no sort criteria now orders by the record's key columns. Unsorted searches on SQL Server used to fail with "Invalid usage of the option FETCH"; the other providers returned pages in an undefined order.
 - `Create` throws `CreationException` when the insert returns `0` / `Guid.Empty` as the key (for example an `Int16` identity key, which SimpleCRUD does not read back), unless `CreationOptions` is created with `allowDefaultIdentifier: true`. The row has already been inserted in the scope's transaction, so dispose the unit of work without calling `SaveChanges` to roll it back.
 
 ## `DateOnly` and `TimeOnly` Properties
