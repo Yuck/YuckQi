@@ -130,7 +130,7 @@ public class SqlGeneratorTests
         var parameters = new[] { new FilterCriteria("Name", FilterOperation.Contains, "Guy") };
         var sql = generator.GenerateGetQuery(parameters).Replace(Environment.NewLine, " ");
 
-        Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` where (`Name` like @p0 escape '\\\\');"));
+        Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` where (lower(convert(`Name` using utf8mb4)) like lower(@p0) escape '\\\\');"));
     }
 
     [Test]
@@ -354,6 +354,90 @@ public class SqlGeneratorTests
         });
     }
 
+    [Test]
+    public void GenerateSearchQuery_WithoutSort_OrdersByIdColumn()
+    {
+        var generator = new SqlGenerator<SurLaTableRecord>();
+        var parameters = Array.Empty<FilterCriteria>();
+        var page = new Page(1, 10);
+        var sort = new List<SortCriteria>().OrderBy(t => t);
+        var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` order by `Id` limit 10 offset 0;"));
+    }
+
+    [Test]
+    public void GenerateSearchQuery_WithoutSort_OrdersByKeyColumns()
+    {
+        var generator = new SqlGenerator<KeyedRecord>();
+        var parameters = Array.Empty<FilterCriteria>();
+        var page = new Page(1, 10);
+        var sort = new List<SortCriteria>().OrderBy(t => t);
+        var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select `TenantId`, `record_code` `Code`, `Id` from `Keyed` order by `TenantId`, `record_code` limit 10 offset 0;"));
+    }
+
+    [Test]
+    public void GenerateSearchQuery_WithoutSortOrKey_IsValid()
+    {
+        var generator = new SqlGenerator<QuotedColumnRecord>();
+        var parameters = Array.Empty<FilterCriteria>();
+        var page = new Page(1, 10);
+        var sort = new List<SortCriteria>().OrderBy(t => t);
+        var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select `odd``name` `Name` from `QuotedColumn` limit 10 offset 0;"));
+    }
+
+    [Test]
+    public void GenerateSearchQuery_WithSort_DoesNotAddKeyColumns()
+    {
+        var generator = new SqlGenerator<KeyedRecord>();
+        var parameters = Array.Empty<FilterCriteria>();
+        var page = new Page(1, 10);
+        var sort = new List<SortCriteria> { new("Id", SortOrder.Descending) }.OrderBy(t => t);
+        var sql = generator.GenerateSearchQuery(parameters, page, sort).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select `TenantId`, `record_code` `Code`, `Id` from `Keyed` order by `Id` desc limit 10 offset 0;"));
+    }
+
+    [Test]
+    public void GenerateGetQuery_WithInOperation_AndNullElement_MatchesNull()
+    {
+        var generator = new SqlGenerator<SurLaTableRecord>();
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.In, new String?[] { null, "Bill", "Mac" }) };
+        var sql = generator.GenerateGetQuery(parameters).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` where (`Name` in (@p0_1,@p0_2) or `Name` is null);"));
+    }
+
+    [Test]
+    public void GenerateGetQuery_WithInOperation_AndOnlyNullElements_MatchesNull()
+    {
+        var generator = new SqlGenerator<SurLaTableRecord>();
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.In, new String?[] { null }) };
+        var sql = generator.GenerateGetQuery(parameters).Replace(Environment.NewLine, " ");
+
+        Assert.That(sql, Is.EqualTo("select `Id`, `Name` from `SurLaTable` where (`Name` is null);"));
+    }
+
+    [Test]
+    public void GenerateGetQuery_WithInOperation_AndNullElement_ParameterNamesMatchDynamicParameters()
+    {
+        var generator = new SqlGenerator<SurLaTableRecord>();
+        var parameters = new[] { new FilterCriteria("Name", FilterOperation.In, new String?[] { "Bill", null, "Mac" }), new FilterCriteria("Name", FilterOperation.In, new String?[] { null }), new FilterCriteria("Id", 1) };
+        var sql = generator.GenerateGetQuery(parameters);
+        var bound = parameters.ToDynamicParameters().ParameterNames.ToList();
+        var referenced = Regex.Matches(sql, @"@(p\d+(?:_\d+)?)\b").Select(t => t.Groups[1].Value).ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(bound, Is.EqualTo(new[] { "p0_0", "p0_2", "p2" }));
+            Assert.That(referenced, Is.EqualTo(bound));
+        });
+    }
+
     [Table("SurLaTable")]
     public class SurLaTableRecord
     {
@@ -403,5 +487,18 @@ public class SqlGeneratorTests
 
         [Annotations.Column("display_name")]
         public String DisplayName { get; set; } = String.Empty;
+    }
+
+    [Table("Keyed")]
+    public class KeyedRecord
+    {
+        [Key]
+        public Int32 TenantId { get; set; }
+
+        [Key]
+        [Column("record_code")]
+        public String Code { get; set; } = String.Empty;
+
+        public Int32 Id { get; set; }
     }
 }

@@ -38,7 +38,12 @@ public static class FilterCriteriaExtensions
                 var values = parameter.GetInValues();
 
                 for (var i = 0; i < values.Count; i++)
+                {
+                    if (values[i] is null)
+                        continue;
+
                     AddParameter(result, FilterParameterNames.ForElement(index, i), values[i], dbTypeMap);
+                }
             }
             else
             {

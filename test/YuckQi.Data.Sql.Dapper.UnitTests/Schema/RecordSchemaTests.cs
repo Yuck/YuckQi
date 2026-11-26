@@ -2,6 +2,7 @@ using Dapper;
 using NUnit.Framework;
 using YuckQi.Data.Sql.Dapper.Schema;
 using Annotations = System.ComponentModel.DataAnnotations.Schema;
+using DataAnnotations = System.ComponentModel.DataAnnotations;
 
 namespace YuckQi.Data.Sql.Dapper.UnitTests.Schema;
 
@@ -202,6 +203,30 @@ public class RecordSchemaTests
     }
 
     [Test]
+    public void KeyProperties_WithoutKeyAttribute_ReturnsIdProperty()
+    {
+        Assert.That(RecordSchema<ResolvableRecord>.KeyProperties.Select(t => t.Name), Is.EqualTo(new[] { "Id" }));
+    }
+
+    [Test]
+    public void KeyProperties_WithDapperKeyAttributes_ReturnsKeyedPropertiesInsteadOfId()
+    {
+        Assert.That(RecordSchema<KeyedRecord>.KeyProperties.Select(t => t.Name), Is.EqualTo(new[] { "TenantId", "Code" }));
+    }
+
+    [Test]
+    public void KeyProperties_WithDataAnnotationsKeyAttribute_ReturnsKeyedProperty()
+    {
+        Assert.That(RecordSchema<AnnotatedKeyRecord>.KeyProperties.Select(t => t.Name), Is.EqualTo(new[] { "Number" }));
+    }
+
+    [Test]
+    public void KeyProperties_WithoutKeyAttributeOrId_IsEmpty()
+    {
+        Assert.That(RecordSchema<OverlappingNamesRecord>.KeyProperties, Is.Empty);
+    }
+
+    [Test]
     public void SchemaName_WithDapperTableAttributeSchema_ReturnsSchema()
     {
         Assert.That(RecordSchema<DapperSchemaRecord>.SchemaName, Is.EqualTo("audit"));
@@ -318,5 +343,25 @@ public class RecordSchemaTests
         public String Url { get; set; } = String.Empty;
 
         public String URL { get; set; } = String.Empty;
+    }
+
+    public class KeyedRecord
+    {
+        [Key]
+        public Int32 TenantId { get; set; }
+
+        [Key]
+        [Column("record_code")]
+        public String Code { get; set; } = String.Empty;
+
+        public Int32 Id { get; set; }
+    }
+
+    public class AnnotatedKeyRecord
+    {
+        public Int32 Id { get; set; }
+
+        [DataAnnotations.Key]
+        public Int32 Number { get; set; }
     }
 }

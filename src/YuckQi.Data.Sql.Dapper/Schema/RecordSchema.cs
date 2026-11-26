@@ -10,6 +10,8 @@ public static class RecordSchema<TRecord>
     private static readonly PropertyInfo[] MappedProperties = typeof(TRecord).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(IsMapped).ToArray();
     private static readonly MappedColumn[] MappedColumns = MappedProperties.Select(t => new MappedColumn(t, GetColumnName(t))).ToArray();
 
+    public static IReadOnlyList<PropertyInfo> KeyProperties { get; } = GetKeyProperties();
+
     public static String? SchemaName { get; } = NullIfBlank(NamedAttributes.GetText(Table, nameof(TableAttribute.Schema)));
 
     public static IReadOnlyList<PropertyInfo> SelectableProperties { get; } = MappedProperties.Where(t => ! NamedAttributes.IsDefined(t, typeof(IgnoreSelectAttribute))).ToArray();
@@ -66,6 +68,15 @@ public static class RecordSchema<TRecord>
         var names = constructors.SelectMany(t => t.GetParameters()).Select(t => t.Name).OfType<String>();
 
         return names.ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static PropertyInfo[] GetKeyProperties()
+    {
+        var keyed = MappedProperties.Where(t => NamedAttributes.IsDefined(t, typeof(KeyAttribute))).ToArray();
+        if (keyed.Length != 0)
+            return keyed;
+
+        return MappedProperties.Where(t => String.Equals(t.Name, "Id", StringComparison.OrdinalIgnoreCase)).ToArray();
     }
 
     private static Boolean HasAutoPropertyBackingField(PropertyInfo property)
