@@ -44,7 +44,7 @@ public static class AbstractValidatorExtensions
         if (result.IsValid)
             return result;
 
-        return new Result<T>(default, detail);
+        return Result<T>.Failure(detail);
     }
 
     private static ResultCode GetResultCode(ValidationFailure failure)

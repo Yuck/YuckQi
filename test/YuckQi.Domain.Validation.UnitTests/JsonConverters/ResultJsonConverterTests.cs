@@ -34,6 +34,27 @@ public class ResultJsonConverterTests
     }
 
     [Test]
+    public void Result_RoundTrip_IsEqualToOriginal()
+    {
+        var original = new Result<String>("content", [new ResultDetail("error", "code", "prop")]);
+        var json = JsonSerializer.Serialize(original, _options);
+        var copy = JsonSerializer.Deserialize<Result<String>>(json, _options);
+
+        Assert.That(copy, Is.EqualTo(original));
+    }
+
+    [Test]
+    public void Result_DeserializeDetailWithoutType_IsNotValid()
+    {
+        var json = "{\"Content\":\"content\",\"Detail\":[{\"Message\":\"msg\"}]}";
+        var result = JsonSerializer.Deserialize<Result<String>>(json, _options);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result?.Detail.Single().Type, Is.EqualTo(ResultType.Unknown));
+        Assert.That(result?.IsValid, Is.False);
+    }
+
+    [Test]
     public void Result_RoundTripNotFound_HasNotFoundResultCode()
     {
         var original = Result<String>.NotFound(42);

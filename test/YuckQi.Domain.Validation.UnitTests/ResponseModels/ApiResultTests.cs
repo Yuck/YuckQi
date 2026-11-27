@@ -70,6 +70,69 @@ public class ApiResultTests
     }
 
     [Test]
+    public void ApiResult_WithEqualDetailInDifferentCollections_IsEqual()
+    {
+        var a = new ApiResult { Detail = [new ApiResultDetail { Code = "code", Message = "msg", Property = "prop", Type = ResultType.Error }] };
+        var b = new ApiResult { Detail = new List<ApiResultDetail> { new () { Code = "code", Message = "msg", Property = "prop", Type = ResultType.Error } } };
+
+        Assert.That(a, Is.EqualTo(b));
+        Assert.That(a == b, Is.True);
+        Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+    }
+
+    [Test]
+    public void ApiResult_WithDifferentDetail_IsNotEqual()
+    {
+        var a = new ApiResult { Detail = [new ApiResultDetail { Code = "code" }] };
+        var b = new ApiResult { Detail = [new ApiResultDetail { Code = "other" }] };
+
+        Assert.That(a, Is.Not.EqualTo(b));
+        Assert.That(a != b, Is.True);
+    }
+
+    [Test]
+    public void ApiResult_WithNullDetail_IsEqualOnlyToNullDetail()
+    {
+        var a = new ApiResult { Detail = null! };
+        var b = new ApiResult { Detail = null! };
+        var c = new ApiResult();
+
+        Assert.That(a, Is.EqualTo(b));
+        Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+        Assert.That(a, Is.Not.EqualTo(c));
+        Assert.That(c, Is.Not.EqualTo(a));
+    }
+
+    [Test]
+    public void ApiResult_AndGenericApiResult_WithEqualDetail_AreNotEqual()
+    {
+        var a = new ApiResult { Detail = [new ApiResultDetail { Code = "code" }] };
+        var b = new ApiResult<String> { Detail = [new ApiResultDetail { Code = "code" }] };
+
+        Assert.That(a, Is.Not.EqualTo(b));
+        Assert.That(b, Is.Not.EqualTo(a));
+    }
+
+    [Test]
+    public void ApiResult_Generic_WithEqualContentAndDetail_IsEqual()
+    {
+        var a = new ApiResult<String> { Content = "content", Detail = [new ApiResultDetail { Code = "code" }] };
+        var b = new ApiResult<String> { Content = "content", Detail = new List<ApiResultDetail> { new () { Code = "code" } } };
+
+        Assert.That(a, Is.EqualTo(b));
+        Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+    }
+
+    [Test]
+    public void ApiResult_Generic_WithDifferentContent_IsNotEqual()
+    {
+        var a = new ApiResult<String> { Content = "content", Detail = [new ApiResultDetail { Code = "code" }] };
+        var b = new ApiResult<String> { Content = "other", Detail = [new ApiResultDetail { Code = "code" }] };
+
+        Assert.That(a, Is.Not.EqualTo(b));
+    }
+
+    [Test]
     public void ApiResult_Generic_Equality_IsBasedOnContent()
     {
         var a = new ApiResult<Int32> { Content = 1 };
