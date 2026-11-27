@@ -7,11 +7,23 @@ A .NET library providing domain validation fundamentals built around a `Result` 
 ### Result Pattern
 
 - **`Result` / `Result<T>`** &ndash; validation outcome with `Detail` collection and `IsValid` flag; the generic variant carries optional `Content`
+  - `new Result<T>(content, detail)` builds a result with content; `Result<T>.Failure(detail)` and `Result<T>.NotFound(identifier)` build an invalid one with `default` content
+  - `Result<T>.Failure` throws `ArgumentNullException` for a `null` detail and `ArgumentException` when the detail would make a valid result (empty, or only warnings)
+  - The constructors copy `detail`, so later changes to the caller's collection do not change the result; a `null` entry in `detail` throws `ArgumentException`
+  - `IsValid` is `true` only when every detail is a `ResultType.Warning`; `Error`, `Unknown`, and undefined types make a result invalid
+  - Equality compares `Detail` item by item, in order, so two results with equal details are equal even when they hold different collection instances
 - **`IResult` / `IResult<T>`** &ndash; interfaces for the result types
 - **`ResultDetail`** &ndash; a single validation issue with message, code, property name, and type
 - **`ResultMessage`** &ndash; strongly typed validation message with implicit `String` conversion; includes `NotFound` factory
 - **`ResultCode`** &ndash; strongly typed validation code with predefined values (`InvalidRequestDetail`, `NotFound`)
 - **`ResultType`** &ndash; enum (`Unknown`, `Warning`, `Error`)
+
+Upgrading to 10.5.0:
+
+- The `Result<T>(ResultDetail)` and `Result<T>(IReadOnlyCollection<ResultDetail>)` constructors are removed. Replace every `new Result<T>(detail)` that passes only detail with `Result<T>.Failure(detail)`. Most such calls stop compiling, but not all: when a detail or detail collection converts to `T` (for example `Result<Object>`, `Result<ResultDetail>`, `Result<IEnumerable<ResultDetail>>`, or `Result<IReadOnlyCollection<ResultDetail>>`), the call still compiles. It now uses the content constructor, so the detail becomes `Content` and the result is valid instead of failed. `new Result<T>(null)` now compiles and creates a result with `null` content.
+- `new Result(detail)` and `new Result<T>(content, detail)` copy `detail` instead of keeping the caller's collection, and throw `ArgumentException` when it contains a `null` entry. Before, a `null` entry made `IsValid` throw `NullReferenceException`.
+- `IsValid` treats `ResultType.Unknown` (the enum's zero value, and the default for `ApiResultDetail.Type` and for a detail read from JSON with no `Type`) as invalid, along with any undefined `ResultType` value. Before, only `ResultType.Error` made a result invalid.
+- `Result` and `Result<T>` equality compares `Detail` by sequence instead of by reference. A `Result` and a `Result<T>` are never equal, even with the same detail.
 
 ### FluentValidation Integration
 
@@ -26,6 +38,10 @@ Upgrading to 10.5.0:
 
 - **`ApiResult` / `ApiResult<T>`** &ndash; API response wrappers with `Detail` collection
 - **`ApiResultDetail`** &ndash; serializable detail model with `Code`, `Message`, `Property`, and `Type`
+
+Upgrading to 10.5.0:
+
+- `ApiResult` and `ApiResult<T>` equality compares `Detail` item by item, in order, instead of by reference. An `ApiResult` and an `ApiResult<T>` are never equal, even with the same detail.
 
 ### JSON Support
 
