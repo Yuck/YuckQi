@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace YuckQi.Domain.Validation;
 
 public record ResultMessage
@@ -6,15 +8,20 @@ public record ResultMessage
 
     private readonly String _message;
 
-    public static implicit operator ResultMessage(String message) => new (message);
-    public static implicit operator String(ResultMessage message) => message._message;
+    [return: NotNullIfNotNull(nameof(message))]
+    public static implicit operator ResultMessage?(String? message) => message is null ? null : new ResultMessage(message);
+
+    [return: NotNullIfNotNull(nameof(message))]
+    public static implicit operator String?(ResultMessage? message) => message?._message;
 
     public ResultMessage() : this(String.Empty) { }
 
     public ResultMessage(String message)
     {
+        ArgumentNullException.ThrowIfNull(message);
+
         _message = message;
     }
 
-    public override String ToString() => this;
+    public override String ToString() => _message;
 }

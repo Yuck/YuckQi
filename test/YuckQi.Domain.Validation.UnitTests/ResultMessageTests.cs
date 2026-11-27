@@ -63,4 +63,22 @@ public class ResultMessageTests
         Assert.That(copy, Is.EqualTo(original));
         Assert.That(copy.ToString(), Is.EqualTo(original.ToString()));
     }
+
+    [Test]
+    public void ResultMessage_NullImplicitConversionToString_IsNull()
+    {
+        var message = default(ResultMessage?);
+        String? value = message;
+
+        Assert.That(value, Is.Null);
+    }
+
+    [Test]
+    public void ResultMessage_NullImplicitConversionFromString_IsNull()
+    {
+        var value = default(String?);
+        ResultMessage? message = value;
+
+        Assert.That(message, Is.Null);
+    }
 }

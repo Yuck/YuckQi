@@ -1,3 +1,4 @@
+using YuckQi.Domain.Validation.ResponseModels;
 using NUnit.Framework;
 
 namespace YuckQi.Domain.Validation.UnitTests;
@@ -67,5 +68,36 @@ public class ResultDetailTests
         Assert.That(detail.Code, Is.Null);
         Assert.That(detail.Property, Is.Null);
         Assert.That(detail.Type, Is.EqualTo(ResultType.Warning));
+    }
+
+
+
+
+    [Test]
+    public void ResultDetail_WithoutCode_ConvertsToApiResultDetailWithNullCode()
+    {
+        var detail = new ResultDetail("msg");
+        var response = new ApiResultDetail { Code = detail.Code, Message = detail.Message };
+
+        Assert.That(response.Code, Is.Null);
+        Assert.That(response.Message, Is.EqualTo("msg"));
+    }
+
+    [Test]
+    public void ResultDetail_WithNullStringMessage_HasEmptyMessage()
+    {
+        var message = default(String?);
+        var detail = new ResultDetail(message);
+
+        Assert.That((String) detail.Message, Is.Empty);
+    }
+
+    [Test]
+    public void ResultDetail_WithNullResultMessage_HasEmptyMessage()
+    {
+        var message = default(ResultMessage?);
+        var detail = new ResultDetail(message);
+
+        Assert.That((String) detail.Message, Is.Empty);
     }
 }

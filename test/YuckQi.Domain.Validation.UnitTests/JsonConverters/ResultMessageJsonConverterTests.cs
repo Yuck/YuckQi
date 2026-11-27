@@ -10,6 +10,8 @@ public class ResultMessageJsonConverterTests
 
     public record Example(ResultMessage M);
 
+    public record NullableExample(ResultMessage? M);
+
     [Test]
     public void ResultMessage_CanDeserialize_FromJson()
     {
@@ -30,5 +32,16 @@ public class ResultMessageJsonConverterTests
 
         Assert.That(json, Is.Not.Null);
         Assert.That(json, Is.EqualTo($"{{\"M\":\"{value}\"}}"));
+    }
+
+    [Test]
+    public void ResultMessage_CanRoundTripNull_ToJson()
+    {
+        var example = new NullableExample(null);
+        var json = JsonSerializer.Serialize(example, _options);
+        var copy = JsonSerializer.Deserialize<NullableExample>(json, _options);
+
+        Assert.That(json, Is.EqualTo("{\"M\":null}"));
+        Assert.That(copy, Is.EqualTo(example));
     }
 }

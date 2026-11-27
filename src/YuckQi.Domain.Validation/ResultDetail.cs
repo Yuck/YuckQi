@@ -9,13 +9,13 @@ public record ResultDetail
     public String? Property { get; }
     public ResultType Type { get; }
 
-    public ResultDetail(ResultMessage message, ResultCode? code = null, String? property = null, ResultType type = ResultType.Error)
+    public ResultDetail(ResultMessage? message, ResultCode? code = null, String? property = null, ResultType type = ResultType.Error)
     {
         Code = code;
-        Message = message;
+        Message = message ?? new ResultMessage();
         Property = property;
         Type = type;
     }
 
-    public ResultDetail(String message, ResultCode? code = null, String? property = null, ResultType type = ResultType.Error) : this(new ResultMessage(message), code, property, type) { }
+    public ResultDetail(String? message, ResultCode? code = null, String? property = null, ResultType type = ResultType.Error) : this((ResultMessage?) message, code, property, type) { }
 }
