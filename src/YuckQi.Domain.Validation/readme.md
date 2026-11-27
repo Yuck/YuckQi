@@ -29,7 +29,33 @@ Upgrading to 10.5.0:
 
 ### JSON Support
 
-- **`ResultCodeJsonConverter`** / **`ResultMessageJsonConverter`** &ndash; `System.Text.Json` converters for `ResultCode` and `ResultMessage`
+The result types carry no serialization attributes. To round-trip them through `System.Text.Json`, register the converters with `AddResultJsonConverters`:
+
+```csharp
+var options = new JsonSerializerOptions().AddResultJsonConverters();
+var json = JsonSerializer.Serialize(result, options);
+var copy = JsonSerializer.Deserialize<Result<Order>>(json, options);
+```
+
+In ASP.NET Core:
+
+```csharp
+builder.Services.ConfigureHttpJsonOptions(t => t.SerializerOptions.AddResultJsonConverters());
+```
+
+- **`JsonSerializerOptionsExtensions`** &ndash; `AddResultJsonConverters` adds all of the converters below to a `JsonSerializerOptions` and returns it
+- **`ResultCodeJsonConverter`** / **`ResultMessageJsonConverter`** &ndash; write `ResultCode` and `ResultMessage` as plain strings and read them back
+- **`ResultDetailJsonConverter`** &ndash; writes a `ResultDetail` in the `ApiResultDetail` shape (`Code`, `Message`, `Property`, `Type`) and reads it back; a missing `Message` becomes an empty `ResultMessage`
+- **`ResultJsonConverter`** / **`ResultJsonConverter<T>`** / **`ResultJsonConverterFactory`** (in `JsonConverters.Factories`) &ndash; write a `Result` as `Detail` and `IsValid`, and a `Result<T>` as `Content`, `Detail`, and `IsValid`, and read them back through their constructors; `IsValid` is recomputed from `Detail` on read, and a `null` entry in `Detail` throws `JsonException`
+- The converters honor the serializer's naming policy, case-insensitive matching, ignore conditions, unmapped member handling, and converters registered for `String`, `ResultType` (such as `JsonStringEnumConverter`), and `T`
+- The converters work with source-generated `JsonSerializerContext` metadata and need no reflection; include the result types in the context, for example `[JsonSerializable(typeof(Result<Order>))]`
+
+Upgrading to 10.5.0:
+
+- `ResultDetailJsonConverter`, `ResultJsonConverter`, `ResultJsonConverter<T>`, `ResultJsonConverterFactory`, and `AddResultJsonConverters` are new. Without them, `ResultCode` and `ResultMessage` still serialize as `{}`, and `ResultDetail` and `Result<T>` cannot be deserialized.
+- The implicit conversions between `String` and `ResultCode` / `ResultMessage` pass `null` through: a null `ResultCode` or `ResultMessage` converts to a null `String`, and a null `String` to a null `ResultCode` or `ResultMessage`, instead of throwing `NullReferenceException` or creating an instance that wraps `null`. Both conversions are now declared nullable (`String?`, `ResultCode?`, `ResultMessage?`).
+- `new ResultCode(null)` and `new ResultMessage(null)` throw `ArgumentNullException`.
+- `ResultDetail` constructors accept a null message (`String?` or `ResultMessage?`) and store an empty `ResultMessage`, so `Message` is never null. `GetResult` therefore maps a FluentValidation failure with a null `ErrorMessage` to an empty message.
 
 ## Dependencies
 

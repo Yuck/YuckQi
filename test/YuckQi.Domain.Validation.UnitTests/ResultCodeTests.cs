@@ -66,4 +66,22 @@ public class ResultCodeTests
         Assert.That(copy, Is.EqualTo(original));
         Assert.That(copy.GetHashCode(), Is.EqualTo(original.GetHashCode()));
     }
+
+    [Test]
+    public void ResultCode_NullImplicitConversionToString_IsNull()
+    {
+        var code = default(ResultCode?);
+        String? value = code;
+
+        Assert.That(value, Is.Null);
+    }
+
+    [Test]
+    public void ResultCode_NullImplicitConversionFromString_IsNull()
+    {
+        var value = default(String?);
+        ResultCode? code = value;
+
+        Assert.That(code, Is.Null);
+    }
 }

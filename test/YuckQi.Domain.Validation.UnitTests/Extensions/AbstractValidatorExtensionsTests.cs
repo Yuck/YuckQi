@@ -33,6 +33,8 @@ public class AbstractValidatorExtensionsTests
             {
                 if (t.Nickname == "anonymous")
                     u.AddFailure(new ValidationFailure(nameof(Profile.Nickname), "it is anonymous"));
+                if (t.Nickname == "silent")
+                    u.AddFailure(new ValidationFailure(nameof(Profile.Nickname), null));
             });
         }
     }
@@ -166,6 +168,17 @@ public class AbstractValidatorExtensionsTests
 
         Assert.That(result.IsValid, Is.False);
         Assert.That(result.HasResultCode(ResultCode.InvalidRequestDetail), Is.True);
+    }
+
+    [Test]
+    public void AbstractValidator_GetResultWithNullErrorMessage_HasEmptyMessage()
+    {
+        var validator = new ProfileValidator();
+        var profile = new Profile { Email = "someone@example.com", Nickname = "silent" };
+        var result = validator.GetResult(profile);
+
+        Assert.That(result.IsValid, Is.False);
+        Assert.That((String) result.Detail.Single().Message, Is.Empty);
     }
 
     [Test]

@@ -57,7 +57,7 @@ public static class AbstractValidatorExtensions
 
     private static IReadOnlyCollection<ResultDetail> GetResultDetail(ValidationResult result)
     {
-        return [..result.Errors.Select(t => new ResultDetail(new ResultMessage(t.ErrorMessage), GetResultCode(t), t.PropertyName, GetResultType(t)))];
+        return [..result.Errors.Select(t => new ResultDetail(t.ErrorMessage, GetResultCode(t), t.PropertyName, GetResultType(t)))];
     }
 
     private static ResultType GetResultType(ValidationFailure failure)
