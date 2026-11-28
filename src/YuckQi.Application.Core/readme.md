@@ -19,9 +19,11 @@ Pipeline behaviors are organized by purpose in subfolders and namespaces:
 
 - **`CacheKey`** &ndash; value object wrapping a cache key string, with implicit conversions to/from `String` (cast to `String` when calling `IMemoryCache`, which takes `Object` keys)
 - **`DistributedCacheInvalidationBehavior<TRequest, TResponse>`** &ndash; Removes keys from `IDistributedCache` after the handler runs when `TResponse` implements `IHasCacheInvalidationKeys`; expands seeds through required `ICacheDependencyGraph`
-- **`DistributedCachingBehavior<TRequest, TResponse>`** &ndash; Uses `IDistributedCache` to cache responses for cacheable requests; configuration via `DistributedCachingBehaviorOptions` record (same file)
+- **`DistributedCachingBehavior<TRequest, TResponse>`** &ndash; Uses `IDistributedCache` to cache responses for cacheable requests; configured through `DistributedCachingBehaviorOptions`
+- **`DistributedCachingBehaviorOptions`** &ndash; `CacheDuration` (absolute expiration; `null` for none) and `SerializerOptions` (`JsonSerializerOptions` used to store and read responses; `null` uses System.Text.Json defaults plus the `YuckQi.Domain.Validation` result converters). Has a parameterless constructor and settable properties, so it works with `services.Configure<T>(...)` and configuration binding
 - **`MemoryCacheInvalidationBehavior<TRequest, TResponse>`** &ndash; Removes keys from `IMemoryCache` after the handler runs when `TResponse` implements `IHasCacheInvalidationKeys`; expands seeds through required `ICacheDependencyGraph`
-- **`MemoryCachingBehavior<TRequest, TResponse>`** &ndash; Uses `IMemoryCache` to cache responses for cacheable requests; configuration via `MemoryCachingBehaviorOptions` record (same file)
+- **`MemoryCachingBehavior<TRequest, TResponse>`** &ndash; Uses `IMemoryCache` to cache responses for cacheable requests; configured through `MemoryCachingBehaviorOptions`
+- **`MemoryCachingBehaviorOptions`** &ndash; `CacheDuration` (absolute expiration; `null` for none), `SerializerOptions` (`JsonSerializerOptions` used to snapshot responses; `null` uses System.Text.Json defaults plus the `YuckQi.Domain.Validation` result converters) and `Size` (the entry's `MemoryCacheEntryOptions.Size`, default `1`, must not be negative; counts against `MemoryCacheOptions.SizeLimit`). Has a parameterless constructor and settable properties, so it works with `services.Configure<T>(...)` and configuration binding
 
 **Caching dependency graph** (`YuckQi.Application.Core.Behaviors.Caching.DependencyGraph`)
 
@@ -53,6 +55,14 @@ Upgrading to 10.5.0:
 - On success, warning results are returned on a shallow copy of the handler's response instead of being dropped. When there are warnings, the returned instance is not the one the handler returned.
 - Validator rules with `Severity.Warning` or `Severity.Info` no longer short-circuit; the handler runs and those failures are returned as warnings. Validation results carry the failure's FluentValidation `ErrorCode` instead of always `InvalidRequestDetail` (see `YuckQi.Domain.Validation`).
 - `LoggingBehavior` logs failures (error level, with the exception) and cancellations, with the elapsed time.
+- `MemoryCachingBehaviorOptions` and `DistributedCachingBehaviorOptions` are no longer positional records. They have a parameterless constructor and settable `CacheDuration` / `SerializerOptions` properties (plus `Size` on the memory options), so `services.Configure<T>(...)` and configuration binding work; before, both threw `MissingMethodException`. `new MemoryCachingBehaviorOptions(duration)` still compiles, but deconstruction and positional `with` patterns do not. Each type moved to its own file.
+- Cached entries carry the response type. A response cached under a key is only returned to a request with the same `TResponse`; any other type, and entries written by earlier versions, are treated as a miss and overwritten. Before, `DistributedCachingBehavior` deserialized another type's JSON into a mostly default `TResponse` and returned it as a hit.
+- `MemoryCachingBehavior` stores a JSON snapshot of the response and returns a fresh copy on every hit, as `DistributedCachingBehavior` does. Mutating a returned response no longer changes what later callers get. Responses cached in memory must now round-trip through `System.Text.Json`.
+- Both caching behaviors check every response before storing it: it is serialized as `TResponse`, compared with its serialization as its runtime type, read back, and serialized again. A response that loses data on the way (non-public setters, get-only properties backed by private fields, a derived type returned for a base `TResponse`) or cannot be read back is returned uncached and a warning is logged, instead of being cached and later returned with missing data.
+- When `SerializerOptions` is `null`, the behaviors use System.Text.Json defaults plus `AddResultJsonConverters()`, so `ValidationResponse<T>` with warnings is cached without extra setup. Custom `SerializerOptions` must call `AddResultJsonConverters()` themselves if responses carry `Result` values.
+- Responses that are `null`, or that implement `IHasValidationResults` and contain a result that is not valid, are no longer cached.
+- `MemoryCachingBehavior` sets `MemoryCacheEntryOptions.Size` (`MemoryCachingBehaviorOptions.Size`, default `1`). Before, a memory cache with `SizeLimit` rejected every entry and caching was silently disabled.
+- `DistributedCachingBehavior` and `DistributedCacheInvalidationBehavior` rethrow an `OperationCanceledException` raised after the request's token is canceled. Before, a canceled read fell through to the handler with the canceled token, and invalidation logged one warning per key and returned normally.
 
 ## Caching guide
 
@@ -148,8 +158,10 @@ The library does not register Mediator behaviors for you. In the host:
 Example (memory cache + invalidation):
 
 ```csharp
-services.AddMemoryCache();
-services.AddSingleton(Options.Create(new MemoryCachingBehaviorOptions(TimeSpan.FromMinutes(5))));
+services.AddMemoryCache(t => t.SizeLimit = 1_000);
+services.Configure<MemoryCachingBehaviorOptions>(t => t.CacheDuration = TimeSpan.FromMinutes(5));
+// or bind from configuration:
+// services.Configure<MemoryCachingBehaviorOptions>(configuration.GetSection("Caching:Memory"));
 services.AddSingleton<ICacheDependencyGraph>(CacheDependencyGraph.Create(/* … */));
 
 // Register with your Mediator pipeline registration of choice, e.g.:
@@ -168,9 +180,11 @@ services.AddSingleton<ICacheDependencyGraph>(CacheDependencyGraph.Create(/* … 
 #### Cached read (`IHasCacheKey`)
 
 1. `MemoryCachingBehavior` / `DistributedCachingBehavior` reads `request.CacheKey`.
-2. **Hit** — returns the cached response; the handler is not invoked.
-3. **Miss** — invokes `next`, then stores the response (optional absolute expiration from options).
-4. Cache get/set failures are fail-soft (logged; the request still proceeds).
+2. **Hit** — returns the cached response; the handler is not invoked. Both behaviors store a JSON snapshot tagged with the response type and return a fresh copy on every hit, so callers can mutate what they get.
+3. **Miss** — invokes `next`, then stores the response (optional absolute expiration from options; the memory behavior also sets the entry `Size`). A response is stored only if it round-trips through `System.Text.Json` unchanged with the configured `SerializerOptions`; otherwise it is returned uncached and a warning is logged. Responses must therefore be serializable data: public settable properties or constructor parameters, and `TResponse` matching the returned type's shape (collection interfaces such as `IReadOnlyList<T>` are fine).
+4. An entry stored for a different `TResponse` under the same key is a miss and is overwritten. Two queries with different response types that share a key evict each other, so give them distinct keys (for example `customer-summary:42` and `customer-detail:42`) and let the dependency graph invalidate both.
+5. `null` responses and responses implementing `IHasValidationResults` with a result that is not valid are returned without being cached. Warnings alone do not prevent caching.
+6. Cache get/set failures are fail-soft (logged; the request still proceeds). Cancellation of the request's token is not a failure: the `OperationCanceledException` propagates.
 
 #### Write / invalidating response (`IHasCacheInvalidationKeys`)
 
@@ -178,7 +192,7 @@ services.AddSingleton<ICacheDependencyGraph>(CacheDependencyGraph.Create(/* … 
 2. Reads `response.CacheKeys` (the seeds).
 3. Calls `dependencyGraph.GetExpandedCacheKeys(seeds)`.
 4. Removes every expanded key from the cache.
-5. Remove failures are fail-soft (logged; other keys still attempted).
+5. Remove failures are fail-soft (logged; other keys still attempted). Cancellation of the request's token stops the loop and propagates.
 
 Handlers never call the cache APIs directly; behaviors own get/set/remove.
 
