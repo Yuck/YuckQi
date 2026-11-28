@@ -1,14 +1,12 @@
 using System.Diagnostics;
-using System.Text.Json;
 using Mediator;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YuckQi.Application.Core.Aspects.Abstract.Interfaces;
+using YuckQi.Application.Core.Behaviors.Caching.Internal;
 
 namespace YuckQi.Application.Core.Behaviors.Caching;
-
-public record DistributedCachingBehaviorOptions(TimeSpan? CacheDuration);
 
 public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache cache, IOptions<DistributedCachingBehaviorOptions> configuration, ILogger<DistributedCachingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : IMessage, IHasCacheKey
 {
@@ -17,20 +15,21 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
         var stopwatch = Stopwatch.StartNew();
         var type = typeof(TRequest).Name;
         var key = request.CacheKey;
+        var settings = configuration.Value;
 
         try
         {
             var cached = await cache.GetAsync(key, cancellationToken);
-            if (cached is { Length: > 0 })
+            if (cached is { Length: > 0 } && CachedResponse.TryDeserialize<TResponse>(cached, settings.SerializerOptions, out var result))
             {
-                var result = JsonSerializer.Deserialize<TResponse>(cached);
-                if (result is not null)
-                {
-                    logger.LogInformation("Distributed cache hit for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
+                logger.LogInformation("Distributed cache hit for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
 
-                    return result;
-                }
+                return result;
             }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception exception)
         {
@@ -40,17 +39,37 @@ public class DistributedCachingBehavior<TRequest, TResponse>(IDistributedCache c
         logger.LogInformation("Distributed cache miss for '{type}' with key '{key}'.", type, key);
 
         var response = await next(request, cancellationToken);
+        if (response is null)
+            return response;
+
+        if (CachedResponse.HasValidationErrors(response))
+        {
+            logger.LogInformation("Distributed cache set skipped for '{type}' with key '{key}' because the response has validation errors ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
+
+            return response;
+        }
 
         var options = new DistributedCacheEntryOptions();
-        var cacheDuration = configuration.Value.CacheDuration;
+        var cacheDuration = settings.CacheDuration;
         if (cacheDuration.HasValue)
             options.SetAbsoluteExpiration(cacheDuration.Value);
 
         try
         {
-            await cache.SetAsync(key, JsonSerializer.SerializeToUtf8Bytes(response), options, cancellationToken);
+            if (! CachedResponse.TrySerialize(response, settings.SerializerOptions, out var bytes))
+            {
+                logger.LogWarning("Distributed cache set skipped for '{type}' with key '{key}' because '{response}' does not round-trip through System.Text.Json ({elapsed:g} elapsed).", type, key, typeof(TResponse).Name, stopwatch.Elapsed);
+
+                return response;
+            }
+
+            await cache.SetAsync(key, bytes, options, cancellationToken);
 
             logger.LogInformation("Distributed cache set for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception exception)
         {

@@ -31,6 +31,10 @@ public class DistributedCacheInvalidationBehavior<TRequest, TResponse>(IDistribu
 
                 logger.LogInformation("Distributed cache invalidated for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception exception)
             {
                 logger.LogWarning(exception, "Distributed cache invalidation failed for '{type}' with key '{key}' ({elapsed:g} elapsed).", type, key, stopwatch.Elapsed);

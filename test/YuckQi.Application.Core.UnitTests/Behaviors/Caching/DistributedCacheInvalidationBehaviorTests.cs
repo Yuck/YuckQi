@@ -81,6 +81,40 @@ public class DistributedCacheInvalidationBehaviorTests
         cache.Verify(t => t.RemoveAsync(It.IsAny<String>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
     }
 
+    [Test]
+    public async Task Handle_WhenRemoveIsCanceled_ThrowsAndStopsRemovingKeys()
+    {
+        var cache = new Mock<IDistributedCache>();
+        var logger = new Mock<ILogger<DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
+        var behavior = new DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(cache.Object, CacheDependencyGraph.Empty, logger.Object);
+        var response = new InvalidationPingResponse(1, new HashSet<CacheKey> { "key1", "key2" });
+        using var source = new CancellationTokenSource();
+
+        source.Cancel();
+        cache.Setup(t => t.RemoveAsync(It.IsAny<String>(), It.IsAny<CancellationToken>())).ThrowsAsync(new OperationCanceledException(source.Token));
+
+        await Assert.ThrowsAsync<OperationCanceledException>(async () => await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), source.Token));
+
+        cache.Verify(t => t.RemoveAsync(It.IsAny<String>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
+    public async Task Handle_WhenRemoveFails_ContinuesWithOtherKeys()
+    {
+        var cache = new Mock<IDistributedCache>();
+        var logger = new Mock<ILogger<DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>>>();
+        var behavior = new DistributedCacheInvalidationBehavior<InvalidationPingRequest, InvalidationPingResponse>(cache.Object, CacheDependencyGraph.Empty, logger.Object);
+        var response = new InvalidationPingResponse(1, new HashSet<CacheKey> { "key1", "key2" });
+
+        cache.Setup(t => t.RemoveAsync(It.IsAny<String>(), It.IsAny<CancellationToken>())).ThrowsAsync(new OperationCanceledException());
+
+        var result = await behavior.Handle(new InvalidationPingRequest(), (t, u) => new ValueTask<InvalidationPingResponse>(response), CancellationToken.None);
+
+        Assert.That(result.Value, Is.EqualTo(1));
+
+        cache.Verify(t => t.RemoveAsync(It.IsAny<String>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+    }
+
     public sealed class InvalidationPingRequest : IRequest<InvalidationPingResponse>;
 
     public sealed record InvalidationPingResponse(Int32 Value, IReadOnlySet<CacheKey>? CacheKeys) : IHasCacheInvalidationKeys
